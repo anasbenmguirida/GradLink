@@ -13,7 +13,7 @@
 - **Job and Internship Listings**  
   Explore career opportunities shared by alumni and organizations.
 
-- **Events **  
+- **Events**  
   Stay updated on upcoming alumni talks, and networking events.
 
 
