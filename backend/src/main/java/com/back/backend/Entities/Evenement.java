@@ -26,7 +26,8 @@ public class Evenement {
     private String designation ; 
     private String description ;
     private Date dateEvenement ;
-    private int capciteMaximal ; 
+    private int capaciteMaximal ; 
+    private int placeRestant ; 
     @ManyToOne
     // plusieurs evenements peuvent etre creer par le meme admin 
     @JoinColumn(name = "admin_id", nullable = false)
