@@ -17,20 +17,20 @@ jobs:
         run: |
           docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
 
-      - name: Build Client Image
+      - name: Build frontend Image
         run: |
           cd frontend
           docker build -t ${{ secrets.DOCKER_USERNAME }}/gradlink-client:latest .
 
-      - name: Push Client Image
+      - name: Push frontend Image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/gradlink-client:latest
 
-      - name: Build Server Image
+      - name: Build backend Image
         run: |
           cd backend
           docker build -t ${{ secrets.DOCKER_USERNAME }}/gradlink-server:latest .
 
-      - name: Push Server Image
+      - name: Push ackend Image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/gradlink-server:latest
