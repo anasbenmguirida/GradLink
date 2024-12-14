@@ -50,11 +50,11 @@ public class User implements UserDetails {
  private Role role ; // its an enum
  private String password ; 
 
- /*@Lob
- @Column(name = "image")
- @Type(org.hibernate.type.BinaryType)
-    private byte[] image ; 
-    */
+ /*@Lob 
+private byte[] image ; 
+*/
+
+    
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 private List<Poste> postes  ;
 

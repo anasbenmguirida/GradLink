@@ -23,4 +23,6 @@ public class RegisterRequest {
     private long promotion ; 
     private String specialite ; 
     
+   
+    
 }

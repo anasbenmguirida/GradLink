@@ -1,4 +1,4 @@
-package com.back.backend.auth;
+package com.back.backend.services;
 
 
 import java.util.Optional;
@@ -12,6 +12,9 @@ import com.back.backend.Entities.Admin;
 import com.back.backend.Entities.Etudiant;
 import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.User;
+import com.back.backend.auth.AuthenticationResponse;
+import com.back.backend.auth.LoginRequest;
+import com.back.backend.auth.RegisterRequest;
 import com.back.backend.config.JwtService;
 import com.back.backend.enums.Role;
 import com.back.backend.repositories.AdminRepository;
@@ -43,37 +46,34 @@ public class AuthService {
                                 .role(Role.valueOf(request.getRole()))
                                 .build();
                 this.userRepository.save(user);
-                var jwtToken = jwtService.generateToken(user);
-                Optional<User> optionalRegistedUser = userRepository.findByEmail(request.getEmail()) ; 
-                User registredUser = optionalRegistedUser.get() ; 
-                // check if its is an etudiant ou laureat ou admin then store the additional infos in the correspondant tables 
-                if (registredUser.getRole() == Role.ETUDIANT) {
-                        Etudiant etudiant = new Etudiant() ; 
-                        etudiant.setId(registredUser.getId());
+                int foreignKey = user.getId() ; 
+                var jwtToken=jwtService.generateToken(user) ; 
+                if (user.getRole() == Role.ETUDIANT) {
+                        Etudiant etudiant = new Etudiant(); 
+                        etudiant.setId(foreignKey);
                         etudiant.setFiliere(request.getFiliere());
-                        this.etudiantRepository.save(etudiant) ; 
-                        System.out.println("etudiant inserted");
+                        this.etudiantRepository.save(etudiant);  
+                
                 }
-                else if(registredUser.getRole() == Role.ADMIN){
-                        Admin admin = new Admin() ; 
-                        admin.setId(registredUser.getId());
+                else if(user.getRole() == Role.ADMIN){
+                        Admin admin = new Admin(); 
+                        admin.setId(foreignKey);
                         admin.setAnneeExeprience(request.getAnneeExeprience());
-                        this.adminRepository.save(admin) ; 
-                        System.out.println("admin inserted");
+                        this.adminRepository.save(admin);  
+                
                 }
                 else {
-                        Laureat laureat = new Laureat() ; 
-                        laureat.setId(registredUser.getId());
-                        laureat.setPromotion(request.getPromotion()) ; 
+                        Laureat laureat = new Laureat(); 
+                        laureat.setId(foreignKey);
+                        laureat.setPromotion(request.getPromotion()); 
                         laureat.setSpecialite(request.getSpecialite());
-                        this.laureatRepository.save(laureat) ; 
-                        System.out.println("laureat inserted");
-
+                        this.laureatRepository.save(laureat);
+                
                 }
                 return AuthenticationResponse.builder()
                                 .accessToken(jwtToken).build();
-                
-        }
+                }
+
 
         // the Login
         public AuthenticationResponse login(LoginRequest request) {
