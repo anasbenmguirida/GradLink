@@ -5,12 +5,13 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import lombok.Data;
 
 @Entity
-
+@Data
 public class Admin extends User{
     
-private String anneeExeprience ; 
+private long anneeExeprience ; 
 @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
 // un amin peut creer plusieurs evenement 
 private List<Evenement> listeEvenements ; 

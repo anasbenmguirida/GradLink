@@ -4,7 +4,9 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import lombok.Data;
 
+@Data
 @Entity
 public class Laureat extends User {
 
@@ -14,7 +16,7 @@ private List<DemandeMentorat> demandes;
 @OneToMany(mappedBy = "laureat", cascade = CascadeType.ALL)
 private List<Message> messages ; 
 
-private String promotion ; 
+private long promotion ; 
 private String specialite ;
 
 }
