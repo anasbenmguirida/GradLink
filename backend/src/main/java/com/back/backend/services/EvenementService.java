@@ -49,36 +49,36 @@ public class EvenementService {
     }
 
 
-// Update Event
-public Evenement updateEvent(int eventId, Evenement updatedEvenement) {
-    Evenement existingEvent;
-    existingEvent = evenementRepository.findById(eventId)
-                                     .orElseThrow(() -> new IllegalArgumentException("Admin with ID " + eventId + " not found"));
+    // Update Event
+    public Evenement updateEvent(int eventId, Evenement updatedEvenement) {
+        Evenement existingEvent;
+        existingEvent = evenementRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Admin with ID " + eventId + " not found"));
 
-    // Update the fields only if they are provided
-    if ( updatedEvenement.getDesignation() != null && !updatedEvenement.getDesignation().isEmpty()) {
-        existingEvent.setDesignation(updatedEvenement.getDesignation());
-    }
-    if (updatedEvenement.getDescription() != null && !updatedEvenement.getDescription().isEmpty()) {
-        existingEvent.setDescription(updatedEvenement.getDescription());
-    }
-    if (updatedEvenement.getDateEvenement() != null) {
-        existingEvent.setDateEvenement(updatedEvenement.getDateEvenement());
-    }
-    if (updatedEvenement.getCapaciteMaximal() > 0 ) {
-        existingEvent.setCapaciteMaximal(updatedEvenement.getCapaciteMaximal());
-        // Adjust remaining places if capacity changes
-        int difference = updatedEvenement.getCapaciteMaximal() - existingEvent.getPlaceRestant();
-        existingEvent.setPlaceRestant(existingEvent.getPlaceRestant() + difference);
+        // Update the fields only if they are provided
+        if ( updatedEvenement.getDesignation() != null && !updatedEvenement.getDesignation().isEmpty()) {
+            existingEvent.setDesignation(updatedEvenement.getDesignation());
+        }
+        if (updatedEvenement.getDescription() != null && !updatedEvenement.getDescription().isEmpty()) {
+            existingEvent.setDescription(updatedEvenement.getDescription());
+        }
+        if (updatedEvenement.getDateEvenement() != null) {
+            existingEvent.setDateEvenement(updatedEvenement.getDateEvenement());
+        }
+        if (updatedEvenement.getCapaciteMaximal() > 0 ) {
+            existingEvent.setCapaciteMaximal(updatedEvenement.getCapaciteMaximal());
+            // Adjust remaining places if capacity changes
+            int difference = updatedEvenement.getCapaciteMaximal() - existingEvent.getPlaceRestant();
+            existingEvent.setPlaceRestant(existingEvent.getPlaceRestant() + difference);
+        }
+
+        return evenementRepository.save(existingEvent);
     }
 
-    return evenementRepository.save(existingEvent);
-}
-
-// Delete Event
-public void deleteEvent(int eventId) {
-    Evenement existingEvent = evenementRepository.findById(eventId)
-            .orElseThrow(() -> new IllegalArgumentException("Evenement with ID " + eventId + " not found"));
-    evenementRepository.delete(existingEvent);
-}
+    // Delete Event
+    public void deleteEvent(int eventId) {
+        Evenement existingEvent = evenementRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Evenement with ID " + eventId + " not found"));
+        evenementRepository.delete(existingEvent);
+    }
 }

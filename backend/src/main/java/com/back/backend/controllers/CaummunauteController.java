@@ -5,7 +5,6 @@ import com.back.backend.services.CaummunauteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/caummunautes")

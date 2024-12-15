@@ -18,16 +18,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class Caummunaute {
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private int id  ; 
-private String titre ; 
-private String description ; 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id  ;
+    private String titre ;
+    private String description ;
 
-// admin peut creer plusieurs caummunautes 
-@ManyToOne
-@JoinColumn(name = "admin_id", nullable = false)
-private Admin admin ;
+    // admin peut creer plusieurs caummunautes
+    @ManyToOne
+    @JoinColumn(name = "admin_id", nullable = false)
+    private Admin admin ;
 
     public void setAdmin(Admin admin) {
         this.admin = admin;
