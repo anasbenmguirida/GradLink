@@ -1,6 +1,7 @@
 package com.back.backend.Entities;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import com.back.backend.enums.StatusMentorat;
 
@@ -11,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class DemandeMentorat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +35,5 @@ public class DemandeMentorat {
     private Laureat laureat ; 
     
     private StatusMentorat statusMentorat ; //its an enum 
-    private Date dateDemande ; 
+    private LocalDate dateDemande ; 
 }

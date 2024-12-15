@@ -67,6 +67,7 @@ public class AuthService {
         
                 return AuthenticationResponse.builder()
                         .accessToken(jwtToken)
+                        .user(user)
                         .build();
             }
             
@@ -95,7 +96,7 @@ public class AuthService {
                 if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                         var jwtToken = jwtService.generateToken(user);
                         return AuthenticationResponse.builder()
-                                        .accessToken(jwtToken).build();
+                                        .accessToken(jwtToken).user(user).build();
                 } else {
                         return null;
                 }
