@@ -31,48 +31,54 @@ public class AuthService {
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
-        private final EtudiantRepository etudiantRepository ; 
-        private final LaureatRepository laureatRepository ; 
-        private final AdminRepository adminRepository ; 
+       
 
 
         public AuthenticationResponse register(RegisterRequest request) {
-                // every user that create an acount is gonna be stored in the users table 
+                //on cree une instance de user => par defaut 
                 User user = User.builder()
-                                .firstName(request.getFirstName())
-                                .lastName(request.getLastName())
-                                .email(request.getEmail())
-                                .password(passwordEncoder.encode(request.getPassword()))
-                                .role(Role.valueOf(request.getRole()))
-                                .build();
-                this.userRepository.save(user);
-                int foreignKey = user.getId() ; 
-                var jwtToken=jwtService.generateToken(user) ; 
+                        .firstName(request.getFirstName())
+                        .lastName(request.getLastName())
+                        .email(request.getEmail())
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .role(Role.valueOf(request.getRole()))
+                        .build();
+            
+                var jwtToken = jwtService.generateToken(user);
+            
+                // on verifie le role 
                 if (user.getRole() == Role.ETUDIANT) {
-                        Etudiant etudiant = new Etudiant(); 
-                        etudiant.setId(foreignKey);
-                        etudiant.setFiliere(request.getFiliere());
-                        this.etudiantRepository.save(etudiant);  
-                
+                    Etudiant etudiant = new Etudiant();
+                    copyUserFieldsToSubclass(user, etudiant);
+                    etudiant.setFiliere(request.getFiliere()); 
+                    userRepository.save(etudiant); 
+                } else if (user.getRole() == Role.ADMIN) {
+                    Admin admin = new Admin();
+                    copyUserFieldsToSubclass(user, admin); 
+                    admin.setAnneeExeprience(request.getAnneeExeprience()); 
+                    userRepository.save(admin); 
+                } else if (user.getRole() == Role.LAUREAT) {
+                    Laureat laureat = new Laureat();
+                    copyUserFieldsToSubclass(user, laureat); 
+                    laureat.setPromotion(request.getPromotion());
+                    laureat.setSpecialite(request.getSpecialite()); 
+                    userRepository.save(laureat);
                 }
-                else if(user.getRole() == Role.ADMIN){
-                        Admin admin = new Admin(); 
-                        admin.setId(foreignKey);
-                        admin.setAnneeExeprience(request.getAnneeExeprience());
-                        this.adminRepository.save(admin);  
-                
-                }
-                else {
-                        Laureat laureat = new Laureat(); 
-                        laureat.setId(foreignKey);
-                        laureat.setPromotion(request.getPromotion()); 
-                        laureat.setSpecialite(request.getSpecialite());
-                        this.laureatRepository.save(laureat);
-                
-                }
+        
                 return AuthenticationResponse.builder()
-                                .accessToken(jwtToken).build();
-                }
+                        .accessToken(jwtToken)
+                        .build();
+            }
+            
+            // method pour copier les champs du user vers n'importe quel subclass (admin , laureat , etudiant)
+            private void copyUserFieldsToSubclass(User user, User subclass) {
+                subclass.setFirstName(user.getFirstName());
+                subclass.setLastName(user.getLastName());
+                subclass.setEmail(user.getEmail());
+                subclass.setPassword(user.getPassword());
+                subclass.setRole(user.getRole());
+            }
+            
 
 
         // the Login
