@@ -29,5 +29,21 @@ private String description ;
 @JoinColumn(name = "admin_id", nullable = false)
 private Admin admin ;
 
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
+    }
 
+    public String getTitre() {
+        return titre;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
 }
