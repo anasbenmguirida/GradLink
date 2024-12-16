@@ -11,6 +11,6 @@ import com.back.backend.Entities.DemandeMentorat;
 
 @Repository
 public interface DemandeRepository extends JpaRepository<DemandeMentorat , Integer>{
-@Query(value = "select *from demande_mentorat where laureat_id=:id" , nativeQuery = true)
+@Query(value = "select *FROM demande_mentorat WHERE laureat_id=:id" , nativeQuery = true)
 List<DemandeMentorat> getAllDemandeLaureat(@Param("id") int id) ; 
 }
