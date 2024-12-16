@@ -2,6 +2,8 @@ package com.back.backend.Entities;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,10 +25,12 @@ private int id ;
 
 @ManyToOne
 @JoinColumn(name = "etudiant_id", nullable = false)
+  @JsonBackReference
 private Etudiant etudiant;
 
 @ManyToOne
 @JoinColumn(name = "laureat_id", nullable = false)
+@JsonBackReference
 private Laureat laureat ; 
 
 private String contenue ; 

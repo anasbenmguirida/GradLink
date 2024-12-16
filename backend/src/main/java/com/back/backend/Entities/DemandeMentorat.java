@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 import com.back.backend.enums.StatusMentorat;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,10 +29,12 @@ public class DemandeMentorat {
 
     @ManyToOne
     @JoinColumn(name = "etudiant_id", nullable = false)
+      @JsonBackReference
     private Etudiant etudiant;
 
     @ManyToOne
     @JoinColumn(name = "laureat_id", nullable = false)
+    @JsonBackReference
     private Laureat laureat ; 
     
     private StatusMentorat statusMentorat ; //its an enum 

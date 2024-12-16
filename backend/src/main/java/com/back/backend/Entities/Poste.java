@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.util.List;
 
 import com.back.backend.enums.TypePoste;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,11 +41,13 @@ public class Poste {
     
     @OneToMany(mappedBy = "poste", cascade = CascadeType.ALL)
     // un poste peut avoir plusieurs reations(likes mostly)
+    @JsonManagedReference
     private List<PosteLikes> posteLikes ; 
 
     // plusieurs postes peuvent appartenir a une seul caummunaute 
     @ManyToOne
     @JoinColumn(name = "caummunaute_id", nullable = true)
+      @JsonBackReference
     private Caummunaute caummunaute;
 
 }

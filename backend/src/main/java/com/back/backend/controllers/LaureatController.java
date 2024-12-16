@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.back.backend.Entities.DemandeMentorat;
 import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.User;
 import com.back.backend.services.LaureatService;
@@ -35,5 +36,9 @@ public class LaureatController {
     @GetMapping("/api/laureats")
     public List<Laureat> getAllLaureats() {
         return this.laureatService.getAllLaureat() ; 
+    }
+    @GetMapping("/api/laureat-demandes/{id}")
+    public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
+        return this.laureatService.getAllLaureatDemandes(id) ;
     }
 }

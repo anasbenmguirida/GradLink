@@ -52,4 +52,7 @@ public class LaureatService {
         }
         return "demande introuvable" ; 
     }
+    public List<DemandeMentorat> getAllLaureatDemandes(int id){
+        return demandeRepository.getAllDemandeLaureat(id) ;  
+    }
 }

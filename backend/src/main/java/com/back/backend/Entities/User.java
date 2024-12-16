@@ -14,7 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.back.backend.enums.Role;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -56,13 +56,16 @@ private byte[] image ;
 
     
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+@JsonManagedReference
 private List<Poste> postes  ;
 
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 // un utilisateur peut aimer plusieurs postes
+@JsonManagedReference
 private List<PosteLikes> posteLikes;
 
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+@JsonManagedReference
 private List<EventParticipants> eventParticipants ; 
 
 
