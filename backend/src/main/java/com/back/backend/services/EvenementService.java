@@ -11,7 +11,6 @@ public class EvenementService {
     private final EvenementRepository evenementRepository;
     private final AdminRepository adminRepository;
 
-    
     public EvenementService(EvenementRepository evenementRepository, AdminRepository adminRepository) {
         this.evenementRepository = evenementRepository;
         this.adminRepository = adminRepository;
@@ -35,14 +34,13 @@ public class EvenementService {
             throw new IllegalArgumentException("La date de l'événement est obligatoire.");
         }
 
-        evenement.setAdmin(admin);
         evenement.setPlaceRestant(evenement.getCapaciteMaximal());
         return evenementRepository.save(evenement);
     }
 
     public Evenement updateEvent(int eventId, Evenement updatedEvenement) {
         Evenement existingEvent = evenementRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Admin with ID " + eventId + " not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Evenement with ID " + eventId + " not found"));
 
         if (updatedEvenement.getDesignation() != null && !updatedEvenement.getDesignation().isEmpty()) {
             existingEvent.setDesignation(updatedEvenement.getDesignation());
@@ -55,8 +53,13 @@ public class EvenementService {
         }
         if (updatedEvenement.getCapaciteMaximal() > 0) {
             existingEvent.setCapaciteMaximal(updatedEvenement.getCapaciteMaximal());
-            int difference = updatedEvenement.getCapaciteMaximal() - existingEvent.getPlaceRestant();
+            int difference = updatedEvenement.getCapaciteMaximal() - existingEvent.getCapaciteMaximal();
             existingEvent.setPlaceRestant(existingEvent.getPlaceRestant() + difference);
+
+            // Ensure that placeRestant doesn't go negative
+            if (existingEvent.getPlaceRestant() < 0) {
+                throw new IllegalArgumentException("Le nombre de places restantes ne peut pas être négatif.");
+            }
         }
 
         return evenementRepository.save(existingEvent);
