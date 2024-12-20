@@ -20,7 +20,8 @@ public class AdminController {
 
     // Constructor Injection
     @Autowired
-    public AdminController(EvenementService evenementService, UserService userService , CaummunauteService caummunauteService) {
+    public AdminController(EvenementService evenementService, UserService userService,
+            CaummunauteService caummunauteService) {
         this.evenementService = evenementService;
         this.userService = userService;
         this.caummunauteService = caummunauteService;
@@ -73,7 +74,8 @@ public class AdminController {
                     .body("Error deleting user: " + e.getMessage());
         }
     }
-        // Create a new community (Caummunaute)
+
+    // Create a new community (Caummunaute)
     @PostMapping("/caummunaute")
     public ResponseEntity<?> createCaummunaute(@RequestBody Caummunaute caummunaute, @RequestParam int adminId) {
         try {
@@ -84,15 +86,28 @@ public class AdminController {
                     .body("Error creating community: " + e.getMessage());
         }
     }
-        // Update an existing community
-        @PutMapping("/caummunaute/{id}")
-        public ResponseEntity<?> updateCaummunaute(@PathVariable int id, @RequestBody Caummunaute updatedCaummunaute) {
-            try {
-                Caummunaute updatedCommunity = caummunauteService.updateCaummunaute(id, updatedCaummunaute);
-                return ResponseEntity.ok(updatedCommunity); // HTTP 200
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Error updating community: " + e.getMessage());
-            }
+
+    // Update an existing community
+    @PutMapping("/caummunaute/{id}")
+    public ResponseEntity<?> updateCaummunaute(@PathVariable int id, @RequestBody Caummunaute updatedCaummunaute) {
+        try {
+            Caummunaute updatedCommunity = caummunauteService.updateCaummunaute(id, updatedCaummunaute);
+            return ResponseEntity.ok(updatedCommunity); // HTTP 200
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error updating community: " + e.getMessage());
         }
+    }
+
+    // Delete a community
+    @DeleteMapping("/caummunaute/{id}")
+    public ResponseEntity<?> deleteCaummunaute(@PathVariable int id) {
+        try {
+            caummunauteService.deleteCaummunaute(id);
+            return ResponseEntity.noContent().build(); // HTTP 204
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error deleting community: " + e.getMessage());
+        }
+    }
 }
