@@ -1,10 +1,15 @@
 package com.back.backend.controllers;
 
 import com.back.backend.Entities.Caummunaute;
+import com.back.backend.Entities.Etudiant;
 import com.back.backend.Entities.Evenement;
 import com.back.backend.services.CaummunauteService;
+import com.back.backend.services.EtudiantService;
 import com.back.backend.services.EvenementService;
 import com.back.backend.services.UserService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +22,16 @@ public class AdminController {
     private final EvenementService evenementService;
     private final UserService userService;
     private final CaummunauteService caummunauteService;
+    private final EtudiantService etudiantService;
 
     // Constructor Injection
     @Autowired
     public AdminController(EvenementService evenementService, UserService userService,
-            CaummunauteService caummunauteService) {
+            CaummunauteService caummunauteService, EtudiantService etudiantService) {
         this.evenementService = evenementService;
         this.userService = userService;
         this.caummunauteService = caummunauteService;
+        this.etudiantService = etudiantService;
     }
 
     // Create a new event
@@ -110,4 +117,18 @@ public class AdminController {
                     .body("Error deleting community: " + e.getMessage());
         }
     }
+    @GetMapping("/etudiants/search")
+    public ResponseEntity<List<Etudiant>> searchEtudiants(@RequestParam(required = false) String firstName,
+                                                           @RequestParam(required = false) String lastName,
+                                                           @RequestParam(required = false) String filiere,
+                                                           @RequestParam(required = false) String email) {
+        try {
+            List<Etudiant> etudiants = etudiantService.searchEtudiants(firstName, lastName, filiere, email);
+            return new ResponseEntity<>(etudiants, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null);
+        }
+    }
+    
 }
