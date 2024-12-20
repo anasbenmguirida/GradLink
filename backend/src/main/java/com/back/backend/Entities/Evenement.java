@@ -34,10 +34,11 @@ public class Evenement {
     @ManyToOne
     // plusieurs evenements peuvent etre creer par le meme admin 
     @JoinColumn(name = "admin_id", nullable = false)
+    @JsonBackReference(value = "admin-event")
      
     private Admin admin  ; 
 
     @OneToMany(mappedBy = "evenement", cascade = CascadeType.ALL)
-    
+    @JsonManagedReference(value="event-parts")
     private List<EventParticipants> eventParticipants ; 
 }

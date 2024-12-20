@@ -17,11 +17,11 @@ public class Admin extends User {
 
     // Admin can create multiple events
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    
+    @JsonManagedReference(value = "admin-event")
     private List<Evenement> listeEvenements;
 
     // Admin can create multiple communities
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    
+    @JsonManagedReference(value = "admin-caum")
     private List<Caummunaute> listCommunautes;
 }

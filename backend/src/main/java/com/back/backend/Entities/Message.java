@@ -25,12 +25,12 @@ private int id ;
 
 @ManyToOne
 @JoinColumn(name = "etudiant_id", nullable = false)
- 
+ @JsonBackReference(value = "etu-msg")
 private Etudiant etudiant;
 
 @ManyToOne
 @JoinColumn(name = "laureat_id", nullable = false)
-
+@JsonBackReference(value = "lau-msg")
 private Laureat laureat ; 
 
 private String contenue ; 

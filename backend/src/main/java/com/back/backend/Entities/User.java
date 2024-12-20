@@ -56,16 +56,17 @@ private byte[] image ;
 
     
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-
+@JsonManagedReference(value = "user-poste")
 private List<Poste> postes  ;
 
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 // un utilisateur peut aimer plusieurs postes
 
+@JsonManagedReference(value = "user-likes")
 private List<PosteLikes> posteLikes;
 
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-
+@JsonManagedReference(value = "users-in-evenement")
 private List<EventParticipants> eventParticipants ; 
 
 

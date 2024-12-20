@@ -25,5 +25,7 @@ public class Caummunaute {
     // admin can create multiple communities
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", nullable = false)
+    @JsonBackReference(value = "admin-caum")
     private Admin admin;
+    // it can have mu
 }

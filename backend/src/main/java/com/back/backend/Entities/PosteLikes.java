@@ -17,11 +17,11 @@ public class PosteLikes {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-      
+     @JsonBackReference(value = "user-likes")
     private User user ;
 
     @ManyToOne
     @JoinColumn(name = "poste_id", nullable = false)
-   
+   @JsonBackReference("poste-likes")
     private Poste poste ;
 }

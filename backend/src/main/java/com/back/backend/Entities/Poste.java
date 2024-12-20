@@ -35,30 +35,35 @@ public class Poste {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id  ; 
-    private TypePoste typePoste ; 
-    private String textArea ; 
-    private LocalDateTime datePoste ; 
+    private int id;
+
+    private TypePoste typePoste;
+
+    private String textArea;
+
+    private LocalDateTime datePoste;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, updatable = false, insertable = false)
+    @JsonBackReference(value = "user-poste")
     private User user;
-    
+
     @OneToMany(mappedBy = "poste", cascade = CascadeType.ALL)
-    // un poste peut avoir plusieurs reations(likes mostly)
-    
-    private List<PosteLikes> posteLikes ; 
+    // A poste can have multiple likes
+    @JsonManagedReference(value = "poste-likes")
+    private List<PosteLikes> posteLikes;
+
     @Column(name = "user_id")
     private int userId;
 
-    // plusieurs postes peuvent appartenir a une seul caummunaute 
+    // Multiple postes can belong to a single caummunaute
     @ManyToOne
     @JoinColumn(name = "caummunaute_id", nullable = true)
-     
     private Caummunaute caummunaute;
 
     @OneToMany(mappedBy = "poste", cascade = CascadeType.ALL)
-    // un poste peut avoir plusieurs ficiers
-    
-    private List<PosteFiles> posteFiles ; 
+    // A poste can have multiple files
+    @JsonManagedReference("poste-files")
+    private List<PosteFiles> posteFiles;
 
 }

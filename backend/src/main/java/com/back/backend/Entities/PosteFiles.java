@@ -16,12 +16,11 @@ public class PosteFiles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id  ; 
-
     private String fileName ;
     
     @ManyToOne
     @JoinColumn(name = "poste_id", nullable = false)
-  
+    @JsonBackReference("poste-files")
     private Poste poste ;
 
 }

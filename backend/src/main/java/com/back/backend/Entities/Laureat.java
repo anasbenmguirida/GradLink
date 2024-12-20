@@ -13,11 +13,11 @@ import lombok.Data;
 public class Laureat extends User {
 
 @OneToMany(mappedBy = "laureat", cascade = CascadeType.ALL)
-
+@JsonManagedReference(value = "lau-demande")
 private List<DemandeMentorat> demandes;
 
 @OneToMany(mappedBy = "laureat", cascade = CascadeType.ALL)
-
+@JsonManagedReference(value="lau-msg")
 private List<Message> messages ; 
 
 private long promotion ; 

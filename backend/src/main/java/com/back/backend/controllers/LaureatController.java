@@ -62,7 +62,7 @@ public class LaureatController {
     @PostMapping("/api/create-poste")
     public ResponseEntity<String> createposte(@RequestBody Poste poste){
          this.posteService.createPoste(poste);
-        return ResponseEntity.ok("product saved ");
+        return ResponseEntity.ok("post saved ");
     }
 }
 
