@@ -84,4 +84,15 @@ public class AdminController {
                     .body("Error creating community: " + e.getMessage());
         }
     }
+        // Update an existing community
+        @PutMapping("/caummunaute/{id}")
+        public ResponseEntity<?> updateCaummunaute(@PathVariable int id, @RequestBody Caummunaute updatedCaummunaute) {
+            try {
+                Caummunaute updatedCommunity = caummunauteService.updateCaummunaute(id, updatedCaummunaute);
+                return ResponseEntity.ok(updatedCommunity); // HTTP 200
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Error updating community: " + e.getMessage());
+            }
+        }
 }
