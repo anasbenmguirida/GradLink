@@ -24,9 +24,9 @@ public class UserService {
         }
         return ResponseEntity.notFound().build();
     }
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    public User getUserById(int id) {
+        return userRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
     }
 
     public ResponseEntity<User> updateUserProfile(String email, User updatedUser) {

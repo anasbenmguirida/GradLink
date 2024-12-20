@@ -16,11 +16,12 @@ public class UserController {
     private UserService userService;
 
     
-    @GetMapping("/profile")
-    public ResponseEntity<User> getUserProfile(@RequestParam String email) {
-        User user = userService.getUserByEmail(email);  
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<User> getUserProfile(@PathVariable int id) {
+        User user = userService.getUserById(id);  
         return ResponseEntity.ok(user);  
     }
+    
     @PutMapping("/profile")
 public ResponseEntity<ResponseEntity<User>> updateUserProfile(@RequestBody User updatedUser) {
     String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
