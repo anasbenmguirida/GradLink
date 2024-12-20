@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         // extracting the JWT from the request
-        JWTtoken = AuthenticationHeader.substring(7); // 7seb bearer + space ?
+        JWTtoken = AuthenticationHeader.substring(7); // eveen(s)
         System.out.println("The jwt token extracted :  " + JWTtoken);
         // extract the email from the JWT token
         System.out.println(JWTtoken);
@@ -55,7 +55,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
-
-    }
-
+}
 }

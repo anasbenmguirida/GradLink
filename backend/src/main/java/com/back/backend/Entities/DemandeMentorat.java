@@ -31,7 +31,7 @@ public class DemandeMentorat {
 
     @ManyToOne
     @JoinColumn(name = "etudiant_id", nullable = false, updatable = false, insertable = false)
-    @JsonBackReference
+
     private Etudiant etudiant;
 
     @Column(name = "etudiant_id")
@@ -39,7 +39,7 @@ public class DemandeMentorat {
 
     @ManyToOne
     @JoinColumn(name = "laureat_id", nullable = false, updatable = false, insertable = false)
-    @JsonBackReference
+
     private Laureat laureat;
 
     @Column(name = "laureat_id")

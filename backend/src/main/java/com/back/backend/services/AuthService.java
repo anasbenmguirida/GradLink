@@ -55,7 +55,7 @@ public class AuthService {
                 } else if (user.getRole() == Role.ADMIN) {
                     Admin admin = new Admin();
                     copyUserFieldsToSubclass(user, admin); 
-                    admin.setAnneeExeprience(request.getAnneeExeprience()); 
+                    admin.setAnneeExperience(request.getAnneeExperience()); 
                     userRepository.save(admin); 
                 } else if (user.getRole() == Role.LAUREAT) {
                     Laureat laureat = new Laureat();

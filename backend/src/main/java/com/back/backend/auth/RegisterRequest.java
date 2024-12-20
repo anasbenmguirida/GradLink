@@ -19,7 +19,7 @@ public class RegisterRequest {
     private String password;
     private String role;
     private String filiere ; 
-    private long anneeExeprience ; 
+    private long anneeExperience ; 
     private long promotion ; 
     private String specialite ; 
     

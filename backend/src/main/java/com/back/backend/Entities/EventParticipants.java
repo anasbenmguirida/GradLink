@@ -27,7 +27,7 @@ public class EventParticipants {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-      @JsonBackReference
+      
     private Evenement evenement  ; 
 
 }

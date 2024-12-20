@@ -29,7 +29,7 @@ public class SecurityConfig {
                                 .csrf(csrf -> csrf
                                                 .disable())
                                 .authorizeRequests(requests -> requests
-                                                .requestMatchers("/" , "/api/register" , "/api/login")
+                                                .requestMatchers("/" ,"/api/create-poste", "/api/register" , "/api/login")
                                                 .permitAll()
                                                 .anyRequest()
                                                 .authenticated())

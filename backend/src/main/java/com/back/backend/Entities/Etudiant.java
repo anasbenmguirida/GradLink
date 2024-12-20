@@ -21,7 +21,7 @@ public class Etudiant extends User {
 private String filiere ; 
 @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL)
 // un etudiant peut avoir demander plusieurs mentorats 
-@JsonManagedReference
+
 private List<DemandeMentorat> demandes;
 
 @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL)

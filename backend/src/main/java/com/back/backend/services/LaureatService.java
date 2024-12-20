@@ -67,11 +67,7 @@ public class LaureatService {
         return demandeRepository.getAllDemandeLaureat(id) ;  
     }
 
-    // creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
-    public ResponseEntity<Poste> createPoste(@RequestBody Poste poste) {
-        Poste nouveauPoste = this.posteRepository.save(poste);
-        return ResponseEntity.ok(nouveauPoste);
-    }
+    
  
                     
         

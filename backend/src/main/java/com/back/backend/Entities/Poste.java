@@ -36,10 +36,6 @@ public class Poste {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id  ; 
-    // pdf et les images 
-   @Lob
-    @Column(columnDefinition = "BYTEA")
-    private byte[] fichiers;
     private TypePoste typePoste ; 
     private String textArea ; 
     private LocalDateTime datePoste ; 
@@ -49,7 +45,7 @@ public class Poste {
     
     @OneToMany(mappedBy = "poste", cascade = CascadeType.ALL)
     // un poste peut avoir plusieurs reations(likes mostly)
-    @JsonManagedReference
+    
     private List<PosteLikes> posteLikes ; 
     @Column(name = "user_id")
     private int userId;
@@ -57,7 +53,12 @@ public class Poste {
     // plusieurs postes peuvent appartenir a une seul caummunaute 
     @ManyToOne
     @JoinColumn(name = "caummunaute_id", nullable = true)
-      @JsonBackReference
+     
     private Caummunaute caummunaute;
+
+    @OneToMany(mappedBy = "poste", cascade = CascadeType.ALL)
+    // un poste peut avoir plusieurs ficiers
+    
+    private List<PosteFiles> posteFiles ; 
 
 }

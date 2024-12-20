@@ -1,5 +1,7 @@
 package com.back.backend.Entities;
 
+
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
@@ -10,18 +12,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class PosteLikes {
+public class PosteFiles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int id  ; 
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-      
-    private User user ;
-
+    private String fileName ;
+    
     @ManyToOne
     @JoinColumn(name = "poste_id", nullable = false)
-   
+  
     private Poste poste ;
+
 }

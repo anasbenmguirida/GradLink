@@ -1,27 +1,27 @@
 package com.back.backend.Entities;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import lombok.Data;
-
 @Entity
-@Data
-public class Admin extends User{
-    
-private long anneeExeprience ; 
-@OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
-// un amin peut creer plusieurs evenement 
-@JsonManagedReference
-private List<Evenement> listeEvenements ; 
+@Getter
+@Setter
+public class Admin extends User {
+    private long anneeExperience;
 
-@OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
-// un amin peut creer plusieurs evenement 
-@JsonManagedReference
-private List<Caummunaute> listCaummunautes ; 
- 
+    // Admin can create multiple events
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    
+    private List<Evenement> listeEvenements;
+
+    // Admin can create multiple communities
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    
+    private List<Caummunaute> listCommunautes;
 }
