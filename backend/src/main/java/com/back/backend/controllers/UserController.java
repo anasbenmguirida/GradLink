@@ -21,23 +21,22 @@ public class UserController {
         User user = userService.getUserById(id);  
         return ResponseEntity.ok(user);  
     }
-    
+
     @PutMapping("/profile")
-public ResponseEntity<ResponseEntity<User>> updateUserProfile(@RequestBody User updatedUser) {
-    String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+    public ResponseEntity<ResponseEntity<User>> updateUserProfile(@RequestBody User updatedUser) {
 
-    try {
-        User currentUser = userService.getUserByEmail(currentUserEmail);
-        
-        if (!currentUser.getEmail().equals(updatedUser.getEmail())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // Forbidden if the user is not the owner
+        try {
+            User currentUser = userService.getUserById(updatedUser.getId()); 
+    
+            if (currentUser.getId() != updatedUser.getId()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            }
+    
+            ResponseEntity<User> updated = userService.updateUserProfile(currentUser.getId(), updatedUser);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-
-        ResponseEntity<User> updated = userService.updateUserProfile(currentUser.getEmail(), updatedUser);
-        return ResponseEntity.ok(updated);
-    } catch (RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Handle user not found
     }
-}
 
 }

@@ -29,8 +29,8 @@ public class UserService {
         .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
     }
 
-    public ResponseEntity<User> updateUserProfile(String email, User updatedUser) {
-        User existingUser = userRepository.findByEmail(email).orElse(null);
+    public ResponseEntity<User> updateUserProfile(int id, User updatedUser) {
+        User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser == null) {
             return ResponseEntity.notFound().build();
         }
