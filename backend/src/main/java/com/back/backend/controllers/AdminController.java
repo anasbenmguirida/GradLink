@@ -4,48 +4,69 @@ import com.back.backend.Entities.Evenement;
 import com.back.backend.services.EvenementService;
 import com.back.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 @RestController
-@AllArgsConstructor
-@NoArgsConstructor
+@RequestMapping("/api/admin") // Group admin-related endpoints
 public class AdminController {
 
+    private final EvenementService evenementService;
+    private final UserService userService;
+
+    // Constructor Injection
     @Autowired
-    private EvenementService evenementService;
-
-    @Autowired
-    private UserService userService;
-
-    @PostMapping("/api/evenement")
-    public ResponseEntity<Evenement> createEvent(@RequestBody Evenement evenement, @RequestParam int adminId) {
-        Evenement createdEvent = evenementService.createEvent(evenement, adminId);
-        return ResponseEntity.ok(createdEvent);
+    public AdminController(EvenementService evenementService, UserService userService) {
+        this.evenementService = evenementService;
+        this.userService = userService;
     }
 
-    @PutMapping("/api/evenement/{eventId}")
-    public ResponseEntity<Evenement> updateEvent(@PathVariable int eventId, @RequestBody Evenement updatedEvenement) {
-        Evenement updatedEvent = evenementService.updateEvent(eventId, updatedEvenement);
-        return ResponseEntity.ok(updatedEvent);
+    // Create a new event
+    @PostMapping("/evenement")
+    public ResponseEntity<?> createEvent(@RequestBody Evenement evenement, @RequestParam int adminId) {
+        try {
+            Evenement createdEvent = evenementService.createEvent(evenement, adminId);
+            return new ResponseEntity<>(createdEvent, HttpStatus.CREATED); // HTTP 201
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error creating event: " + e.getMessage());
+        }
     }
 
-    @DeleteMapping("/api/evenement/{eventId}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable int eventId) {
-        evenementService.deleteEvent(eventId);
-        return ResponseEntity.noContent().build();
+    // Update an existing event
+    @PutMapping("/evenement/{eventId}")
+    public ResponseEntity<?> updateEvent(@PathVariable int eventId, @RequestBody Evenement updatedEvenement) {
+        try {
+            Evenement updatedEvent = evenementService.updateEvent(eventId, updatedEvenement);
+            return ResponseEntity.ok(updatedEvent); // HTTP 200
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error updating event: " + e.getMessage());
+        }
     }
 
-    @DeleteMapping("/api/user/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable int id) {
+    // Delete an event
+    @DeleteMapping("/evenement/{eventId}")
+    public ResponseEntity<?> deleteEvent(@PathVariable int eventId) {
+        try {
+            evenementService.deleteEvent(eventId);
+            return ResponseEntity.noContent().build(); // HTTP 204
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error deleting event: " + e.getMessage());
+        }
+    }
+
+    // Delete a user
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
         try {
             userService.deleteUser(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build(); // HTTP 204
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error deleting user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error deleting user: " + e.getMessage());
         }
     }
 }

@@ -17,7 +17,7 @@ public class EvenementService {
     }
 
     public Evenement createEvent(Evenement evenement, int adminId) {
-        Admin admin = (Admin) adminRepository.findById(adminId)
+        Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin with ID " + adminId + " not found"));
         evenement.setAdmin(admin);
 
