@@ -21,7 +21,7 @@ private List<Evenement> listeEvenements ;
 
 @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
 // un amin peut creer plusieurs evenement 
-
+@JsonManagedReference  // Prevents infinite recursion in the "admin" -> "Caummunaute" relationship
 private List<Caummunaute> listCaummunautes ; 
  
 }

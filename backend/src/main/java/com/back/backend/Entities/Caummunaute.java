@@ -2,6 +2,8 @@ package com.back.backend.Entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +29,7 @@ private String description ;
 // admin peut creer plusieurs caummunautes 
 @ManyToOne
 @JoinColumn(name = "admin_id", nullable = false)
+@JsonBackReference  // Prevents infinite recursion in the "Caummunaute" -> "Admin" relationship
 private Admin admin ;
 
 
