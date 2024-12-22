@@ -42,6 +42,7 @@ public class Poste {
     private String textArea;
 
     private LocalDateTime datePoste;
+    private int nbrLikes ; 
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, updatable = false, insertable = false)
