@@ -15,7 +15,7 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartResolver;
-
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import com.back.backend.repositories.UserRepository;
 
@@ -49,7 +49,7 @@ public class ApplicationConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+   
 
 
 

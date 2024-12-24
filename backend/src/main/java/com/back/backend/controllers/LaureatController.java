@@ -27,6 +27,8 @@ import com.back.backend.Entities.User;
 import com.back.backend.enums.TypePoste;
 import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import jakarta.servlet.annotation.MultipartConfig;
 import lombok.AllArgsConstructor;
@@ -60,8 +62,11 @@ public class LaureatController {
         return this.laureatService.getAllLaureatDemandes(id) ;
     }
     @PostMapping("/api/create-poste")
-    public ResponseEntity<String> createposte(@RequestBody Poste poste){
-         this.posteService.createPoste(poste);
+    public ResponseEntity<String> createposte(@RequestParam("poste") String posteJson
+                                            ,@RequestPart(value = "file" , required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
+        
+        
+        this.posteService.createPoste(posteJson , file);
         return ResponseEntity.ok("post saved ");
     }
 }

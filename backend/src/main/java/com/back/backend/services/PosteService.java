@@ -1,18 +1,26 @@
 package com.back.backend.services;
 
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.back.backend.Entities.Poste;
+import com.back.backend.Entities.PosteFiles;
 import com.back.backend.Entities.PosteLikes;
+import com.back.backend.repositories.PosteFilesRepository;
 import com.back.backend.repositories.PosteLikesRepository;
 import com.back.backend.repositories.PosteRepository;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
 
@@ -21,14 +29,29 @@ import lombok.AllArgsConstructor;
 public class PosteService {
     private final PosteRepository posteRepository ; 
     private final PosteLikesRepository posteLikesRepository ; 
+    private final PosteFilesRepository posteFilesRepository ;
     
     // creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
-    public ResponseEntity<String> createPoste(@RequestBody Poste poste) {
-       poste.setDatePoste(LocalDateTime.now());
-        poste.setNbrLikes(0);
-        this.posteRepository.save(poste) ; 
-        return ResponseEntity.ok("Poste cree avec succes") ;
+    public ResponseEntity<String> createPoste(String posteJson, MultipartFile file) throws JsonMappingException, JsonProcessingException {
+    Poste poste = new ObjectMapper().readValue(posteJson, Poste.class);
+    poste.setDatePoste(LocalDateTime.now());
+    poste.setNbrLikes(0);
+    this.posteRepository.save(poste);
+
+    if (!file.isEmpty()) {
+        try {
+            PosteFiles posteFiles = new PosteFiles();
+            posteFiles.setFileName(file.getOriginalFilename());
+            posteFiles.setFileType(file.getContentType());
+            posteFiles.setData(file.getBytes());
+            posteFiles.setPoste(poste);
+            this.posteFilesRepository.save(posteFiles);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed");
+        }
     }
+    return ResponseEntity.ok("Poste ajouté avec succes");
+}
 
 
     public List<Poste> getAllPoste() {
