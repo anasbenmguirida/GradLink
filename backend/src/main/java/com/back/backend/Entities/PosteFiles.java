@@ -22,7 +22,7 @@ public class PosteFiles {
     private int id  ; 
     private String fileName ;
     private String fileType;
-     @Lob
+    
     @Column(columnDefinition = "BYTEA")
     private byte[] data;
     
