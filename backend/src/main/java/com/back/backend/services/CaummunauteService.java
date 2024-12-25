@@ -39,8 +39,6 @@ public class CaummunauteService {
     public Caummunaute updateCaummunaute(int id, Caummunaute updatedCaummunaute) {
         Caummunaute existingCaummunaute = caummunauteRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Caummunaute with ID " + id + " not found"));
-
-        // Update the fields only if they are provided
         if (updatedCaummunaute.getTitre() != null && !updatedCaummunaute.getTitre().isEmpty()) {
             existingCaummunaute.setTitre(updatedCaummunaute.getTitre());
         }
