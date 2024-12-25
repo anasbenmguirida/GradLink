@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.services.PosteService;
+import com.back.backend.services.UserService;
 
 import lombok.AllArgsConstructor;
 
@@ -21,6 +22,7 @@ import lombok.AllArgsConstructor;
 public class PosteController {
 
     private final PosteService posteService;
+    private final UserService userService;
 
     @GetMapping("/api/postes")
     public List<Poste> getAllPostes(){
@@ -28,6 +30,6 @@ public class PosteController {
     }
     @PutMapping("/api/like")
     public ResponseEntity<String> likePoste(@RequestBody PosteLikes posteLikes){
-        return this.posteService.likePoste(posteLikes.getPosteId() ,posteLikes.getUserId());
+        return this.userService.likePoste(posteLikes.getPosteId() ,posteLikes.getUserId());
     }
 }
