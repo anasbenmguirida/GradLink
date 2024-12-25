@@ -2,6 +2,7 @@ package com.back.backend.services;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteFiles;
 import com.back.backend.Entities.PosteLikes;
+import com.back.backend.Entities.User;
 import com.back.backend.repositories.PosteFilesRepository;
 import com.back.backend.repositories.PosteLikesRepository;
 import com.back.backend.repositories.PosteRepository;
+import com.back.backend.repositories.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +30,7 @@ public class UserService {
 private final PosteRepository posteRepository;
 private final PosteLikesRepository posteLikesRepository;
 private final PosteFilesRepository posteFilesRepository;
+private final UserRepository userRepository;
 
 
  // creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
@@ -82,4 +86,30 @@ private final PosteFilesRepository posteFilesRepository;
             }
             return ResponseEntity.badRequest().body("Poste non trouvé et le poste n'est pas like par cet utilisateur");
     }
+
+
+    public ResponseEntity<String> SaveProfilePicture(MultipartFile file , int idUser){
+        try{
+           User user = this.userRepository.findById(idUser).orElse(null);
+           System.out.println("heeeeere ");
+           if(user !=null){
+               user.setPhotoProfile(file.getBytes());
+               this.userRepository.save(user);
+               System.out.println("heeeeere its saved ");
+           }
+        }catch(IOException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'upload de l'image");
+        }
+        return ResponseEntity.ok("Image de profil sauvegardée avec succes");
+    }
+    // retrieving the profile picture of a user
+    public String getProfilePicture(int idUser){
+        User user = this.userRepository.findById(idUser).orElse(null);
+        if(user != null){
+            return Base64.getEncoder().encodeToString(user.getPhotoProfile());
+        }
+        return "something went wrong";
+
+    }
+
 }

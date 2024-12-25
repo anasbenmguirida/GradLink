@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.back.backend.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -50,9 +51,9 @@ public class User implements UserDetails {
  private Role role ; // its an enum
  private String password ; 
 
- /*@Lob 
-private byte[] image ; 
-*/
+@Column(columnDefinition = "BYTEA")
+@JsonIgnore
+private byte[] photoProfile ; 
 
     
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

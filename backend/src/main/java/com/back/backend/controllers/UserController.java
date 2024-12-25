@@ -54,4 +54,13 @@ private final PosteService posteService;
     public ResponseEntity<String> unlikePoste(@PathVariable int posteId , @RequestBody int userId){
         return this.userService.unlikePoste(posteId , userId);
     }
+    @PutMapping("/api/save-picture")
+    public ResponseEntity<String> savePicture(@RequestParam("id") int id , @RequestParam("file") MultipartFile file){
+        return this.userService.SaveProfilePicture( file , id);
+    }
+
+    @GetMapping("/api/profile-picture/{id}")
+    public String getProfilePicture(@PathVariable int id){
+        return this.userService.getProfilePicture(id);
+    } 
 }
