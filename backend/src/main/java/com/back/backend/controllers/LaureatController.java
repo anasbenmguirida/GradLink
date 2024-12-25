@@ -27,6 +27,7 @@ import com.back.backend.Entities.User;
 import com.back.backend.enums.TypePoste;
 import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
+import com.back.backend.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -43,6 +44,7 @@ public class LaureatController {
     
     private final PosteService posteService ; 
     private final LaureatService laureatService ; 
+    private final UserService userService ;
 
     @PutMapping("/api/accept/{id}")
     public String acceptDemande(@PathVariable int id) {
@@ -61,13 +63,6 @@ public class LaureatController {
     public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
         return this.laureatService.getAllLaureatDemandes(id) ;
     }
-    @PostMapping("/api/create-poste")
-    public ResponseEntity<String> createposte(@RequestParam("poste") String posteJson
-                                            ,@RequestPart(value = "file" , required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
-        
-        
-        this.posteService.createPoste(posteJson , file);
-        return ResponseEntity.ok("post saved ");
-    }
+    
 }
 

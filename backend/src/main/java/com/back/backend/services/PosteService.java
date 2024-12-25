@@ -31,8 +31,9 @@ public class PosteService {
     private final PosteLikesRepository posteLikesRepository ; 
     private final PosteFilesRepository posteFilesRepository ;
     
-   
-
+    public List<Poste> findPostesByUserId(int id){
+        return this.posteRepository.findPostesByUserId(id) ; 
+    }
 
     public List<Poste> getAllPoste() {
         return this.posteRepository.findAll() ; 
@@ -41,5 +42,13 @@ public class PosteService {
     public boolean checkLikedPoste(PosteLikes posteLikes){
         PosteLikes isLiked = this.posteLikesRepository.checklikes(posteLikes.getPosteId(), posteLikes.getUserId()) ; 
         return isLiked==null ? false : true ;
+    }
+    public ResponseEntity<String> deletePoste(int idPoste){
+        try{
+            this.posteRepository.deleteById(idPoste) ;
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la suppression du poste");
+        }
+        return ResponseEntity.ok().body("Poste supprimé avec succes");
     }
 }
