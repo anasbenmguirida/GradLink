@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "profileImage": "profile.png",
+    "username": "Mouad Ajmani",
+    "role": "1337 student",
+    "daysAgo": 4,
+    "description": "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
+    "images": ["windows-design.jpg", "additional-image.jpg"],
+    "pdfs": ["projet_use_case.pdf"],
+    "isLiked": false
+  },
+  {
+    "id": 2,
+    "profileImage": "profile.png",
+    "username": "Mouad Ajmani",
+    "role": "1337 student",
+    "daysAgo": 4,
+    "description": "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
+    "images": ["laravel.png"],
+    "pdfs": [],
+    "isLiked": true
+  },
+  {
+    "id": 3,
+    "profileImage": "profile.png",
+    "username": "Soumaia Kerouan",
+    "role": "ENSAT Student",
+    "daysAgo": 1,
+    "description": "Excited to start my new journey in Angular and explore its power! 🚀",
+    "images": [],
+    "pdfs": [],
+    "isLiked": false
+  }
+]

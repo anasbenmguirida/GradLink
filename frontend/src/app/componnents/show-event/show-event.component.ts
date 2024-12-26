@@ -7,15 +7,15 @@ import { CalendarOptions } from '@fullcalendar/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { EventService } from '../../services/event/event.service';
-import { NavbarComponent } from "../navbar/navbar.component";
 import { AddEventDialogComponent } from '../add-event-dialog/add-event-dialog.component';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 
 @Component({
   standalone: true,
   selector: 'app-show-event',
   templateUrl: './show-event.component.html',
   styleUrls: ['./show-event.component.css'],
-  imports: [FullCalendarModule, CommonModule, NavbarComponent,AddEventDialogComponent],
+  imports: [FullCalendarModule, CommonModule, NavBarComponent,AddEventDialogComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 
 })

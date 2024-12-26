@@ -5,10 +5,11 @@ import { isPlatformBrowser } from '@angular/common';
 import { UserService } from '../../services/authservice/user.service';
 import { EventService } from '../../services/event/event.service';
 import { EditEventDialogComponent } from '../edit-event-dialog/edit-event-dialog.component';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [CommonModule,EditEventDialogComponent],
+  imports: [CommonModule,EditEventDialogComponent,NavBarComponent],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css'
 })

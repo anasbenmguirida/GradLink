@@ -3,11 +3,12 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommunityService } from '../../services/community/community.service';
 import { UserService } from '../../services/authservice/user.service';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-community-space',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,NavBarComponent],
   templateUrl: './community-space.component.html',
   styleUrls: ['./community-space.component.css']  // Correction ici : styleUrls au pluriel
 })
