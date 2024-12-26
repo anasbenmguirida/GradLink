@@ -14,7 +14,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.back.backend.enums.Role;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,19 +51,23 @@ public class User implements UserDetails {
  private Role role ; // its an enum
  private String password ; 
 
- /*@Lob 
-private byte[] image ; 
-*/
+@Column(columnDefinition = "BYTEA")
+@JsonIgnore
+private byte[] photoProfile ; 
 
     
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+@JsonManagedReference(value = "user-poste")
 private List<Poste> postes  ;
 
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 // un utilisateur peut aimer plusieurs postes
+
+@JsonManagedReference(value = "user-likes")
 private List<PosteLikes> posteLikes;
 
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+@JsonManagedReference(value = "users-in-evenement")
 private List<EventParticipants> eventParticipants ; 
 
 
@@ -71,6 +76,7 @@ private List<EventParticipants> eventParticipants ;
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
+    
 
     @Override
     public String getUsername() {

@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -33,9 +34,11 @@ public class Evenement {
     @ManyToOne
     // plusieurs evenements peuvent etre creer par le meme admin 
     @JoinColumn(name = "admin_id", nullable = false)
-    @JsonBackReference // Breaks the circular reference
+    @JsonBackReference(value = "admin-event")
+     
     private Admin admin  ; 
 
     @OneToMany(mappedBy = "evenement", cascade = CascadeType.ALL)
+    @JsonManagedReference(value="event-parts")
     private List<EventParticipants> eventParticipants ; 
 }

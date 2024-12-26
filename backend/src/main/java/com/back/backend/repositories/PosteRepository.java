@@ -7,11 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.back.backend.Entities.Laureat;
-import com.back.backend.enums.Role;
-
+import com.back.backend.Entities.Poste;
 @Repository
-public interface LaureatRepository extends JpaRepository<Laureat , Integer>{
- @Query("SELECT l FROM Laureat l WHERE l.role = :role")
-    List<Laureat> findAllByRole(@Param("role") Role role);
+public interface PosteRepository extends JpaRepository<Poste , Integer>{
+@Query(value = "SELECT * FROM poste WHERE user_id = :userId", nativeQuery = true)
+List<Poste> findPostesByUserId(@Param("userId") int userId);
 }

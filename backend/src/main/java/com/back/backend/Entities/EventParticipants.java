@@ -1,5 +1,7 @@
 package com.back.backend.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.annotation.Generated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,10 +23,12 @@ public class EventParticipants {
     private int id ; 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference(value = "users-in-evenement")
     private User user  ; 
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
+      @JsonBackReference(value = "event-parts")
     private Evenement evenement  ; 
 
 }
