@@ -1,1 +1,84 @@
-<p>login works!</p>
+<div
+  class="min-h-screen bg-gray-100 flex justify-center items-center"
+  style="background-image: url('https://via.placeholder.com/800'); background-size: cover; background-position: center;"
+>
+  <!-- Carte avec formulaire -->
+  <div
+    class="bg-white bg-opacity-90 p-6 rounded-xl shadow-xl w-full max-w-5xl flex flex-col md:flex-row md:space-x-6 space-y-6"
+  >
+    <!-- Formulaire -->
+    <div class="w-full md:w-1/2 flex flex-col justify-center items-center space-y-6">
+      <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Se connecter</h2>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6 w-full">
+        <div>
+          <label for="email" class="block text-lg font-medium text-gray-700">Adresse e-mail</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+          <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="loginForm.get('email')?.errors?.['required']">L'e-mail est requis.</span>
+            <span *ngIf="loginForm.get('email')?.errors?.['email']">Veuillez entrer une adresse e-mail valide.</span>
+          </div>
+        </div>
+
+        <div class="relative">
+          <label for="password" class="block text-lg font-medium text-gray-700">Mot de passe</label>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
+          >
+          </button>
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-red-500 text-sm mt-1">
+            Le mot de passe est requis.
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              formControlName="rememberMe"
+              class="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+            />
+            <label for="rememberMe" class="ml-2 block text-sm text-gray-800">Se souvenir de moi</label>
+          </div>
+          <a href="#" class="text-sm text-purple-600 hover:text-purple-800 transition">Mot de passe oublié ?</a>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="loginForm.invalid"
+          class="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:from-purple-600 hover:to-pink-500 transition-all duration-300"
+        >
+          Se connecter
+        </button>
+
+        <div class="text-center mt-4">
+          <p class="text-sm text-gray-700">
+            Vous n'avez pas de compte ?
+            <a [routerLink]="['/registre']" routerLinkActive="router-link-active"  class="text-purple-600 hover:text-purple-800 transition">Inscrivez-vous</a>
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Image à droite -->
+    <div
+      class="w-full md:w-1/2 flex justify-center items-center md:bg-cover md:bg-center rounded-lg md:h-auto h-64 bg-gray-200"
+    >
+      <img src="https://via.placeholder.com/500" alt="Image de connexion" class="object-cover rounded-lg w-full h-full" />
+    </div>
+  </div>
+</div>

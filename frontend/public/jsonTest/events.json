@@ -1,0 +1,35 @@
+[
+    {
+      "id": "1",
+      "title": "Atelier FullCalendar",
+      "start": "2024-12-08",
+      "capacite_maximal": 100,
+      "place_restant": 66,
+      "description": "Atelier sur la gestion des événements avec FullCalendar."
+    },
+    {
+      "id": "2",
+      "title": "Conférence Angular",
+      "start": "2024-12-10",
+      "capacite_maximal": 80,
+      "place_restant": 72,
+      "description": "Conférence sur les dernières fonctionnalités d'Angular."
+    },
+    {
+      "id": "3",
+      "title": "Atelier IA",
+      "start": "2024-12-12",
+      "capacite_maximal": 120,
+      "place_restant": 83,
+      "description": "Introduction à l'intelligence artificielle et ses applications."
+    },
+    {
+        "id": "4",
+        "title": "Safae Test",
+        "start": "2024-12-14",
+        "capacite_maximal": 1200,
+        "place_restant": 666,
+        "description": "Atelier sur la gestion des événements avec FullCalendar."
+      }
+  ]
+  
