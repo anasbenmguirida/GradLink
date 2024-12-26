@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Map port 8080 on the host to port 8080 in the container
+    volumes:
+      - ./backend:/app # Bind mount the backend source code for local development
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev # Example environment variable
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/gradlink
+      - SPRING_DATASOURCE_USERNAME=postgres 
+      - SPRING_DATASOURCE_PASSWORD=1234
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200" # Map port 4200 on the host to port 4200 in the container
+    volumes:
+      - ./frontend:/app # Bind mount the frontend source code for local development
+    stdin_open: true # Keep container running for debugging
+    tty: true
+
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    ports:
+      - "5432:5432" # Map port 5432 on the host to port 5432 in the container
+    environment:
+      POSTGRES_USER: postgres 
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: gradlink
+    volumes:
+      - db_data:/var/lib/postgresql/data # Persist database data locally
+
+volumes:
+  db_data: # Volume to persist PostgreSQL data

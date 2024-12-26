@@ -1,0 +1,18 @@
+# Ignore the target folder in the backend (Spring Boot build artifacts)
+backend/target/
+
+# Ignore node_modules in the frontend (Angular dependencies)
+frontend/node_modules/
+
+# Ignore the dist folder in the frontend (Angular build artifacts)
+frontend/dist/
+
+# Ignore IDE or editor-specific files
+**/.idea
+**/.vscode
+**/.project
+**/.classpath
+**/.settings
+
+# Ignore OS-specific files
+.DS_Store
