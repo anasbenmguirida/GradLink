@@ -66,6 +66,22 @@ public class LaureatService {
     public List<DemandeMentorat> getAllLaureatDemandes(int id){
         return demandeRepository.getAllDemandeLaureat(id) ;  
     }
+    // ACCEPTED DEMANDES ONLY 
+    public List<DemandeMentorat> getAllAcceptedDemandes(int id){
+        return demandeRepository.getAllAcceptedDemandes(id) ; 
+    }
+    
+    public ResponseEntity<String> modifierPoste(int posteId , String textArea){
+       Poste posteAmodifier= this.posteRepository.findById(posteId).orElse(null); 
+       if(posteAmodifier !=null){
+           posteAmodifier.setTextArea(textArea);
+           this.posteRepository.save(posteAmodifier);
+           return ResponseEntity.ok("poste modifie");
+       }
+       else{
+           return ResponseEntity.ok("poste introuvable");
+       }
+    }
 
     
  

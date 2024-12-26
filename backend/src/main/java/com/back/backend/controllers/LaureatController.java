@@ -23,19 +23,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.back.backend.Entities.DemandeMentorat;
 import com.back.backend.Entities.Laureat;
-import com.back.backend.Entities.Poste;
-import com.back.backend.Entities.User;
-import com.back.backend.enums.TypePoste;
+
 import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
 import com.back.backend.services.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
-import jakarta.annotation.security.RolesAllowed;
+
+
 import jakarta.servlet.annotation.MultipartConfig;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+
 
 @RestController
 @AllArgsConstructor
@@ -65,6 +62,10 @@ public class LaureatController {
     @GetMapping("demandes/{id}")
     public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
         return this.laureatService.getAllLaureatDemandes(id) ;
+    }
+    @GetMapping("accepted/{id}")
+    public List<DemandeMentorat> getAllAcceptedDemandes(@PathVariable int id) {
+        return this.laureatService.getAllAcceptedDemandes(id) ; 
     }
     
 }

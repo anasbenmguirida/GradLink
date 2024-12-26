@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
+import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
 import com.back.backend.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,6 +31,7 @@ import lombok.AllArgsConstructor;
 public class UserController {
 private final UserService userService;
 private final PosteService posteService;
+private final LaureatService laureatService;
 
 
     @PostMapping("/api/create-poste")
@@ -69,6 +71,10 @@ private final PosteService posteService;
     public ResponseEntity<User> getUserProfile(@PathVariable int id) {
         User user = userService.getUserById(id);  
         return ResponseEntity.ok(user);  
+    }
+    @PostMapping("/api/modifier-poste/{id}")
+    public ResponseEntity<String> modifierPoste(@PathVariable int id , @RequestBody String textArea){
+        return this.laureatService.modifierPoste(id , textArea);
     }
 
     @PutMapping("/profile")
