@@ -15,7 +15,6 @@ import com.back.backend.enums.Role;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
-    // a query that retrieve all users where role is laureat
 
     @Query("SELECT u FROM User u WHERE u.role = :role")
     List<User> findAllByRole(@Param("role") Role role);

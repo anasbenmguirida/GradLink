@@ -65,14 +65,6 @@ private final PosteService posteService;
     public String getProfilePicture(@PathVariable int id){
         return this.userService.getProfilePicture(id);
     } 
-
-
-
-
-
-    
-
-    
     @GetMapping("/profile/{id}")
     public ResponseEntity<User> getUserProfile(@PathVariable int id) {
         User user = userService.getUserById(id);  

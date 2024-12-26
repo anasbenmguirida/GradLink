@@ -114,13 +114,6 @@ private final UserRepository userRepository;
     }
 
 
-
-
-
-
-
-    
-
     public ResponseEntity<String> deleteUser(int id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
