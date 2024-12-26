@@ -1,0 +1,88 @@
+{
+  "usersMessage": [
+    {
+      "id": 1,
+      "firstname": "Aya",
+      "lastname": "Sal",
+      "role": "lauréat",
+      "specialite": "Informatique",
+      "entreprise": "TechCorp",
+      "image": "profile1.png",
+      "messages": [
+        {
+          "id_emitter": 1,
+          "id_receiver": 2,
+          "content": "Bonjour, j'ai une question sur le projet.",
+          "time": "2024-12-20T14:00:00Z"
+        },
+        {
+          "id_emitter": 1,
+          "id_receiver": 2,
+          "content": "Je rencontre quelques difficultés techniques.",
+          "time": "2024-12-20T14:10:00Z"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "firstname": "Ali",
+      "lastname": "Khan",
+      "role": "étudiant",
+      "filiere": "Génie logiciel",
+      "image": "profile2.png",
+      "messages": [
+        {
+          "id_emitter": 2,
+          "id_receiver": 1,
+          "content": "Salut, j'ai bien reçu ton message.",
+          "time": "2024-12-20T14:15:00Z"
+        },
+        {
+          "id_emitter": 2,
+          "id_receiver": 1,
+          "content": "Je vais essayer de résoudre ton problème.",
+          "time": "2024-12-20T14:20:00Z"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "firstname": "Sara",
+      "lastname": "Ahmed",
+      "role": "lauréat",
+      "specialite": "Data Science",
+      "entreprise": "DataX",
+      "image": "profile3.png",
+      "messages": [
+        {
+          "id_emitter": 3,
+          "id_receiver": 1,
+          "content": "J'ai besoin d'aide sur un projet de data analysis.",
+          "time": "2024-12-19T09:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "firstname": "Sara",
+      "lastname": "Smith",
+      "role": "étudiant",
+      "filiere": "Mathématiques",
+      "image": "profile4.png",
+      "messages": [
+        {
+          "id_emitter": 4,
+          "id_receiver": 2,
+          "content": "Je suis en train de revoir mes notes pour l'examen.",
+          "time": "2024-12-19T09:40:00Z"
+        },
+        {
+          "id_emitter": 4,
+          "id_receiver": 2,
+          "content": "Tu veux qu'on révise ensemble ?",
+          "time": "2024-12-19T09:45:00Z"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+<nav class="bg-green-300 fixed top-0 left-0 w-full z-50">
+  <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <div class="relative flex h-16 items-center justify-between">
+      <!-- Logo + Recherche -->
+      <div class="flex items-center space-x-4">
+        <!-- Logo -->
+        <div class="flex shrink-0 items-center">
+          <img class="h-8 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
+        </div>
+
+        <!-- Barre de recherche (visible sur mobile et desktop) -->
+        <div class="relative flex-1 sm:w-auto">
+          <label for="simple-search" class="sr-only">Search</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5v10M3 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0V6a3 3 0 0 0-3-3H9m1.5-2-2 2 2 2"/>
+              </svg>
+            </div>
+            <input type="text" [(ngModel)]="query" (input)="search()" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-noir-500 block w-full sm:w-80 pl-10 p-2" placeholder="Search..." required />
+          </div>
+        </div>
+        
+     
+      </div>
+
+
+      <div *ngIf="filteredUsers.length > 0 && query != ''" class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 left-12">
+        <div class="p-4">
+          <ul>
+            <li *ngFor="let user of filteredUsers" 
+                (click)="navigateToProfile(user)" 
+                class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100">
+              <img [src]="user.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+              <div>
+                <p class="text-sm font-medium text-gray-900">{{ user.firstname }}  {{ user.lastname}}</p>
+                <p class="text-xs text-gray-500">
+                
+                  <span *ngIf="user.id == me.id" class="text-blue-500 font-semibold">(Vous)</span> 
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="flex items-center justify-between flex-1">
+        <!-- Hamburger Icon for Mobile -->
+        <div class="sm:hidden">
+          <button (click)="toggleMobileMenu()" class="text-gray-400 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Links de navigation visible sur desktop -->
+        <div class="hidden sm:flex space-x-4 ml-4">
+          <a href="#" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white">Dashboard</a>
+          <a routerLink="/posts" routerLinkActive="Active" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Home</a>
+          <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Evenement</a>
+        </div>
+
+        <!-- Messagerie, Notifications, Profil -->
+        <div class="flex items-center space-x-6 ml-8">
+          <!-- Notifications -->
+          <button type="button" (click)="toggleNotif()" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
+            <img src="notif.jpeg" class="h-7 w-7 rounded-full object-cover" alt="Notifications">
+          </button>
+
+          <div *ngIf="isInvit" class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-0">
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-900">Notifications</h3>
+              <ul>
+                <li *ngFor="let demande of demandesMentorat" class="py-2 border-b space-y-3">
+                           
+                  <div class="flex items-start space-x-3">
+               
+                    <img [src]="demande.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                    
+                
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">
+                        <strong>{{demande.firstname}} {{demande.lastname}}</strong> {{ demande.content }}
+                      </p>
+                                  <p class="text-xs text-gray-500">{{ demande.time }}</p>
+                    </div>
+                  </div>
+              
+                
+                  <div class="flex justify-end space-x-2">
+                    <button class="px-4 py-2 bg-green-500 text-white text-sm rounded hover:bg-green-600">
+                      Accepter
+                    </button>
+                    <button class="px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600">
+                      Refuser
+                    </button>
+                  </div>
+                </li>
+              </ul>
+              
+            </div>
+          </div>
+          
+
+          <!-- Messagerie -->
+          <button type="button" (click)="toggleMessagerie()" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
+            <img src="IM.jpeg" class="h-7 w-7 rounded-full object-cover" alt="Messagerie">
+          </button>
+
+          <div *ngIf="isMessagerie" class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-12">
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Messagerie</h3>
+              <div class="mb-4">
+                <input
+                  type="text"
+                 
+                  placeholder="Rechercher une discussion..."
+                  class="w-full px-3 py-2 border rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div class="scrollable-container">
+                <ul>
+                  <li
+                    *ngFor="let user of usersMessage"
+                    [class.selected]="user === selectedUser"
+                    class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100"
+                    (click)="onSelectUser(user)">
+                    <img [src]="user.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">{{ user.firstname }} {{ user.lastname }}</p>
+                      <p class="text-xs text-gray-500">{{ user.messages.slice(-1)[0].content }}</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            </div>
+            
+            <div *ngIf="selectedUser" class="fixed bottom-0 right-0 w-full sm:w-96 bg-white shadow-xl rounded-t-xl border border-gray-200">
+              <div class="flex items-center p-4 bg-gray-100 rounded-t-xl">
+                <img [src]="selectedUser.image" alt="profile" class="w-10 h-10 rounded-full object-cover mr-4">
+                <h3 class="text-lg font-semibold">{{ selectedUser.firstname }} {{ selectedUser.lastname }}</h3>
+            
+  
+                <button (click)="closeChat()" class="ml-auto text-gray-600 hover:text-gray-900">
+                  <span class="material-icons">X</span>
+                </button>
+              </div>
+            
+              <div class="flex-1 overflow-y-auto p-4 space-y-4 max-h-80">
+                <div *ngFor="let message of selectedMessages" class="flex flex-col space-y-2">
+                  
+                  <div 
+                  [ngClass]="{
+                    'self-end bg-green-100': message.id_emitter === me.id,
+                    'self-start bg-gray-100': message.id_receiver === me.id
+                  }"
+                    class="p-3 rounded-xl max-w-max flex items-end relative">
+                    
+                    <p class="text-sm">{{ message.content }}</p>
+                    
+                    <span class="text-xs text-gray-500 ml-2 relative top-0.5">{{ message.time }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              
+              
+            
+              <div class="p-4 bg-gray-100 rounded-b-xl flex items-center space-x-4">
+                <input 
+                [(ngModel)]="newMessage" 
+                placeholder="Écrire un message..." 
+                (keydown.enter)="sendMessage()" 
+                class="flex-1 p-2 border rounded-full border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" /> 
+                 <button (click)="sendMessage()" class="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none">
+                  Envoyer
+                </button>
+              </div>
+            </div>
+            
+            
+  
+            <div  *ngIf="me.role==='laureat'" class="flex items-center space-x-6 ml-8 relative">
+              <button type="button" (click)="toggleNotif()" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
+                <span class="sr-only">View invitation</span>
+              <img src="groupeIcon.jpg" class="h-7 w-7 rounded-full object-cover">
+            </button>
+            <div *ngIf="isNotif " class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-0">
+              <div class="p-4">
+                <h3 class="text-lg font-semibold text-gray-900  mb-2">demandes de montorat</h3>
+                <ul class="scrollable-container">
+                  <li 
+                  *ngFor="let demande of demandesMentorat"  
+                  (click)="onSelectDemande(demande.id)" 
+                  class="py-2 border-b space-y-3 hover:bg-gray-100 cursor-pointer">                 
+                    <div class="flex items-start space-x-3" >
+  
+                 
+                      <img [src]="demande.image"  class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                      
+                  
+                      <div>
+                        <p  class="text-sm font-medium text-gray-900">
+                          {{demande.firstname}} {{demande.lastname}}
+                          <span class="font-normal">{{ demande.content }}</span>
+                        </p>
+                                            
+                        <p class="text-xs text-gray-500">{{ demande.time }}</p>
+                      </div>
+                    </div>
+                
+                  
+                    <div class="flex justify-end space-x-2">
+                      <button class="px-2 py-1 bg-green-500 text-white text-xxs rounded hover:bg-green-600">
+                        Accepter
+                      </button>
+                      <button class="px-2 py-1 bg-red-500 text-white text-xxs rounded hover:bg-red-600">
+                        Refuser
+                      </button>
+                    </div>
+                  </li>
+                </ul>
+                
+              </div>
+            </div>
+  
+  
+          </div>
+          
+          <div class="relative">
+            <button type="button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none" (click)="toggleMenu()">
+              <img [src]="me.image" class="h-10 w-10 rounded-full object-cover" alt="Profil">
+            </button>
+            <div
+              class="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
+              *ngIf="isMenu"
+            >
+          
+              <div  (click)=navigateToProfile(me.id) class="flex items-center px-4 py-3 border-b border-gray-200">
+                <img src="profile.png" alt="User photo" class="h-12 w-12 rounded-full object-cover">
+                <div class="ml-3">
+                  <p class="text-sm font-medium text-gray-800">{{me.firstname}} {{me.lastname}}</p>
+                 
+                </div>
+              </div>
+          
+          
+              <div class="py-2">
+                <a
+                  href="#"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Paramètres et confidentialité
+                </a>
+                <a
+                  href="#"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Déconnexion
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu mobile -->
+  <div *ngIf="isMobileMenuOpen" class="sm:hidden fixed inset-0 bg-gray-800 bg-opacity-75 z-40">
+    <div class="flex justify-end p-4">
+      <button (click)="toggleMobileMenu()" class="text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="flex flex-col items-center">
+      <a href="#" class="text-white text-xl py-2">Dashboard</a>
+      <a routerLink="/posts" routerLinkActive="Active" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Home</a>
+      <a href="#" class="text-white text-xl py-2">Evenement</a>
+    </div>
+  </div>
+</nav>

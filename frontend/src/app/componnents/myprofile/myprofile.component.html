@@ -1,0 +1,465 @@
+<div class="container mx-auto max-w-screen-lg p-4">
+  <div class="card w-500 h-200 rounded-lg shadow-lg bg-white overflow-hidden">
+   
+    <div class="upper">
+      <img src="https://i.imgur.com/Qtrsrk5.jpg" class="w-full h-45 object-cover">
+    </div>
+
+  
+    <div class="user px-4 -mt-20 z-10">
+    
+      <div class="profile w-40 h-40">
+        <img src="profile.png" (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
+      </div>
+
+      <div
+    *ngIf="isImageOpen"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center  z-50"
+  >
+  <div class="bg-white w-2/4 h-auto p-10 rounded-lg shadow-lg relative">      
+      <button
+        class="absolute top-2 right-2 text-gray-500 hover:text-black"
+        (click)="closeImage()"
+      >
+        ✖
+      </button>
+
+     
+      <h2 class="text-xl font-bold mb-4">Photo de profil</h2>
+      <div class="flex flex-col items-center">
+        <img
+          src="profile.png"
+          alt="Photo de profil"
+          class="w-50 h-50 rounded-full mb-4"
+        />
+   
+       <div class="flex justify-end w-full">
+          <button (click)="selectFile()" class="bg-gray-500 text-white rounded mb-2 w-12 h-12">
+            <img src="Iconmoodify.jpeg" class="w-full h-full object-cover" />
+          </button>
+      </div>
+        <form [formGroup]="form" (Submit)="updateProfile($event)">
+    
+        <input  
+          #fileInput
+          type="file"
+          formControlName="image"
+          accept="image/*"
+          class="hidden"
+          (change)="onImageSelected($event)"
+        />
+      </form>
+      
+      
+        <button type="submit" class="bg-gray-500 text-white rounded mb-2 w-12 h-12">
+          Save
+        </button>
+        
+        
+      </div>
+
+
+    </div>
+  </div>
+
+    
+      <div class="mt-4 flex justify-between items-center">
+    
+        <div>
+          <h1 class="text-lg font-semibold">{{me.firstname}} {{me.lastname}}</h1>
+          <h4
+          >
+          {{me.specialite}}
+          </h4>
+          <h4
+            *ngIf="me.role==='laureat'"
+            class="text-sm font-normal"
+          >
+            entreprise : {{me.entreprise}}
+          </h4>
+          <h4 *ngIf="me.role==='laureat'" class="text-sm font-normal">
+            Promotion {{me.promotion}}
+          </h4>
+          <h4 *ngIf="me.role==='etudiant'" class="text-sm font-normal">
+            Filiere: {{me.filiere}}
+          </h4>
+        </div>
+        <div class="ml-auto">
+          <button class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden p-0">
+            <img src="Iconmoodify.jpeg" (click)="openModal()" class="w-full h-full object-cover" />
+          </button>
+        </div>
+
+        <div
+    *ngIf="isModalOpen"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white w-1/2 p-6 rounded-lg shadow-lg relative">
+      <button
+        class="absolute top-2 right-2 text-gray-500 hover:text-black"
+        (click)="closeModal()"
+      >
+        ✖
+      </button>
+      <h2 class="text-xl font-bold mb-4">Modifier le résumé</h2>
+      
+     
+      <form [formGroup]="form" (Submit)="updateProfile($event)">
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2" for="prenom">FirstName</label>
+          <input
+            id="prenom"
+            type="text"
+            class="border border-gray-300 p-2 rounded w-full"
+            formControlName="firstname"
+          />
+          <div
+            *ngIf="form.get('firstname')?.invalid && form.get('fisrtname')?.touched"
+            class="text-red-500 text-sm mt-1"
+          >
+            Le prénom est requis.
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2" for="nom">LastName</label>
+          <input
+            id="nom"
+            type="text"
+            class="border border-gray-300 p-2 rounded w-full"
+            formControlName="lastname"
+          />
+          <div
+            *ngIf="form.get('lastname')?.invalid && form.get('lastname')?.touched"
+            class="text-red-500 text-sm mt-1"
+          >
+            Le nom est requis.
+          </div>
+        </div>
+        <div  *ngIf="me.role==='laureat'" class="mb-4">
+          <label class="block text-sm font-medium mb-2" for="nomSupp">Specialité</label>
+          <input
+            id="nomSupp"
+            type="text"
+            class="border border-gray-300 p-2 rounded w-full"
+            formControlName="specialite"
+          />
+        </div>
+        <div *ngIf="me.role==='laureat'" class="mb-4">
+          <label class="block text-sm font-medium mb-2" for="titre">Entreprise Actuelle</label>
+          <input
+            id="titre"
+            type="text"
+            class="border border-gray-300 p-2 rounded w-full"
+            formControlName="entreprise"
+          />
+          <div
+            *ngIf="form.get('entreprise')?.invalid && form.get('entreprise')?.touched"
+            class="text-red-500 text-sm mt-1"
+          >
+            Le titre est requis.
+          </div>
+        </div>
+        <div  *ngIf="me.role==='etudiant'" class="mb-4">
+          <label class="block text-sm font-medium mb-2" for="titre">Filiere</label>
+          <input
+            id="titre"
+            type="text"
+            class="border border-gray-300 p-2 rounded w-full"
+            formControlName="filiere"
+          />
+          <div
+            *ngIf="form.get('filiere')?.invalid && form.get('filiere')?.touched"
+            class="text-red-500 text-sm mt-1"
+          >
+            Le titre est requis.
+          </div>
+        </div>
+        <button
+              type="submit" 
+          class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          [disabled]="form.invalid"
+        >
+          Enregistrer
+        </button>
+     
+      </form>  
+    </div>
+  </div>
+        
+        
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="page-container mx-auto w-full max-w-2xl p-6">
+
+    <form 
+    [formGroup]="postForm" 
+    (ngSubmit)="submitPost()" 
+    class="post-container bg-white p-6 rounded-lg shadow-md mb-6"
+  >
+  
+    <div class="flex items-center mb-4 space-x-3">
+      <div class="post-header">
+        <img 
+          class="profile-image w-12 h-12 rounded-full object-cover" 
+          src="me.image" 
+          alt="Profile Image" 
+        />
+        <div class="user-info">
+          <h3 class="font-medium text-lg">{{me.firstname}}{{me.lastname}}</h3>
+        </div>
+      </div>
+    </div>
+  
+  
+    <textarea
+      formControlName="description"
+      class="w-full border border-gray-300 rounded-lg p-3 text-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+      rows="4"
+      placeholder="De quoi souhaitez-vous discuter ?"
+      style="min-height: 120px; width: 100%;"
+    ></textarea>
+  
+    
+    <div class="flex items-center justify-between mt-4">
+      <div class="flex items-center space-x-4">
+    
+        <input
+          type="file"
+          accept="image/*,application/pdf"
+          (change)="onFileChange($event)"
+          style="display: none;"
+          id="fileInput"
+          multiple
+        />
+        <label for="fileInput" class="flex items-center text-gray-500 hover:text-blue-500 cursor-pointer">
+          ➕
+        </label>
+  
+       
+        <div *ngIf="selectedFileNames.length > 0" class="ml-2">
+          <span *ngFor="let fileName of selectedFileNames" class="block text-gray-700">{{ fileName }}</span>
+        </div>
+      </div>
+  
+
+      <div class="flex justify-end">
+        <button 
+          class="w-7 h-7 p-0 border-0 rounded overflow-hidden focus:outline-none" 
+          type="submit"
+        >
+          <img 
+            src="shareIcon.png" 
+            alt="Button Image" 
+            class="w-full h-full object-cover"
+          />
+        </button>
+      </div>
+    </div>
+  </form>
+  
+
+
+<div *ngFor="let post of posts; let i = index" class="post-container bg-white p-6 rounded-lg shadow-md mb-6 relative">
+  
+  <div class="post-header flex items-center justify-between mb-4">
+    <div class="flex items-center space-x-3">
+      <img class="profile-image w-12 h-12 rounded-full object-cover" [src]="post.profileImage" alt="Profile Image" />
+      <div class="user-info">
+        <h3 class="font-medium text-lg">{{ post.username }}</h3>
+        <p class="text-sm text-gray-500">{{ post.daysAgo }}j</p>
+      </div>
+    </div>
+    
+   
+    <div>
+      <button (click)="toggleList(i)">
+        <img src="troispnt.jpeg" class="w-10 h-10" />
+      </button>
+    </div>
+  </div>
+
+  
+  <div *ngIf="visibleLists[i]" class="max-w-sm bg-white rounded-lg shadow-lg overflow-hidden absolute z-10 top-12 right-0">
+    <ul class="list-group list-group-light">
+      <li (click)="editPost(post)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
+        Modifier
+      </li>
+      <li class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
+        Supprimer
+      </li>
+    </ul>
+  </div>
+  <div *ngIf="isEditing" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-md relative w-11/12 max-w-lg">
+      <button (click)="closeEdit()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+        &#x2715;
+      </button>
+      <h3 class="text-lg font-medium mb-4">Modifier le post</h3>
+      <form (ngSubmit)="updatePost()">
+        <textarea 
+          [(ngModel)]="editingPost.description" 
+          name="description" 
+          rows="4" 
+          class="w-full p-2 border rounded-lg" 
+          placeholder="Modifier le contenu du post..." 
+          required>
+        </textarea>
+  
+       
+        <button 
+          type="submit" 
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">
+          Enregistrer
+        </button>
+      </form>
+    </div>
+  </div>
+  
+
+  <div class="post-content">
+    <p>{{ post.description }}</p>
+
+    <div *ngIf="post.images && post.images.length > 0" class="image-gallery grid gap-2">
+      <ng-container [ngSwitch]="post.images.length">
+       
+        <div *ngSwitchCase="1">
+          <img 
+            class="post-image cursor-pointer" 
+            [src]="post.images[0]" 
+            alt="Post Image" 
+            (click)="openModalimage(post.images[0])"
+          />
+        </div>
+    
+      
+        <div *ngSwitchCase="2" class="grid grid-cols-2 gap-2">
+          <img 
+            *ngFor="let image of post.images" 
+            class="post-image cursor-pointer" 
+            [src]="image" 
+            alt="Post Image" 
+            (click)="openModalimage(image)"
+          />
+        </div>
+    
+        <div *ngSwitchCase="3" class="grid grid-cols-2 gap-2">
+          <img 
+            class="post-image cursor-pointer col-span-2" 
+            [src]="post.images[0]" 
+            alt="Post Image" 
+            (click)="openModalimage(post.images[0])"
+          />
+          <img 
+            *ngFor="let image of post.images.slice(1, 3)" 
+            class="post-image cursor-pointer" 
+            [src]="image" 
+            alt="Post Image" 
+            (click)="openModalimage(image)"
+          />
+        </div>
+    
+        
+        <div *ngSwitchDefault class="grid grid-cols-2 gap-2">
+          <img 
+            *ngFor="let image of post.images; let i = index" 
+            class="post-image cursor-pointer"
+            [src]="image" 
+            alt="Post Image" 
+            [class.hidden]="i >= 4"
+            (click)="openModalimage(image)"
+          />
+          <div *ngIf="post.images.length > 4" class="relative flex items-center justify-center bg-gray-200 rounded-lg">
+            <span 
+            (click)="openGallery(post.images.slice(4))" 
+            class="text-lg font-bold text-gray-700 cursor-pointer"
+          >
+            +{{ post.images.length - 4 }}
+          </span>          </div>
+        </div>
+        <div *ngIf="isGalleryOpen" class="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div class="bg-white p-4 rounded-lg shadow-lg max-w-md w-full">
+            <div class="flex flex-wrap gap-2">
+              <img 
+                *ngFor="let image of selectedImages" 
+                [src]="image" 
+                alt="Gallery Image" 
+                class="w-full h-auto rounded-lg"
+              />
+            </div>
+            <button 
+              (click)="closeGallery()" 
+              class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+        
+      </ng-container>
+
+    </div>
+    
+    
+ 
+
+<div *ngIf="selectedImage" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white w-1/2 p-6 rounded-lg shadow-lg relative">
+    <button 
+      class="absolute top-2 right-2 text-gray-500 hover:text-black" 
+      (click)="closeModalimage()">
+      ✖
+    </button>
+
+    <img 
+      [src]="selectedImage" 
+      alt="Image sélectionnée" 
+      class="w-full h-auto rounded-lg"
+    />
+  </div>
+</div>
+
+
+   
+    <div *ngIf="post.pdfs.length > 0" class="pdf-links mt-4">
+      <div *ngFor="let pdf of post.pdfs" class="pdf-link">
+        📄 <a [href]="pdf" target="_blank" class="text-blue-600 underline">Voir le fichier PDF</a>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="separator my-4 h-px bg-gray-200"></div>
+
+  <div class="flex items-center space-x-2">
+    <button
+      (click)="toggleLike(post)"
+      [ngClass]="{
+        'text-red-500': post.isLiked,
+        'text-gray-300': !post.isLiked
+      }"
+      class="p-0"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="w-8 h-8"
+      >
+        <path
+          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+        />
+      </svg>
+    </button>
+    <span>{{ post.likes }}</span>
+  </div>
+  
+  
+</div>
+
+  </div>
+  
+</div>
