@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authenticati
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authorization.method.AuthorizeReturnObject;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,20 +29,13 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .csrf(csrf -> csrf.disable())
+                                .csrf(csrf -> csrf
+                                                .disable())
                                 .authorizeRequests(requests -> requests
-<<<<<<< HEAD
-                                .requestMatchers("/", "/api/register", "/api/login", "/ws/**", "/topic/**", "/app/**")
-                                                .permitAll()
-                                                .anyRequest()
-                                                .authenticated())
-=======
                                 .requestMatchers("/" , "/api/register" , "/api/login")
                                 .permitAll()
-                                .requestMatchers("/api/laureat/**").hasRole("LAUREAT")
                                 .anyRequest()
                                 .authenticated())
->>>>>>> backend-anas
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authenticationProvider(authenticationProvider)
@@ -51,14 +43,10 @@ public class SecurityConfig {
 
                 return http.build();
         }
-<<<<<<< HEAD
-        
-=======
         @Bean
         public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
         SimpleAuthorityMapper authorityMapper = new SimpleAuthorityMapper();
         authorityMapper.setPrefix(""); // Remove the default ROLE_ prefix
         return authorityMapper;
     }
->>>>>>> backend-anas
 }
