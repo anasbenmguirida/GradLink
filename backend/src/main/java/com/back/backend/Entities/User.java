@@ -76,6 +76,7 @@ private List<EventParticipants> eventParticipants ;
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
+    
 
     @Override
     public String getUsername() {

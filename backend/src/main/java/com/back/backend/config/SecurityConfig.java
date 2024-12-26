@@ -6,9 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authorization.method.AuthorizeReturnObject;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 
 public class SecurityConfig {
         private final JwtAuthenticationFilter jwtAuthFilter;
@@ -29,10 +33,11 @@ public class SecurityConfig {
                                 .csrf(csrf -> csrf
                                                 .disable())
                                 .authorizeRequests(requests -> requests
-                                                .requestMatchers("/" ,"/api/create-poste", "/api/register" , "/api/login")
-                                                .permitAll()
-                                                .anyRequest()
-                                                .authenticated())
+                                .requestMatchers("/" , "/api/register" , "/api/login")
+                                .permitAll()
+                                .requestMatchers("/api/laureat/**").hasRole("LAUREAT")
+                                .anyRequest()
+                                .authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authenticationProvider(authenticationProvider)
@@ -40,4 +45,10 @@ public class SecurityConfig {
 
                 return http.build();
         }
+        @Bean
+        public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
+        SimpleAuthorityMapper authorityMapper = new SimpleAuthorityMapper();
+        authorityMapper.setPrefix(""); // Remove the default ROLE_ prefix
+        return authorityMapper;
+    }
 }

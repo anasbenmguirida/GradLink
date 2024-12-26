@@ -1,10 +1,12 @@
 package com.back.backend.services;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +45,8 @@ public class AuthService {
                         .password(passwordEncoder.encode(request.getPassword()))
                         .role(Role.valueOf(request.getRole()))
                         .build();
-            
+               
+                
                 var jwtToken = jwtService.generateToken(user);
             
                 // on verifie le role 

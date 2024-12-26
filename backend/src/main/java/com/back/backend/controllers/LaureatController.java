@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,7 @@ import com.back.backend.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.annotation.MultipartConfig;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -38,6 +40,7 @@ import lombok.NoArgsConstructor;
 @RestController
 @AllArgsConstructor
 @MultipartConfig
+@RequestMapping(path = "/api/laureat/")
 
 public class LaureatController {
 
@@ -46,20 +49,20 @@ public class LaureatController {
     private final LaureatService laureatService ; 
     private final UserService userService ;
 
-    @PutMapping("/api/accept/{id}")
+    @PutMapping("accept/{id}")
     public String acceptDemande(@PathVariable int id) {
         return this.laureatService.accepterDemande(id) ; 
     }
 
-    @PutMapping("/api/reject/{id}")
+    @PutMapping("reject/{id}")
     public String refuserDemande(@PathVariable int id) {
         return this.laureatService.refuserDemande(id) ; 
     }
-    @GetMapping("/api/laureats")
+    @GetMapping("all")
     public List<Laureat> getAllLaureats() {
         return this.laureatService.getAllLaureat() ; 
     }
-    @GetMapping("/api/laureat-demandes/{id}")
+    @GetMapping("demandes/{id}")
     public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
         return this.laureatService.getAllLaureatDemandes(id) ;
     }
