@@ -1,0 +1,103 @@
+<app-nav-bar></app-nav-bar>
+
+<div *ngIf="event" class="back flex flex-col items-center bg-gray-50 min-h-screen py-8">
+  <div class="bg-white rounded-2xl shadow-md w-full max-w-3xl p-8">
+    <div class="text-center mb-6">
+      <h2 class="text-3xl font-semibold text-gray-800">{{ event.title }}</h2>
+      <p class="text-lg text-gray-500 mt-2">Détails de l'événement</p>
+    </div>
+
+    <div class="space-y-6">
+      <p class="text-lg text-gray-700 flex items-center">
+        <span class="text-indigo-500 text-2xl mr-2">📅</span>
+        <strong class="text-gray-800">Début :</strong> {{ event.date_evenement | date: 'fullDate' }}
+      </p>
+      <p class="text-lg text-gray-700 flex items-center">
+        <span class="text-indigo-500 text-2xl mr-2">📋</span>
+        <strong class="text-gray-800">Capacité maximale :</strong>
+        <span class="ml-2">{{ event.capacite }}</span>
+      </p>
+      <p class="text-lg text-gray-700 flex items-center">
+        <span class="text-indigo-500 text-2xl mr-2">🪑</span>
+        <strong class="text-gray-800">Les places restantes :</strong>
+        <span class="ml-2">{{ event.place_rest }}</span>
+      </p>
+      <p class="text-lg text-gray-700 flex items-center">
+        <span class="text-indigo-500 text-2xl mr-2">📝</span>
+        <strong class="text-gray-800">Description :</strong>
+        <span class="ml-2">{{ event.description || 'Aucune description.' }}</span>
+      </p>
+    </div>
+
+    <!-- Boutons utilisateur (non-admin) -->
+    <div class="flex justify-between items-center mt-8 space-x-6">
+      <button
+      *ngIf="!isAdmin"
+
+        (click)="goBack()"
+        class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md shadow-sm border border-gray-300 transition-all duration-200"
+      >
+        Retour
+      </button>
+
+
+      <button
+      *ngIf="!isAdmin && !isReserved"
+      (click)="reserver()"
+      [disabled]="isLoading"
+      class="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300"
+    >
+      Réserver ma place
+    </button>
+
+    <button
+      *ngIf="isReserved" 
+      (click)="cancelReservation()"
+      [disabled]="isLoading"
+      class="bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300"
+    >
+      Annuler la réservation
+    </button>
+    
+    </div>
+
+    <!-- Bloc admin avec boutons alignés horizontalement -->
+    <div *ngIf="isAdmin" class="mt-10 border-t border-gray-200 pt-6">
+      
+      <div class="flex justify-center space-x-4">
+          <button
+            (click)="goBack()"
+            class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md shadow-sm border border-gray-300 transition-all duration-200">
+          
+            Retour
+          </button>
+          <button
+          (click)="openEditDialog()"
+          class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md shadow-md transition-all duration-200">
+            Modifier
+          </button>
+
+        <!-- Dialog d'édition -->
+        <app-edit-event-dialog
+          *ngIf="isEditDialogOpen"
+          [event]="event"
+          (onClose)="closeEditDialog()"
+          (onSave)="handleEditSave($event)"
+        ></app-edit-event-dialog>
+
+        <button
+            (click)="deleteEvent()"
+            class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md shadow-md transition-all duration-200"
+          >
+            Supprimer
+          </button>
+      </div>
+        
+    </div>
+   </div>
+</div>
+
+<!-- Si l'événement n'est pas encore chargé -->
+<div *ngIf="!event" class="flex justify-center items-center min-h-screen bg-gray-50">
+  <p class="text-gray-500 text-xl">Chargement des détails de l'événement...</p>
+</div>

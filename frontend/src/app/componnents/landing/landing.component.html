@@ -1,0 +1,512 @@
+
+
+
+
+
+<div class="nav-container">
+
+    <div class="max-w-screen-l mx-auto px-4 sm:px-6 lg:px-16">
+      <nav class="bg-white bg-opacity-80 rounded-md shadow-lg border border-white mt-4">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <a href="https://flowbite.com/" class="flex items-center space-x-3 rtl:space-x-reverse">
+              <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo">
+              <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">GradLink</span>
+          </a>
+          <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Get started</button>
+              <button (click)="toggleMenu()" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-sticky" aria-expanded="false">
+                  <span class="sr-only">Open main menu</span>
+                  <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                  </svg>
+              </button>
+          </div>
+          <div 
+          [ngClass]="{
+           'hidden': !isMenuVisible,
+           'block': isMenuVisible 
+          }"
+  
+          class="lg:flex hidden md:flex items-center justify-between w-full md:w-auto md:order-1" 
+          id="navbar-sticky">
+             <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+              <li>
+                <a href="#" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Home</a>
+              </li>
+              <li>
+                <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</a>
+              </li>
+              <li>
+                <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Services</a>
+              </li>
+              <li>
+                <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div class="flex flex-col-reverse md:flex-row items-center md:items-start animate-slide-in-right">
+        <!-- Texte -->
+        <div class="w-full md:w-1/3 p-4 " >
+          <h1 class="text-4xl  font-extrabold items-center "style="margin-top: 50px;">
+            <span class="mod">Ensemble,</span> nous construisons des carrières
+          </h1>
+          <p class="text-lg md:text-xl max-w-2xl" style="margin-top: 20px;">
+            Trouvez l’inspiration, partagez vos expériences, et progressez ensemble
+          </p>
+          <button
+            class="mt-6 px-6 py-3 bg-white text-blue-500 font-bold rounded-lg hover:bg-gray-200 transition-all duration-300 shadow-lg"
+          >
+            Join Us Now!
+          </button>
+        </div>
+        <!-- Image -->
+        <div  class="w-full md:w-3/4 lg:w-2/3 ">
+          <img src="mentoring1.webp" alt="" class="mentor w-full md:w-5/4 lg:w-full bg-cover bg-center min-h-[90vh] mt-0 ml-auto">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+  <section class="py-16 bg-gradient-to-br from-blue-100 to-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      
+      <h2 class="text-4xl font-bold text-gray-800 mb-10">Nos Résultats en Chiffres</h2>
+      <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12">
+        <!-- Statistique 1 -->
+        <div class="text-center">
+          <p class="text-6xl font-extrabold text-blue-600" [innerText]="stat1">{{ stat1 }}</p>
+          <p class="text-gray-600 text-lg mt-2">Utilisateurs satisfaits</p>
+          <div class="mt-4 w-16 h-1 bg-blue-500 mx-auto"></div>
+        </div>
+  
+        <!-- Ligne de séparation (pour les écrans larges uniquement) -->
+        <div class="hidden md:block w-px h-16 bg-gray-300"></div>
+  
+        <!-- Statistique 2 -->
+        <div class="text-center">
+          <p class="text-6xl font-extrabold text-blue-600" [innerText]="stat2">{{ stat2 }}</p>
+          <p class="text-gray-600 text-lg mt-2">Taux de satisfaction</p>
+          <div class="mt-4 w-16 h-1 bg-blue-500 mx-auto"></div>
+        </div>
+  
+        <!-- Ligne de séparation (pour les écrans larges uniquement) -->
+        <div class="hidden md:block w-px h-16 bg-gray-300"></div>
+  
+        <!-- Statistique 3 -->
+        <div class="text-center">
+          <p class="text-6xl font-extrabold text-blue-600" [innerText]="stat3">{{ stat3 }}</p>
+          <p class="text-gray-600 text-lg mt-2">Projets complétés</p>
+          <div class="mt-4 w-16 h-1 bg-blue-500 mx-auto"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  
+  
+  
+  
+  <section class="py-16 bg-gradient-to-r from-customBlue to-teal-500">
+    <div class="container mx-auto px-4 text-center text-white">
+      <!-- Title -->
+      <h2 class="text-4xl font-extrabold mb-8">
+        Qu'est-ce que notre application ?
+      </h2>
+      <p class="text-lg md:text-xl max-w-3xl mx-auto mb-12">
+        Notre application est conçue pour révolutionner la manière dont vous interagissez avec vos données et vos tâches quotidiennes. En simplifiant les processus complexes, nous vous offrons une expérience intuitive et performante.
+      </p>
+  
+      <!-- Asymmetrical Cards -->
+      <div class="card_app grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" >
+        <!-- Card 1 -->
+        <div class="bg-white p-6 rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-500 relative overflow-hidden">
+          <div class="absolute inset-0 bg-gray-300 opacity-30 rounded-lg"></div>
+          <h3 class="text-2xl font-semibold z-10 relative font-bold bg-gradient-to-r from-blue-500 to-teal-500 text-transparent bg-clip-text ">Simplicité</h3>
+          <p class="text-gray-700 z-10 relative mt-4">
+            Une interface épurée et facile à utiliser, qui vous permet de vous concentrer sur ce qui compte vraiment.
+          </p>
+        </div>
+  
+        <!-- Card 2 -->
+        <div class="bg-white p-6 rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-500 relative overflow-hidden">
+          <div class="absolute inset-0 bg-gray-300 opacity-30 rounded-lg"></div>
+          <h3 class="text-2xl text-blue-500 font-semibold z-10 relative font-bold bg-gradient-to-r from-blue-500 to-teal-500 text-transparent bg-clip-text">Performance</h3>
+          <p class="text-gray-700 z-10 relative mt-4">
+            Des performances de haut niveau pour vous permettre de travailler plus vite et plus efficacement.
+          </p>
+        </div>
+  
+        <!-- Card 3 -->
+        <div class="bg-white p-6 rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-500 relative overflow-hidden">
+          <div class="absolute inset-0 bg-gray-300 opacity-30 rounded-lg"></div>
+          <h3 class="text-2xl text-blue-500 font-semibold z-10 relative font-bold bg-gradient-to-r from-blue-500 to-teal-500 text-transparent bg-clip-text">Innovation</h3>
+          <p class="text-gray-700 z-10 relative mt-4">
+            Grâce à des technologies de pointe, notre application se réinvente constamment pour répondre à vos besoins.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  
+  
+  
+  
+  <!-- team.component.html -->
+  <section class=" bg-gray-50 ">
+  
+    <h2 class="text-4xl font-extrabold text-gray-800 text-center mb-6 mt-6 relative">
+      Notre Équipe
+    </h2>
+    
+    
+    <div class="relative overflow-hidden w-full  flex flex-col items-center justify-center">
+  
+      <!-- Conteneur des membres de l'équipe avec transition de défilement -->
+      <div class="flex transition-transform duration-500 ease-in-out min-h-full" [style.transform]="activeMemberId !== null ? 'translateX(-' + activeMemberId * 100 + '%)' : 'translateX(0%)'">
+        
+          <!-- Affichage des membres de l'équipe -->
+          <div *ngFor="let member of teamMembers" class="min-w-full mb-3 flex-shrink-0 p-4 sm:w-1/3 md:w-1/2 lg:w-1/3 xl:w-1/4">
+            <div class="profile-card rounded-lg shadow-lg p-6 text-center min-h-full min-w-2xl  flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white-60">
+              <img [src]="member.image" alt="{{ member.name }}" class="profile-photo h-20 rounded-full m-0 w-2/3">
+              <h3 class="text-lg font-semibold">{{ member.name }}</h3>
+              <p class="text-gray-500 ">{{ member.role }}</p>
+            </div>
+          </div>
+  
+      </div>
+       <!-- Dots de navigation en bas de la section -->
+       <div class="absolute bottom-0 left-0 right-0 flex justify-center space-x-4 mt-4">
+        <button
+          *ngFor="let member of teamMembers"
+          class="w-4 h-4 rounded-full bg-gray-300 hover:bg-gray-500"
+          [class.bg-blue-500]="member.id === activeMemberId"
+          (click)="selectMember(member.id)">
+        </button>
+      </div>
+  
+      
+    </div>
+  </section>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <section class="py-9 bg-gray-50" >
+    <div class="container mx-auto">
+      <h2 class="text-4xl font-extrabold text-gray-800 text-center mb-9 mt-4 relative">
+        Nos Fonctionnalités
+      </h2>
+      <div class="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+  
+        <!-- Card 1 -->
+        <div class=" fonc-card bg-white shadow-lg rounded-lg overflow-hidden mb-3">
+          <img src="mentorship.webp" alt="Mentor" class="w-full h-40 object-cover">
+          <div class="p-5">
+            <h3 class="text-lg font-bold mb-2">Trouver un Mentor</h3>
+            <p class="text-gray-600">Explorez notre réseau pour trouver des mentors qui peuvent vous guider.</p>
+          </div>
+        </div>
+  
+        <!-- Card 2 -->
+        <div class="fonc-card bg-white shadow-lg rounded-lg overflow-hidden mb-3">
+          <img src="networking.png" alt="Network" class="w-full h-40 object-cover">
+          <div class="p-5">
+            <h3 class="text-lg font-bold mb-2">Créer un Réseau</h3>
+            <p class="text-gray-600">Connectez-vous avec d'autres étudiants et diplômés pour partager des opportunités.</p>
+          </div>
+        </div>
+  
+        <!-- Card 3 -->
+        <div class="fonc-card bg-white shadow-lg rounded-lg overflow-hidden mb-3">
+          <img src="hand.avif" alt="Opportunities" class="w-full h-40 object-cover">
+          <div class="p-5">
+            <h3 class="text-lg font-bold mb-2">Rechercher des Opportunités</h3>
+            <p class="text-gray-600">Accédez à des offres de stages, d'emplois et bien plus encore.</p>
+          </div>
+        </div>
+  
+        <!-- Card 4 -->
+        <div class="fonc-card bg-white shadow-lg rounded-lg overflow-hidden mb-3">
+          <img src="ressource.jpg" alt="Resources" class="w-full h-40 object-contain">
+          <div class="p-5">
+            <h3 class="text-lg font-bold mb-2">Partage de Ressources</h3>
+            <p class="text-gray-600">Partagez et téléchargez des ressources pour améliorer vos compétences.</p>
+          </div>
+        </div>
+  
+        <!-- Card 5 -->
+        <div class="fonc-card bg-white shadow-lg rounded-lg overflow-hidden mb-3">
+          <img src="event.webp" alt="Events" class="w-full h-40 object-cover">
+          <div class="p-5">
+            <h3 class="text-lg font-bold mb-2">Participer à des Événements</h3>
+            <p class="text-gray-600">Participez à des ateliers, des conférences et des journées de recrutement.</p>
+          </div>
+        </div>
+  
+        <!-- Card 6 -->
+        <div class="fonc-card bg-white shadow-lg rounded-lg overflow-hidden mb-3">
+          <img src="notifications.png" alt="Notifications" class="w-full h-40 object-cover">
+          <div class="p-5">
+            <h3 class="text-lg font-bold mb-2">Notifications en Temps Réel</h3>
+            <p class="text-gray-600">Recevez des mises à jour instantanées sur les nouvelles opportunités.</p>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  </section>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto">
+      <h2 class="text-4xl font-extrabold text-gray-800 text-center mb-8 relative">
+        Foire aux Questions (FAQ)    </h2>
+      <div class="relative">
+        <!-- Ligne centrale -->
+        <div class="border-l-4 border-customBlue absolute h-full left-1/2 transform -translate-x-1/2"></div>
+  
+        <!-- Conteneur des questions -->
+        <div class="flex flex-col space-y-8">
+          <!-- Question 1 -->
+          <div class="flex flex-col items-start space-y-2">
+            <div class="bg-customBlue text-white p-4 rounded-lg shadow-md w-1/2"appScrollReveal animationClass="slide-in-left">
+              <h3 class="text-2xl font-bold">Comment m'inscrire sur la plateforme ?</h3>
+              <p>Pour vous inscrire, cliquez sur le bouton "S'inscrire" en haut à droite, remplissez vos informations et validez votre compte via email.</p>
+            </div>
+          </div>
+  
+          <!-- Question 2 -->
+          <div class="flex flex-col items-end space-y-2">
+            <div class="bg-teal-500 text-white p-4 rounded-lg shadow-md w-1/2"appScrollReveal animationClass="slide-in-right">
+              <h3 class="text-2xl font-bold">Qui peut utiliser cette application ?</h3>
+              <p>L'application est destinée aux étudiants, aux alumni et aux professionnels souhaitant partager ou recevoir des conseils.</p>
+            </div>
+          </div>
+  
+          <!-- Question 3 -->
+          <div class="flex flex-col items-start space-y-2">
+            <div class="bg-customBlue text-white p-4 rounded-lg shadow-md w-1/2"appScrollReveal animationClass="slide-in-left">
+              <h3 class="text-2xl font-bold">Est-ce gratuit ?</h3>
+              <p>Oui, l'application propose un plan gratuit avec des fonctionnalités de base. Des options premium sont disponibles pour des services avancés.</p>
+            </div>
+          </div>
+  
+          <!-- Question 4 -->
+          <div class="flex flex-col items-end space-y-2">
+            <div class="bg-teal-500 text-white p-4 rounded-lg shadow-md w-1/2"appScrollReveal animationClass="slide-in-left">
+              <h3 class="text-2xl font-bold">Comment puis-je trouver un mentor ?</h3>
+              <p>Utilisez la fonctionnalité de recherche pour trouver un mentor adapté à vos besoins ou explorez les recommandations basées sur vos préférences.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <section class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <!-- Titre de la section -->
+      <div class="text-center mb-10">
+        <h2 class="text-4xl font-bold text-gray-700 text-center mb-3 relative">
+          Ce que disent nos utilisateurs      </h2>
+        <p class="text-gray-600 mt-2">Des retours authentiques de notre communauté.</p>
+      </div>
+  
+      <!-- Grille des témoignages -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Témoignage 1 -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <img src="https://via.placeholder.com/100" alt="User 1" class="w-16 h-16 rounded-full object-cover mr-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">Alice Dupont</h3>
+              <p class="text-gray-500 text-sm">Développeuse Web</p>
+            </div>
+          </div>
+          <p class="text-gray-600 text-sm italic">"Cette plateforme m'a énormément aidée à progresser dans ma carrière professionnelle."</p>
+        </div>
+  
+        <!-- Témoignage 2 -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <img src="https://via.placeholder.com/100" alt="User 2" class="w-16 h-16 rounded-full object-cover mr-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">Mohamed El Amrani</h3>
+              <p class="text-gray-500 text-sm">Ingénieur DevOps</p>
+            </div>
+          </div>
+          <p class="text-gray-600 text-sm italic">"J'ai trouvé des ressources de grande qualité ici. Un outil indispensable pour les professionnels."</p>
+        </div>
+  
+        <!-- Témoignage 3 -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <img src="https://via.placeholder.com/100" alt="User 3" class="w-16 h-16 rounded-full object-cover mr-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">Sarah Belkacem</h3>
+              <p class="text-gray-500 text-sm">Data Analyst</p>
+            </div>
+          </div>
+          <p class="text-gray-600 text-sm italic">"Une communauté et des outils qui ont changé ma manière de travailler. Merci !"</p>
+        </div>
+  
+        <!-- Témoignage 4 -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <img src="https://via.placeholder.com/100" alt="User 4" class="w-16 h-16 rounded-full object-cover mr-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">Omar Boulkha</h3>
+              <p class="text-gray-500 text-sm">Consultant IT</p>
+            </div>
+          </div>
+          <p class="text-gray-600 text-sm italic">"Une excellente plateforme avec des outils pratiques pour les professionnels."</p>
+        </div>
+  
+        <!-- Témoignage 5 -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <img src="https://via.placeholder.com/100" alt="User 5" class="w-16 h-16 rounded-full object-cover mr-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">Khadija Bensalah</h3>
+              <p class="text-gray-500 text-sm">Designer UX/UI</p>
+            </div>
+          </div>
+          <p class="text-gray-600 text-sm italic">"J'adore les outils de collaboration et la communauté active. Je recommande !"</p>
+        </div>
+  
+        <!-- Témoignage 6 -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+          <div class="flex items-center mb-4">
+            <img src="https://via.placeholder.com/100" alt="User 6" class="w-16 h-16 rounded-full object-cover mr-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">Samir Haddadi</h3>
+              <p class="text-gray-500 text-sm">Étudiant en Informatique</p>
+            </div>
+          </div>
+          <p class="text-gray-600 text-sm italic">"Une source d'apprentissage précieuse qui m'a permis de développer mes compétences."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  
+  
+  
+  
+  
+  <section class="bg-gradient-to-r bg-gray-50 py-12 text-blach">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <!-- Texte principal -->
+      <h2 class="text-4xl font-bold mb-4">
+        Qu'attendez-vous ?
+      </h2>
+      <p class="text-lg mb-8">
+        Rejoignez notre communauté dès maintenant et accédez à des opportunités uniques !
+      </p>
+  
+      <!-- Call-to-action interactif -->
+      <div class="relative group">
+        <button class="bg-white text-blue-600 font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-blue-100  transition duration-300">
+          Rejoignez-nous maintenant
+        </button>
+    
+  
+        <!-- Animation derrière le bouton -->
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-100 to-indigo-200 rounded-full blur-md opacity-50 group-hover:opacity-70 transition duration-500 "></div>
+      </div>
+  
+      <!-- Texte d'encouragement -->
+      <p class="mt-8 text-sm text-gray-800">
+        Vous êtes à un clic de changer votre futur ✨
+      </p>
+    </div>
+  
+    
+  </section>
+  
+  
+  
+  
+  
+  
+  
+  
+  <footer class="bg-gradient-to-r from-indigo-500 to-customBlue text-gray-300 py-10">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+   
+      <div>
+        <h3 class="text-2xl font-bold text-white mb-4">GradLink</h3>
+        <p class="text-sm">
+          Rejoignez-nous pour découvrir une plateforme innovante qui transforme vos idées en réalité. Nous sommes là pour vous aider à atteindre vos objectifs.
+        </p>
+      </div>
+  
+      <div>
+        <h4 class="text-lg font-semibold text-white mb-4">Liens utiles</h4>
+        <ul>
+          <li class="mb-2"><a href="#features" class="hover:underline">Fonctionnalités</a></li>
+          <li class="mb-2"><a href="#testimonials" class="hover:underline">Témoignages</a></li>
+          <li class="mb-2"><a href="#join" class="hover:underline">Rejoignez-nous</a></li>
+          <li><a href="#contact" class="hover:underline">Contactez-nous</a></li>
+        </ul>
+      </div>
+  
+      
+      <div>
+        <h4 class="text-lg font-semibold text-white mb-4">Suivez-nous</h4>
+        <div class="flex space-x-4">
+          <a href="#" class="text-white-400 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M22.675 0H1.325C.593 0 0 .594 0 1.326v21.348C0 23.406.593 24 1.325 24h11.495v-9.293H9.693V11.41h3.127V8.572c0-3.1 1.894-4.785 4.659-4.785 1.325 0 2.463.099 2.794.143v3.24h-1.918c-1.506 0-1.797.716-1.797 1.765v2.313h3.59l-.467 3.297h-3.123V24h6.127C23.406 24 24 23.406 24 22.674V1.326C24 .594 23.406 0 22.675 0z"/>
+            </svg>
+          </a>
+          <a href="#" class="text-white-400 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.954 4.569a10 10 0 01-2.825.775 4.948 4.948 0 002.163-2.723 9.93 9.93 0 01-3.127 1.184 4.936 4.936 0 00-8.391 4.498A14.002 14.002 0 011.671 3.149a4.922 4.922 0 001.523 6.573 4.902 4.902 0 01-2.23-.616v.06a4.937 4.937 0 003.946 4.827 4.962 4.962 0 01-2.224.084 4.935 4.935 0 004.604 3.419 9.876 9.876 0 01-6.102 2.103c-.396 0-.786-.023-1.17-.067a13.95 13.95 0 007.557 2.212c9.054 0 14.001-7.496 14.001-13.986 0-.21-.005-.423-.015-.635A9.936 9.936 0 0024 4.59z"/>
+            </svg>
+          </a>
+          <a href="#" class="text-white-400 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 4.373 9.8 10 10.527V15.89h-3.017v-3.31H10V9.923c0-2.98 1.794-4.614 4.493-4.614 1.31 0 2.686.235 2.686.235v2.955h-1.511c-1.49 0-1.952.927-1.952 1.878v2.252h3.317l-.53 3.31h-2.787v6.934c5.627-.726 10-5.224 10-10.527 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  
+   
+    <div class="border-t border-gray-700 mt-10 pt-6 text-center">
+      <p class="text-sm">
+        © 2024 GradLink. Tous droits réservés.
+      </p>
+    </div>
+  </footer>
+  

@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.fixed {
+    position: fixed;
+  }
+  
+  .z-50 {
+    z-index: 9999; /* Assurez-vous que le z-index est suffisamment élevé */
+  }
+  
+  .bg-black {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .container {
+    background-color: white;
+    z-index: 10000; /* Augmenter le z-index ici aussi */
+  }
+  

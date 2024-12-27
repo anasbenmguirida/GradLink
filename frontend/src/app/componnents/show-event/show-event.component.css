@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.titre{
+  color: rgb(43, 43, 104);
+  background-color: rgb(29, 78, 216);
+}

@@ -114,6 +114,43 @@ export class PostePageComponent implements OnInit  {
         }
       );
     }
+
+
+
+    // submitPost(): void {
+    //   if (this.postForm.valid) {
+    //     const postData = this.postForm.value;
+    
+    //     // Créez un objet FormData pour la requête multipart/form-data
+    //     const formData = new FormData();
+    
+    //     // Ajoutez les données de description sous forme de JSON
+    //     const posteJson = JSON.stringify({ description: postData.description });
+    //     formData.append('poste', posteJson);
+    
+    //     // Ajoutez les fichiers au FormData
+    //     this.selectedFiles.forEach((file) => {
+    //       formData.append('file', file); // Le backend attend un champ "file"
+    //     });
+    
+    //     // Envoi des données au backend via le service
+    //     this.postService.createPost(formData).subscribe(
+    //       (response) => {
+    //         // Ajoutez le nouveau post localement (par exemple, dans une liste)
+    //         this.posts.unshift(response);
+    
+    //         // Réinitialisez le formulaire et les fichiers sélectionnés
+    //         this.postForm.reset();
+    //         this.selectedFiles = [];
+    //         this.selectedFileNames = [];
+    //       },
+    //       (error) => {
+    //         console.error('Erreur lors de l\'envoi du post :', error);
+    //       }
+    //     );
+    //   }
+    // }
+    
   }
   
  //si je veux envoyer urls 
@@ -149,7 +186,6 @@ export class PostePageComponent implements OnInit  {
         Array.from(input.files).forEach((file) => {
           const mimeType = file.type;
     
-          // Vérifie que le fichier est une image ou un PDF
           if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
             this.selectedFiles.push(file);  // Ajoute le fichier valide à la liste
             this.selectedFileNames.push(file.name); // Stocke le nom du fichier

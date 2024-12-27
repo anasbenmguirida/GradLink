@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PostService {
-  private apiUrl = 'test.json'; // Remplacez par l'URL de votre backend
+  private apiUrl = 'http://localhost:8080/api'; // Remplacez par l'URL de votre backend
 
   constructor(private http: HttpClient) {}
 
@@ -17,32 +17,40 @@ export class PostService {
   }
   
 
-  getMesPosts(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
-  }
+  // getMesPosts(): Observable<any[]> {
+  //   return this.http.get<any[]>(`${this.apiUrl}/poste/{id}`);
+  // }
   // Méthode pour soumettre un nouveau post
   createPost(postData: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, postData);
+    return this.http.post<any>(`${this.apiUrl}/create-poste`, postData);
   }
+  
 
 
   updatePost( postData: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}`, postData);
   }
 
+  deletePost(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/delete-poste/{id}`);
+  }
 
   toggleLike(postId: number, isLiked:boolean): Observable<any> {
-    return this.http.post(this.apiUrl, { postId,  isLiked });
+    return this.http.post(`${this.apiUrl}/like`, { postId,  isLiked });
   }
 
   getAllPosts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}`);
+    return this.http.get<any[]>(`${this.apiUrl}/postes`);
+
+   
   }
 
+ 
 
 
-  getUserPosts(userId: any): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}?userId=${userId}`);
+
+  getUserPosts(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/poste/${userId}`);
   }
 
 

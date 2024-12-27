@@ -6,19 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { PostService } from '../../services/post/post.service';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 
 
-
-interface Post {
-  id: string;
-  description: string;
-  fichiers: string[]; // Tableau de chaînes (si ce sont des URL de fichiers)
-  isLiked?: boolean; // Ajout de isLiked, qui peut être géré côté frontend
-}
-
-
-
- 
 @Component({
   selector: 'app-recherche-profile',
   imports: [
@@ -26,7 +16,8 @@ interface Post {
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
-    FormsModule
+    FormsModule,
+    NavBarComponent
   ],
   standalone:true,
   templateUrl: './recherche-profile.component.html',
@@ -46,7 +37,7 @@ export class RechercheProfileComponent implements OnInit {
   ngOnInit(): void {
   
   this.me = JSON.parse(localStorage.getItem('user') || '{}');
-  this.selectedId = +this.route.snapshot.paramMap.get('id')! || null;
+  this.selectedId = +this.route.snapshot.paramMap.get('id')! ;
 
 
   if (this.selectedId) {
@@ -92,7 +83,7 @@ export class RechercheProfileComponent implements OnInit {
 
 
   fetchPosts(): void {
-    this.classifiedPosts = this.posts.map((post: Post) => ({
+    this.classifiedPosts = this.posts.map((post: any) => ({
       ...post,
       images: post.fichiers.filter((url: string) => this.isImage(url)),
       pdfs: post.fichiers.filter((url: string) => this.isPdf(url))

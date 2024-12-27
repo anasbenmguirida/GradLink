@@ -6,16 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PostService } from '../../services/post/post.service';
 import { Router, RouterLink } from '@angular/router';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 
 
 
-interface Post {
-  id: number;
-  title: string;
-  description: string;
-  fichiers:[];
-  isLiked:boolean;
-}
 
 
 @Component({
@@ -27,7 +21,8 @@ interface Post {
     MatIconModule,
     MatButtonModule,
     FormsModule,
-    RouterLink
+    RouterLink,
+    NavBarComponent
   ],
   templateUrl: './myprofile.component.html',
   styleUrl: './myprofile.component.css'
@@ -47,15 +42,15 @@ export class MyprofileComponent implements OnInit {
 
   
   ngOnInit(): void {
-
+    this.me = JSON.parse(localStorage.getItem('user') || '{}');
     console.log("hi");
-    this.postService.getMesPosts().subscribe((data) => {
+    this.postService.getUserPosts(this.me.id).subscribe((data) => {
       this.posts = data;
       this.fetchPosts();
 
     });
 
-    this.me = JSON.parse(localStorage.getItem('user') || '{}');
+    
 
     if (this.me.role === 'etudiant') {
               this.form.patchValue({
@@ -77,8 +72,9 @@ export class MyprofileComponent implements OnInit {
 
 
 
+  
   fetchPosts(): void {
-    this.classifiedPosts = this.posts.map((post: Post) => ({
+    this.classifiedPosts = this.posts.map((post: any) => ({
       ...post,
       images: post.fichiers.filter((url: string) => this.isImage(url)),
       pdfs: post.fichiers.filter((url: string) => this.isPdf(url))
@@ -295,7 +291,7 @@ isModalOpen = false;
   isEditing: boolean = false; 
   editingPost: any; 
   
-  editPost(post: { description: string; fichiers: string[]; }): void {
+  editPost(post: any): void {
     this.isEditing = true;
     this.editingPost = { ...post }; 
   }
@@ -319,6 +315,19 @@ isModalOpen = false;
       }
     });
   }
+
+  deletePost(post: any): void {
+    this.postService.deletePost(post.id).subscribe(
+      () => {
+        console.log(`Post with ID ${post.id} deleted successfully.`);
+        this.posts = this.posts.filter((p:any) => p.id !== post.id); // Utilisation de "p" au lieu de "Post"
+      },
+      (error) => {
+        console.error('Error deleting post:', error);
+      }
+    );
+  }
+  
 
 
   //   removeImage(index: number): void {

@@ -23,12 +23,12 @@ export class MessagerieService {
 
     sendMessage(senderId: number, receiverId: number, content: string): Observable<any> {
       const payload = { senderId, receiverId, content };
-      return this.http.post(`${this.apiUrl}/send`, payload);
+      return this.http.post(`${this.apiUrl}`, payload);
     }
 
 
     getAllUsers(): Observable<any[]> {
-      return this.http.get<any[]>(`${this.apiUrl}/all`);
+      return this.http.get<any[]>(`${this.apiUrl}`);
     }
   
 }

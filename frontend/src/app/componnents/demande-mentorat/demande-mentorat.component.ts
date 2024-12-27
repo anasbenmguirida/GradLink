@@ -3,10 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 @Component({
   selector: 'app-demande-mentorat',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule,NavBarComponent],
   templateUrl: './demande-mentorat.component.html',
   styleUrls: ['./demande-mentorat.component.css']
 })
