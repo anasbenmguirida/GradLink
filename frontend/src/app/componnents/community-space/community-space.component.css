@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 .msg{
-    max-height: 500px;
+    max-height: 480px;
 }

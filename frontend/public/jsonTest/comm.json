@@ -8,21 +8,23 @@
           {
             "id": 1,
             "description": "reuirheuiwreuiuiuq3",
-            "photo": "img.png",
+            "posteFiles": "img.png",
             "user": {
               "id": 1,
               "firstName": "safae",
-              "lastName": "Lab"
+              "lastName": "Lab",
+              "photoProfile":""
             }
           },
           {
             "id": 2,
             "description": "reuirheuiwreuiuiuq3",
-            "photo": "img.png",
+            "posteFiles": "img.png",
             "user": {
               "id": 1,
               "firstName": "safae",
-              "lastName": "Lab"
+              "lastName": "Lab",
+              "photoProfile":""
             }
           }
         ]
