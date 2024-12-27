@@ -1,30 +1,31 @@
 package com.back.backend.controllers;
 
-
-
+import com.back.backend.Entities.Message;
+import com.back.backend.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.socket.TextMessage;
-
-import com.back.backend.handler.CustomWebSocketHandler;
-import com.back.backend.model.Message;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/messages")
 public class MessageController {
 
-   @Autowired
-   private CustomWebSocketHandler webSocketHandler;
+    @Autowired
+    private MessageRepository messageRepository;
 
-   @PostMapping("/send")
-   public String sendMessage(@RequestBody Message message) {
-       try {
-           webSocketHandler.handleTextMessage(null, new TextMessage(message.getSender() + ": " + message.getContent()));
-           return "Message sent!";
-       } catch (Exception e) {
-           return "Error: " + e.getMessage();
-       }
-   }
+    @GetMapping("/all")
+    public List<Message> getAllMessages() {
+        return messageRepository.findAll();
+    }
+
+    @PostMapping("/send")
+    public String sendMessage(@RequestBody Message message) {
+        try {
+            messageRepository.save(message);
+            return "Message saved!";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
 }
-
