@@ -1,25 +1,25 @@
 package com.back.backend.dto;
 
 public class MessageDTO {
-    private int etudiantId;
-    private int laureatId;
+    private int senderId;
+    private int recipientId;
     private String contenue;
 
     // Getters and setters
-    public int getEtudiantId() {
-        return etudiantId;
+    public int getSenderId() {
+        return senderId;
     }
 
-    public void setEtudiantId(int etudiantId) {
-        this.etudiantId = etudiantId;
+    public void setSenderId(int senderId) {
+        this.senderId = senderId;
     }
 
-    public int getLaureatId() {
-        return laureatId;
+    public int getRecipientId() {
+        return recipientId;
     }
 
-    public void setLaureatId(int laureatId) {
-        this.laureatId = laureatId;
+    public void setRecipientId(int recipientId) {
+        this.recipientId = recipientId;
     }
 
     public String getContenue() {

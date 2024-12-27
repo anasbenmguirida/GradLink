@@ -24,14 +24,14 @@ public class Message {
 private int id ;  
 
 @ManyToOne
-@JoinColumn(name = "etudiant_id", nullable = false)
- @JsonBackReference(value = "etu-msg")
-private Etudiant etudiant;
+@JoinColumn(name = "sender_id", nullable = false)
+ @JsonBackReference(value = "sender-msg")
+private User sender;
 
 @ManyToOne
-@JoinColumn(name = "laureat_id", nullable = false)
-@JsonBackReference(value = "lau-msg")
-private Laureat laureat ; 
+@JoinColumn(name = "recipient_id", nullable = false)
+@JsonBackReference(value = "recipient-msg")
+private User recipient; 
 
 private String contenue ; 
 private Date dateEnvoie ; 
