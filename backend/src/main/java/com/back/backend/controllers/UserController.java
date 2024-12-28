@@ -38,8 +38,8 @@ private final LaureatService laureatService;
 
     @PostMapping("/api/create-poste")
     public ResponseEntity<String> createposte(@RequestParam("poste") String posteJson
-                                ,@RequestPart(value = "file" , required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
-        this.userService.createPoste(posteJson , file);
+                                ,@RequestPart(value = "files" , required = false) MultipartFile[] files) throws JsonMappingException, JsonProcessingException {
+        this.userService.createPoste(posteJson , files);
         return ResponseEntity.ok("post saved ");
     }
     // postes can be deleted by both admins or laureat 
