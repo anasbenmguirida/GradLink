@@ -4,6 +4,9 @@ import com.back.backend.Entities.Admin;
 import com.back.backend.Entities.Caummunaute;
 import com.back.backend.repositories.AdminRepository;
 import com.back.backend.repositories.CaummunauteRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,4 +59,5 @@ public class CaummunauteService {
         caummunauteRepository.delete(existingCaummunaute);
     }
 
+  
 }
