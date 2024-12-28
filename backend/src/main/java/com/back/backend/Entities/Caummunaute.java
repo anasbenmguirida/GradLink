@@ -21,6 +21,7 @@ import lombok.Setter;
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Caummunaute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
