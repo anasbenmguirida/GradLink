@@ -45,8 +45,8 @@ public class SecurityConfig {
             .requestMatchers(mvcMatcherBuilder.pattern("/api/login")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/api/register")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/ws")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern("/api/caummunautes")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/caummunaute")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/messages")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/contacts/1")).permitAll()
             .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
