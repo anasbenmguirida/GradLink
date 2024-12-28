@@ -35,22 +35,23 @@ private final UserRepository userRepository;
 
 
  // creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
-    public ResponseEntity<String> createPoste(String posteJson, MultipartFile file) throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<String> createPoste(String posteJson, MultipartFile[] files) throws JsonMappingException, JsonProcessingException {
     Poste poste = new ObjectMapper().readValue(posteJson, Poste.class);
     poste.setDatePoste(LocalDateTime.now());
     poste.setNbrLikes(0);
     this.posteRepository.save(poste);
-
-    if (!file.isEmpty()) {
-        try {
-            PosteFiles posteFiles = new PosteFiles();
-            posteFiles.setFileName(file.getOriginalFilename());
-            posteFiles.setFileType(file.getContentType());
-            posteFiles.setData(file.getBytes());
-            posteFiles.setPoste(poste);
-            this.posteFilesRepository.save(posteFiles);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed");
+    for(MultipartFile file:files){
+        if (!file.isEmpty()) {
+            try {
+                    PosteFiles posteFiles = new PosteFiles();
+                    posteFiles.setFileName(file.getOriginalFilename());
+                    posteFiles.setFileType(file.getContentType());
+                    posteFiles.setData(file.getBytes());
+                    posteFiles.setPoste(poste);
+                    this.posteFilesRepository.save(posteFiles);
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed");
+            }
         }
     }
     return ResponseEntity.ok("Poste ajouté avec succes");

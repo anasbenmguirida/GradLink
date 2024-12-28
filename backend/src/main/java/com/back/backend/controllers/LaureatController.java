@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.back.backend.Entities.DemandeMentorat;
 import com.back.backend.Entities.Laureat;
-
+import com.back.backend.Entities.User;
 import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
 import com.back.backend.services.UserService;
@@ -38,6 +38,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @MultipartConfig
 @RequestMapping(path = "/api/laureat/")
+@CrossOrigin(origins = "http://localhost:4200")
 
 public class LaureatController {
 
@@ -55,16 +56,19 @@ public class LaureatController {
     public String refuserDemande(@PathVariable int id) {
         return this.laureatService.refuserDemande(id) ; 
     }
+    // avoir la liste de toutes les laureats 
     @GetMapping("all")
     public List<Laureat> getAllLaureats() {
         return this.laureatService.getAllLaureat() ; 
     }
+    // avoir la liste des demandes de mentorat pour un laureat 
     @GetMapping("demandes/{id}")
     public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
         return this.laureatService.getAllLaureatDemandes(id) ;
     }
-    @GetMapping("accepted/{id}")
-    public List<DemandeMentorat> getAllAcceptedDemandes(@PathVariable int id) {
+    // avoir la liste les demandes accepter pour un laureat
+    @GetMapping("accepted-demandes/{id}")
+    public List<User> getAllAcceptedDemandes(@PathVariable int id) {
         return this.laureatService.getAllAcceptedDemandes(id) ; 
     }
     

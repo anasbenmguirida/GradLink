@@ -14,6 +14,6 @@ public interface DemandeRepository extends JpaRepository<DemandeMentorat , Integ
 @Query(value = "select *FROM demande_mentorat WHERE laureat_id=:id" , nativeQuery = true)
 List<DemandeMentorat> getAllDemandeLaureat(@Param("id") int id) ; 
 
-@Query(value = "select *FROM demande_mentorat WHERE laureat_id=:id and status_mentorat=1" , nativeQuery = true)
+@Query(value = "select *FROM demande_mentorat WHERE laureat_id=:id AND status_mentorat=1" , nativeQuery = true)
 List<DemandeMentorat> getAllAcceptedDemandes(@Param("id") int id) ;
 }

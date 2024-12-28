@@ -2,6 +2,7 @@ package com.back.backend.services;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ public class LaureatService {
     private final DemandeRepository demandeRepository;
     private final LaureatRepository laureatRepository ; 
     private final PosteRepository posteRepository ; 
+    private final UserRepository userRepository ;
     
     public List<Laureat> getAllLaureat(){
       return laureatRepository.findAllByRole(Role.LAUREAT) ;     
@@ -67,8 +69,15 @@ public class LaureatService {
         return demandeRepository.getAllDemandeLaureat(id) ;  
     }
     // ACCEPTED DEMANDES ONLY 
-    public List<DemandeMentorat> getAllAcceptedDemandes(int id){
-        return demandeRepository.getAllAcceptedDemandes(id) ; 
+    public List<User> getAllAcceptedDemandes(int id){
+        List<DemandeMentorat> maListe =  demandeRepository.getAllAcceptedDemandes(id) ; 
+        List<User> etudiantAccepterAuMentorat= new ArrayList<User>();
+        for(DemandeMentorat demande : maListe){
+            User user= userRepository.findById(demande.getEtudiantId()).orElse(null);
+            System.out.println("user : " + user);
+            etudiantAccepterAuMentorat.add(user);
+        }
+        return etudiantAccepterAuMentorat ; 
     }
     
     public ResponseEntity<String> modifierPoste(int posteId , String textArea){

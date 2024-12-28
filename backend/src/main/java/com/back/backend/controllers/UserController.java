@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 private final UserService userService;
 private final PosteService posteService;
@@ -40,7 +42,7 @@ private final LaureatService laureatService;
         this.userService.createPoste(posteJson , file);
         return ResponseEntity.ok("post saved ");
     }
-    // postes can be deleted by bith admins or laureat 
+    // postes can be deleted by both admins or laureat 
     @DeleteMapping("/api/delete-poste/{id}")
     public ResponseEntity<String> deletePoste(@PathVariable int id){
         return this.posteService.deletePoste(id);
