@@ -1,0 +1,33 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="container mx-auto px-4 py-6">
+  <div class="bg-white shadow-lg rounded-lg border p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Demandes de mentorat</h3>
+    <ul>
+      <li *ngFor="let demande of demandesFiltre" class="py-4 border-b">
+        <div class="flex items-start space-x-3 mb-3">
+          <img   [src]="demande.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+          <div>
+            <p (click)="goToProfile(demande.id_emmitteur)" class="text-sm font-medium text-gray-900 hover:underline cursor-pointer"
+            >
+              {{demande.firstname}} {{demande.lastname}}
+            </p>
+            <p class="text-xs text-gray-500">{{ demande.time }}</p>
+          </div>
+        </div>
+     
+        <p class="text-sm text-gray-700">
+          Raison: {{ demande.reason }}
+        </p>
+        <div class="flex justify-end space-x-2 mt-4">
+          <button (click)="acceptedemande(demande.id)" class="px-4 py-2 bg-green-500 text-white text-sm rounded hover:bg-green-600">
+            Accepter
+          </button>
+          <button (click)="refusedemande(demande.id)" class="px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600">
+            Refuser
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

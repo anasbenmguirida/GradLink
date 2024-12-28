@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+      
+.selected {
+  background-color: #e2e8f0; /* Couleur pour l'élément sélectionné */
+  font-weight: bold;        /* Met en gras l'utilisateur sélectionné */
+}
+
+.self-start {
+  align-self: flex-start;
+}
+.self-end {
+  align-self: flex-end;
+}
+.cursor-pointer:hover {
+  cursor: pointer;
+}
+
+.text-time {
+  color: #6B7280 !important;
+}
+
+.text-sm {
+  font-size: 0.875rem; /* Taille normale pour le message */
+}
+
+.text-xs {
+  font-size: 0.75rem; /* Petite taille pour l'heure */
+}
+
+.text-gray-500 {
+  color: #6b7280; /* Gris clair pour l'heure */
+}
+
+.ml-2 {
+  margin-left: 0.5rem; /* Marge horizontale entre le texte et l'heure */
+}
+
+.relative {
+  position: relative;
+}
+
+
+
+.flex {
+  display: flex;
+}
+
+.items-end {
+  align-items: flex-end; /* Aligne les éléments en bas */
+}
+

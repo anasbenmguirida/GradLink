@@ -1,0 +1,101 @@
+<app-nav-bar></app-nav-bar>
+
+<div class=" h-full flex flex-col lg:flex-row p-6 lg:gap-6 space-y-6 lg:space-y-0 mt-16">
+  <!-- Liste des communautés -->
+  <div 
+    class="w-full  lg:w-1/3 p-6 bg-gradient-to-r from-indigo-100 to-indigo-50 rounded-lg shadow-lg mx-auto transition-all"
+    [ngClass]="{'hidden': !communityListVisible && selectedCommunityId !== null}"
+  >
+    <h2 class="text-3xl font-bold text-indigo-800 mb-6 text-center lg:text-left">Espace Communautaire</h2>
+    <div *ngFor="let community of communities" class="bg-white shadow-md rounded-lg p-5 mb-5 hover:bg-indigo-50 transition-transform transform hover:scale-105">
+      <button 
+      (click)="deleteCommunity(community.id)" 
+      class="absolute top-2 right-2 text-gray-400 hover:text-red-500"
+      title="Supprimer la communauté"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+      <h3 class="text-xl font-semibold text-gray-700">{{ community.name }}</h3>
+      <p class="text-sm text-gray-500 mb-3">{{ community.description }}</p>
+      
+      <button 
+        (click)="selectCommunity(community.id)" 
+        class="text-indigo-600 hover:text-indigo-800 font-semibold underline"
+      >
+        Voir les discussions
+      </button>
+    </div>
+  </div>
+
+ <!-- Discussions de la communauté sélectionnée -->
+<div *ngIf="selectedCommunityId" class="lg:w-2/3 max-h-screen p-4 bg-white h-full shadow-lg rounded-lg transition-all">
+  <div *ngFor="let community of communities" [ngClass]="{'hidden': community.id !== selectedCommunityId}">
+    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Discussions dans {{ community.name }}</h3>
+
+    <div class="msg max-h-96 overflow-y-auto space-y-4 mb-6">
+      <div *ngFor="let message of community.messages" class="flex items-start bg-gray-50 p-4 rounded-lg shadow-md mb-4 hover:shadow-lg transition-all">
+        <img [src]="message.photo" alt="Profil" class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-blue-500">
+        
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-2">
+            <div>
+              <h4 class="text-lg font-semibold text-gray-800">{{ message.firstName }} {{ message.lastName }}</h4>
+              <p class="text-sm text-gray-500">{{ message.description }}</p>
+            </div>
+
+            <!-- Menu des options (Modifier / Supprimer) -->
+            <div *ngIf="isAdmin || message.id === userId" class="relative">
+              <button (click)="toggleMenu(message)" id="menu" class="text-gray-500 hover:text-black">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 12h12M6 6h12M6 18h12" />
+                </svg>
+              </button>
+
+              <!-- Menu déroulant -->
+              <div *ngIf="menuOpen && selectedMessage === message" class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                <ul>
+                  <li *ngIf="message.id === userId" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" (click)="editMessage(message)">Modifier</li>
+                  <li *ngIf="isAdmin || message.id === userId" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" (click)="deleteMessage(message)">Supprimer</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-gray-700 mb-3">{{ message.text }}</p>
+
+          <div *ngIf="message.image" class="mt-2">
+            <img [src]="message.image" alt="Image du message" class="w-full rounded-lg shadow-md object-cover max-h-60">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Ajouter poste -->
+  <div class="bg-gray-50 p-2 h-50 rounded-lg shadow-md flex items-center space-x-4">
+    <textarea [(ngModel)]="newMessageText" (keyup.enter)="postMessage()" placeholder="Écrivez un message..." class="flex-1 p-2 bg-white rounded-lg shadow-sm border border-gray-300" rows="2"></textarea>
+
+    <label for="message-image" class="cursor-pointer">
+      <svg class="w-6 h-6 text-indigo-600 hover:text-indigo-800" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5zm14 2v14H5V5h14zm-6.5 3.5A1.5 1.5 0 1 1 12 10a1.5 1.5 0 0 1 .5-1.5zM6 17l3-4 2.25 3L14 11l4 6H6z" />
+      </svg>
+      <input type="file" id="message-image" (change)="onImageSelected($event)" class="hidden" />
+    </label>
+
+    <button (click)="postMessage()" class="p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition" aria-label="Poster">
+      <svg class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+
+<button (click)="toggleCommunityList()" class="text-3xl text-indigo-800 absolute top-4 left-4 bg-white p-2 rounded-full shadow-md" aria-label="Menu">
+  <span *ngIf="communityListVisible && selectedCommunityId !== null">✕</span>
+  <span *ngIf="!communityListVisible">☰</span>
+</button>
+
+</div>

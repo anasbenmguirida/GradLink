@@ -1,0 +1,206 @@
+<div
+  class="min-h-screen bg-gray-100 flex justify-center items-center"
+  style="background-image: url('https://via.placeholder.com/800'); background-size: cover; background-position: center;"
+>
+  <div class="bg-white bg-opacity-90 p-6 rounded-xl shadow-xl w-full max-w-5xl flex flex-col md:flex-row md:space-x-6 space-y-6">
+    <div class="w-full md:w-1/2 flex flex-col justify-center items-center space-y-6">
+      <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Inscription</h2>
+
+      <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="space-y-4 w-full">
+        <div class="flex-col space-y-4" *ngIf="currentStep === 1">
+        <!-- preNom  -->
+        <div>
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            placeholder="prenom"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+          />
+          <div *ngIf="formGroup.get('firstName')?.invalid && formGroup.get('firstName')?.touched" class="text-red-500 text-sm">
+            Le prenom est requis
+          </div>
+        </div>
+        <!-- Nom  -->
+        <div>
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            placeholder="nom"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+          />
+          <div *ngIf="formGroup.get('lastName')?.invalid && formGroup.get('lastName')?.touched" class="text-red-500 text-sm">
+            Le prenom est requis
+          </div>
+        </div>
+
+        <!-- CIN -->
+        <div>
+          <input
+            id="cin"
+            type="text"
+            formControlName="cin"
+            placeholder="CIN"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+          />
+          <div *ngIf="formGroup.get('cin')?.invalid && formGroup.get('cin')?.touched" class="text-red-500 text-sm">
+            Le CIN est requis
+          </div>
+        </div>
+
+        <!-- Type de personne -->
+        <div>
+          <select
+            id="role"
+            formControlName="role"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+          >
+            <option value="" disabled selected class="placeholder-gray">Role</option>
+            <option value="etudiant">Étudiant</option>
+            <option value="laureat">Lauréat</option>
+          </select>
+        </div>
+
+        <!-- Filière -->
+        <div *ngIf="formGroup.get('role')?.value === 'etudiant'">
+          <select
+            id="filiere"
+            formControlName="filiere"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+          >
+            <option value="" disabled selected>Filière</option>
+            <option value="GINF">GINF</option>
+            <option value="GCS">GCS</option>
+            <option value="GSTR">GSTR</option>
+          </select>
+        </div>
+
+        <!-- Specialite -->
+        <div *ngIf="formGroup.get('role')?.value === 'laureat'">
+          <input
+            id="specialite"
+            type="text"
+            formControlName="specialite"
+            placeholder="Specialite"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+          />
+        </div>
+       <!-- Promotion -->
+        <div *ngIf="formGroup.get('role')?.value === 'laureat'">
+          <input
+            id="promotion"
+            type="number"
+            formControlName="promotion"
+            placeholder="Promotion"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+          />
+          <div *ngIf="formGroup.get('promotion')?.invalid && formGroup.get('promotion')?.touched" class="text-red-500 text-sm">
+            La promotion est requise
+          </div>
+        </div>
+
+
+        <!-- Email -->
+        <div>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Email"
+            class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+          />
+          <div *ngIf="formGroup.get('email')?.invalid && formGroup.get('email')?.touched" class="text-red-500 text-sm">
+            Un email valide est requis
+          </div>
+        </div>
+        <button
+          type="submit"
+          (click)="nextStep()"
+          class="w-full py-3 mt-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:from-purple-600 hover:to-pink-500 transition-all duration-300"
+        >
+          Suivant
+        </button>
+      </div>
+
+
+
+
+
+
+        <!-- Mot de passe -->
+        <div *ngIf="currentStep === 2" >
+          <div class="relative" *ngIf="currentStep === 2">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Mot de passe"
+              class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+            />
+            <button
+          type="button"
+          (click)="togglePasswordVisibility()"
+          class="absolute right-3 top-3"
+        >
+        </button>
+          </div>
+          <div *ngIf="formGroup.get('password')?.invalid && formGroup.get('password')?.touched" class="text-red-500 text-sm">
+            Le mot de passe est requis
+          </div>
+          
+        </div>
+
+        <!-- Confirmation du mot de passe -->
+        <div *ngIf="currentStep === 2">
+          <div class="relative" *ngIf="currentStep === 2">
+            <input
+              id="confirmPassword"
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              placeholder="Confirmer le mot de passe"
+              class="w-full mt-2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600"
+            />
+            <button
+          type="button"
+          (click)="togglePasswordVisibility()"
+          class="absolute right-3 top-3"
+          >
+
+          </button>
+          </div>
+          <div *ngIf="formGroup.get('confirmPassword')?.invalid && formGroup.get('confirmPassword')?.touched" class="text-red-500 text-sm">
+            La confirmation du mot de passe est requise
+          </div>
+          <div *ngIf="formGroup.hasError('mismatch') && formGroup.get('confirmPassword')?.touched" class="text-red-500 text-sm">
+            Les mots de passe ne correspondent pas.
+          </div>
+        </div>
+        <div class="flex justify-between" *ngIf="currentStep === 2">
+          <button
+            type="button"
+            (click)="prevStep()"
+            class="py-3 px-6 bg-gray-300 text-gray-700 rounded-lg shadow-md hover:bg-gray-400 transition-all duration-300"
+          >
+            Précédent
+          </button>
+          <button
+            type="submit"
+            [disabled]="formGroup.invalid"
+            class="py-3 px-6 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:from-purple-600 hover:to-pink-500 transition-all duration-300"
+          >
+            S'inscrire
+          </button>
+        </div>
+
+        
+       
+      </form>
+    </div>
+
+    <!-- Image à droite -->
+    <div class="w-full md:w-1/2 flex justify-center items-center md:bg-cover md:bg-center rounded-lg md:h-auto h-64 bg-gray-200">
+      <img src="mentor2.jpg" alt="image d'inscription" class="object-cover rounded-lg w-full h-full" />
+    </div>
+  </div>
+</div>
