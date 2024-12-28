@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class PostService {
   private apiUrl = 'http://localhost:8080/api'; // Remplacez par l'URL de votre backend
-
+  //private apiUrl = 'test.json';
   constructor(private http: HttpClient) {}
 
   // Méthode pour récupérer les données des posts
@@ -22,7 +22,20 @@ export class PostService {
   // }
   // Méthode pour soumettre un nouveau post
   createPost(postData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/create-poste`, postData);
+      const token = localStorage.getItem('authToken'); // Récupérez le token depuis le stockage local ou un autre emplacement
+  
+      console.log("Token récupéré depuis localStorage :", token);
+      
+      
+      const headers = new HttpHeaders({
+          'Authorization': `Bearer ${token}` // Ajoutez le token au format Bearer
+        });
+        console.log(postData,"hiiiiiii");
+        postData.forEach((value: any, key: any) => {
+          console.log(`Key: ${key}, Value: ${value}`);
+      });
+      console.log("headers",headers.get('Authorization'));
+    return this.http.post<any>(`${this.apiUrl}/create-poste`, postData,{headers});
   }
   
 
@@ -35,9 +48,19 @@ export class PostService {
     return this.http.delete<void>(`${this.apiUrl}/delete-poste/{id}`);
   }
 
-  toggleLike(postId: number, isLiked:boolean): Observable<any> {
-    return this.http.post(`${this.apiUrl}/like`, { postId,  isLiked });
+
+  likePost(postId: number, userId: string): Observable<any> {
+    const payload = { posteId: postId, userId: userId }; // Prépare l'objet à envoyer
+    return this.http.put('/api/like', payload, { responseType: 'text' });
   }
+  
+  
+  unlikePost(postId: number, userId: string): Observable<any> {
+    return this.http.put(`/api/unlike/${postId}`, userId, { responseType: 'text' });
+  }
+  // toggleLike(postId: number, isLiked:boolean): Observable<any> {
+  //   return this.http.post(`${this.apiUrl}/like`, { postId,  isLiked });
+  // }
 
   getAllPosts(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/postes`);

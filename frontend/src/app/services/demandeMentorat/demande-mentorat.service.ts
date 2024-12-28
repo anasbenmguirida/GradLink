@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/internal/Observable';
 export class DemandeMentoratService {
 
   
-  private apiUrl = 'test.json';  // Remplacez par l'URL de votre backend
+  private apiUrl = 'http://localhost:8080/api';  // Remplacez par l'URL de votre backend
 
   constructor(private http: HttpClient) { }
 

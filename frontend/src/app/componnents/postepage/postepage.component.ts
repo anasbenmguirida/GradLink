@@ -6,12 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { PostService } from '../../services/post/post.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 
-interface Post {
-  id: string;
-  description: string;
-  fichiers: string[]; // Tableau de chaînes (si ce sont des URL de fichiers)
-  isLiked?: boolean; // Ajout de isLiked, qui peut être géré côté frontend
-}
+
 
 @Component({
   selector: 'app-postepage',
@@ -36,13 +31,14 @@ export class PostePageComponent implements OnInit  {
   classifiedPosts: any[] = [];
   constructor(private fb: FormBuilder, private postService: PostService) {
     this.postForm = this.fb.group({
-      description: [''],
-      images: [[]],
-      files: [[]],
+     textArea: [''],
+     PosteFiles: [[]],
+      
     });
   }
   
   ngOnInit(): void {
+    console.log("Token récupéré dans /posts:", localStorage.getItem('authToken'));
 
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data;
@@ -53,13 +49,14 @@ export class PostePageComponent implements OnInit  {
     this.me = JSON.parse(localStorage.getItem('user') || '{}');
 
     console.log("hi");
+    console.log(this.me);
     this.postService.getPosts().subscribe((data) => {
       this.posts = data;
     });
   }
 
   checkLikes() {
-    this.posts.forEach((post:Post) => {
+    this.posts.forEach((post:any) => {
       this.postService.isLiked(post.id, this.me.id).subscribe((isLiked) => {
         (post as any).isLiked = isLiked; 
       });
@@ -67,7 +64,7 @@ export class PostePageComponent implements OnInit  {
   }
  
   fetchPosts(): void {
-    this.classifiedPosts = this.posts.map((post: Post) => ({
+    this.classifiedPosts = this.posts.map((post: any) => ({
       ...post,
       images: post.fichiers.filter((url: string) => this.isImage(url))  || [],
       pdfs: post.fichiers.filter((url: string) => this.isPdf(url)) || [],
@@ -91,11 +88,11 @@ export class PostePageComponent implements OnInit  {
       const formData = new FormData();
   
       // Ajoutez la description au FormData
-      formData.append('description', postData.description);
-  
+      formData.append('textArea', postData.textArea);
+      formData.append('typePoste', 'NORMAL');
       // Ajoutez les fichiers au FormData
       this.selectedFiles.forEach((file) => {
-        formData.append('files[]', file); // "files[]" correspond à l'attente du backend
+        formData.append('PosteFiles', file); // "files[]" correspond à l'attente du backend
       });
   
       // Envoi des données au backend via le service
@@ -235,37 +232,46 @@ closeGallery(): void {
 
 
 selectedImage: string | null = null;
-
+isModalOpen:boolean=false;
 openModalimage(image: string) {
   this.selectedImage = image;
+  this.isModalOpen=true;
 }
 
 closeModalimage() {
   this.selectedImage = null;
+  this.isModalOpen=false;
 }
   
 
 toggleLike(post: any): void {
-  const userId = 'myCIN'; 
+  const userId = 'myCIN'; // Identifiant de l'utilisateur
   const isLiked = !post.isLiked;
 
-    this.postService.toggleLike(post.id,  isLiked).subscribe(
-    (response) => {
-      if (response.success) {
-   
-        post.isLiked = isLiked;
-        console.log(`Action "isLiked=${isLiked}" réussie pour le post :`, post);
-      } else {
-        console.error('Erreur lors de la mise à jour du like.');
+  if (isLiked) {
+    // Utiliser le service pour "liker"
+    this.postService.likePost(post.id, this.me.id).subscribe(
+      (response) => {
+        post.isLiked = true; // Met à jour l'état local
+        console.log(`Post liké avec succès :`, post);
+      },
+      (error) => {
+        console.error('Erreur lors du like du post :', error);
       }
-    },
-    (error) => {
-      console.error('Erreur de communication avec le backend :', error);
-    }
-  );
+    );
+  } else {
+    // Utiliser le service pour "unliker"
+    this.postService.unlikePost(post.id, this.me.id).subscribe(
+      (response) => {
+        post.isLiked = false; // Met à jour l'état local
+        console.log(`Post unliké avec succès :`, post);
+      },
+      (error) => {
+        console.error('Erreur lors du unlike du post :', error);
+      }
+    );
+  }
 }
-
-
 
 
 

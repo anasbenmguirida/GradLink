@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 
@@ -9,13 +9,19 @@ export class ProfileService {
 
 
 
-  private apiUrl = 'test.json'; // Remplacez cette URL par celle de votre backend
+  private apiUrl = 'http://localhost:8080/api'; // Remplacez cette URL par celle de votre backend
 
   constructor(private http: HttpClient) { }
 
   // Méthode pour envoyer le profil et l'image au backend
   updateProfile(data: any): Observable<any> {
-    return this.http.put<any>(this.apiUrl, data);
+    const token = localStorage.getItem('authToken'); // Récupérez le token depuis le stockage local ou un autre emplacement
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}` // Ajoutez le token au format Bearer
+    });
+  
+  
+    return this.http.put<any>(`${this.apiUrl}/profile`, data,{ headers });
   }
 
 

@@ -41,9 +41,18 @@ export class MyprofileComponent implements OnInit {
   classifiedPosts: any[] = [];
 
   
-  ngOnInit(): void {
-    this.me = JSON.parse(localStorage.getItem('user') || '{}');
-    console.log("hi");
+   ngOnInit(): void {
+   this.me = JSON.parse(localStorage.getItem('user') || '{}');
+  // this.me = {
+  //   role: 'LAUREAT',
+  //   firstName: 'Charlie',
+  //   lastName: 'Brown',
+  //   specialite: 'Mathématiques',
+  //   entreprise: 'EduCenter',
+  //   promotion:"2025",
+  // };
+  
+    console.log(this.me);
     this.postService.getUserPosts(this.me.id).subscribe((data) => {
       this.posts = data;
       this.fetchPosts();
@@ -52,18 +61,18 @@ export class MyprofileComponent implements OnInit {
 
     
 
-    if (this.me.role === 'etudiant') {
+    if (this.me.role === 'ETUDIANT') {
               this.form.patchValue({
-                firstname: this.me.firstname,
-                lastname: this.me.lastname,
+                firstName: this.me.firstName,
+                lastName: this.me.lastName,
                 filiere: this.me.filiere || '', // Par défaut si non défini
               });
             }
         
-            if (this.me.role === 'laureat') {
+            if (this.me.role === 'LAUREAT') {
               this.form.patchValue({
-                firstname: this.me.firstname,
-                lastname: this.me.lastname,
+                firstName: this.me.firstName,
+                lastName: this.me.lastName,
                 specialite: this.me.specialite || '', // Par défaut si non défini
                 entreprise: this.me.entreprise || '', // Par défaut si non défini
               });
@@ -94,17 +103,17 @@ export class MyprofileComponent implements OnInit {
 
 
     this.form = this.fb.group({
-      firstname: ['', Validators.required],
-      lastname: ['', Validators.required],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
       filiere: ['', Validators.required],
-      entreprise: ['',Validators.required],
+      entreprise: [''],
       image: ['',Validators.required],
       specialite:['',Validators.required],
 
     });
 
     this.postForm = this.fb.group({
-      description: [''],
+      textArea: [''],
       fichiers: [[]],
     
     });
@@ -118,8 +127,8 @@ export class MyprofileComponent implements OnInit {
       // Créer un FormData pour envoyer les fichiers
       const formData = new FormData();
   
-      // Ajoutez la description du post (optionnel)
-      formData.append('description', postData.description || '');
+      // Ajoutez la textArea du post (optionnel)
+      formData.append('textArea', postData.textArea || '');
   
       // Ajoutez chaque fichier à l'objet FormData
       this.selectedFiles.forEach((file) => {
@@ -127,8 +136,23 @@ export class MyprofileComponent implements OnInit {
       });
   
      
-  
-      // Appeler le service pour envoyer les données
+      console.log('Contenu du FormData :');
+      formData.forEach((value, key) => {
+          console.log(`${key}: ${value}`);
+      });
+
+
+formData.forEach((value, key) => {
+  if (value instanceof File) {
+      console.log(`${key}:`);
+      console.log(`  File Name: ${value.name}`);
+      console.log(`  File Size: ${value.size} bytes`);
+      console.log(`  File Type: ${value.type}`);
+  } else {
+      console.log(`${key}: ${value}`);
+  }
+});
+
       this.postService.createPost(formData).subscribe((response) => {
         this.posts.unshift(response); 
         this.postForm.reset();
@@ -187,26 +211,31 @@ closeModalimage() {
   
 
 toggleLike(post: any): void {
-  const userId = 'myCIN'; 
   const isLiked = !post.isLiked;
 
-    this.postService.toggleLike(post.id, isLiked).subscribe(
-    (response) => {
-      if (response.success) {
-   
-        post.isLiked = isLiked;
-        console.log(`Action "isLiked=${isLiked}" réussie pour le post :`, post);
-      } else {
-        console.error('Erreur lors de la mise à jour du like.');
+  if (isLiked) {
+    // Utiliser le service pour "liker"
+    this.postService.likePost(post.id, this.me.id).subscribe(
+      (response) => {
+        post.isLiked = true; // Met à jour l'état local
+        console.log(`Post liké avec succès :`, post);
+      },
+      (error) => {
+        console.error('Erreur lors du like du post :', error);
       }
-    },
-    (error) => {
-      console.error('Erreur de communication avec le backend :', error);
-    }
-  );
-
-
-}
+    );
+  } else {
+    // Utiliser le service pour "unliker"
+    this.postService.unlikePost(post.id, this.me.id).subscribe(
+      (response) => {
+        post.isLiked = false; // Met à jour l'état local
+        console.log(`Post unliké avec succès :`, post);
+      },
+      (error) => {
+        console.error('Erreur lors du unlike du post :', error);
+      }
+    );
+  }}
   
 
 
@@ -298,7 +327,7 @@ isModalOpen = false;
   
   closeEdit(): void {
     this.isEditing = false;
-    this.editingPost = { description: '', fichiers: [], id: null }; // ou undefined si vous préférez
+    this.editingPost = { textArea: '', fichiers: [], id: null }; // ou undefined si vous préférez
   }
 
   updatePost() {
@@ -361,7 +390,7 @@ closeImage() {
 //       username: 'Mouad Ajmani',
 //       role: '1337 student',
 //       daysAgo: 4,
-//       description: "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
+//       textArea: "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
 //       images: ['windows-design.jpg'], // Tableau contenant les chemins des images
 //       pdfs: [], // Tableau vide si aucun PDF n'est attaché
 //       likes: 891,
@@ -373,7 +402,7 @@ closeImage() {
 //       username: 'Mouad Ajmani',
 //       role: '1337 student',
 //       daysAgo: 4,
-//       description: "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
+//       textArea: "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
 //       images: ['laravel.png','profile.png'], // Tableau contenant les chemins des images
 //       pdfs: ['projet_use_case.pdf'], // Tableau contenant les chemins des fichiers PDF
 //       likes: 891,
@@ -385,7 +414,7 @@ closeImage() {
 //       username: 'Mouad Ajmani',
 //       role: '1337 student',
 //       daysAgo: 4,
-//       description: "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
+//       textArea: "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
 //       images: ['laravel.png','profile.png','profile.png'], // Tableau contenant les chemins des images
 //       pdfs: ['projet_use_case.pdf'], // Tableau contenant les chemins des fichiers PDF
 //       likes: 891,
@@ -397,7 +426,7 @@ closeImage() {
 //       username: 'Mouad Ajmani',
 //       role: '1337 student',
 //       daysAgo: 4,
-//       description: "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
+//       textArea: "🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉",
 //       images: ['laravel.png','profile.png','profile.png','profile.png','profile.png'], // Tableau contenant les chemins des images
 //       pdfs: ['projet_use_case.pdf'], // Tableau contenant les chemins des fichiers PDF
 //       likes: 891,
@@ -421,15 +450,15 @@ closeImage() {
 //   //constructor(private fb: FormBuilder) {
 //     constructor(private fb: FormBuilder) {
 //     this.postForm = this.fb.group({
-//       description: [''], 
+//       textArea: [''], 
 //       images: [null],  
 //       files: [null]   
 //     });
 
 
 //     this.form = this.fb.group({
-//       firstname: ['', Validators.required],
-//       lastname: ['', Validators.required],
+//       firstName: ['', Validators.required],
+//       lastName: ['', Validators.required],
 //       filiere: ['', Validators.required],
 //       entreprise: [''],
 //       image: [''],
@@ -446,35 +475,35 @@ closeImage() {
 //    me:any;
 
 
-//   //me={id:'1',firstname:'soumaia',lastname:'kerouan',filiere:"ginf",role:"etudiant"}
-//     //me={id:'1',firstname:'Soumaia',lastname:'Kerouan Salah',promotion:"2025",specialite:'developpeur full stack' , entreprise:'KINOV',role:'laureat'}
+//   //me={id:'1',firstName:'soumaia',lastName:'kerouan',filiere:"ginf",role:"ETUDIANT"}
+//     //me={id:'1',firstName:'Soumaia',lastName:'Kerouan Salah',promotion:"2025",specialite:'developpeur full stack' , entreprise:'KINOV',role:'LAUREAT'}
 //     ngOnInit(): void {
 //      console.log("hi")
 //       this.me = {
 //         id: '1',
-//         firstname: 'Soumaia',
-//         lastname: 'Kerouan Salah',
+//         firstName: 'Soumaia',
+//         lastName: 'Kerouan Salah',
 //         promotion: '2025',
 //         specialite: 'developpeur full stack',
 //         entreprise: 'KINOV',
-//         role: 'laureat',
+//         role: 'LAUREAT',
 //       };
   
-//         //this.me={id:'1',firstname:'soumaia',lastname:'kerouan',filiere:"ginf",role:"etudiant"};
+//         //this.me={id:'1',firstName:'soumaia',lastName:'kerouan',filiere:"ginf",role:"ETUDIANT"};
 
      
-//       if (this.me.role === 'etudiant') {
+//       if (this.me.role === 'ETUDIANT') {
 //         this.form.patchValue({
-//           firstname: this.me.firstname,
-//           lastname: this.me.lastname,
+//           firstName: this.me.firstName,
+//           lastName: this.me.lastName,
 //           filiere: this.me.filiere || '', // Par défaut si non défini
 //         });
 //       }
   
-//       if (this.me.role === 'laureat') {
+//       if (this.me.role === 'LAUREAT') {
 //         this.form.patchValue({
-//           firstname: this.me.firstname,
-//           lastname: this.me.lastname,
+//           firstName: this.me.firstName,
+//           lastName: this.me.lastName,
 //           specialite: this.me.specialite || '', // Par défaut si non défini
 //           entreprise: this.me.entreprise || '', // Par défaut si non défini
 //         });
@@ -558,7 +587,7 @@ closeImage() {
 //         username: 'Soumaia Kerouan', // Remplace par le nom de l'utilisateur connecté
 //         role: 'User', // Ajout de la propriété 'role'
 //         daysAgo: 0, // Nouveau post, donc publié aujourd'hui
-//         description: postData.description || '', // Description vide par défaut si non renseignée
+//         textArea: postData.textArea || '', // textArea vide par défaut si non renseignée
 //         images, // Liste des URL temporaires pour les images
 //         pdfs,   // Liste des URL temporaires pour les fichiers PDF
 //         likes: 0, // Initialisation des likes à 0
@@ -680,13 +709,13 @@ closeImage() {
 
 
 //   isEditing: boolean = false; 
-//   editingPost: { description: string; images: string[]; pdfs: string[] } = {
-//     description: '',
+//   editingPost: { textArea: string; images: string[]; pdfs: string[] } = {
+//     textArea: '',
 //     images: [],
 //     pdfs: []
 //   }; 
   
-//   editPost(post: { description: string; images: string[]; pdfs: string[] }): void {
+//   editPost(post: { textArea: string; images: string[]; pdfs: string[] }): void {
 //     this.isEditing = true;
 //     this.editingPost = { ...post }; // Crée une copie du post pour modification
 //   }
@@ -694,7 +723,7 @@ closeImage() {
 //   closeEdit(): void {
 //     this.isEditing = false;
 //     this.editingPost = {
-//       description: '', // Texte vide par défaut
+//       textArea: '', // Texte vide par défaut
 //       images: [], // Liste d'images vide
 //       pdfs: [] // Liste de PDF vide
 //     };
@@ -710,7 +739,7 @@ closeImage() {
   
 //   updatePost(): void {
 //     const updatedPost = {
-//       description: this.editingPost.description,
+//       textArea: this.editingPost.textArea,
 //       images: this.editingPost.images.length ? this.editingPost.images : null, // Vérifie si des images restent
 //       pdfs: this.editingPost.pdfs.length ? this.editingPost.pdfs : null // Vérifie si des PDF restent
 //     };

@@ -28,18 +28,7 @@ export class LoginComponent implements OnInit{
   email: string = '';
   password: string = '';
   errorMessage: string = '';
-  onLogin(): void {
-    this.userService.login(this.email, this.password).subscribe(
-      (response: any) => {
-        localStorage.setItem('token', response.token);
-        this.router.navigate(['/dashboard']); // Redirige vers le dashboard après la connexion
-      },
-      (error: any) => {
-        this.errorMessage = 'Identifiants invalides';
-        console.log(error);
-      }
-    );
-  }
+ 
 
   onSubmit(): void {
     if (this.loginForm.valid) {
@@ -49,11 +38,13 @@ export class LoginComponent implements OnInit{
         (response: any) => {
           console.log('Connexion réussie', response);
   
-          const token = response.access; // Supposons que le backend retourne un token
+          const token = response.accessToken; // Supposons que le backend retourne un token
           const user = response.user; // Supposons que l'API renvoie aussi un objet 'user'
 
             localStorage.setItem('authToken', token); // Stockage persistant
             localStorage.setItem('user', JSON.stringify(user));  // Stockage de l'objet utilisateur
+            this.router.navigate(['/posts']);
+
         },
         (error: any) => {
           console.error('Erreur de connexion', error);
@@ -70,4 +61,3 @@ export class LoginComponent implements OnInit{
 
 
   }
-
