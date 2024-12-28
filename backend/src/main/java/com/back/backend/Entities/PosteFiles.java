@@ -16,6 +16,7 @@ import lombok.Data;
 
 @Entity
 @Data
+
 public class PosteFiles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
