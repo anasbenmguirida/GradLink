@@ -1,21 +1,20 @@
 package com.back.backend.repositories;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import com.back.backend.Entities.Message;
-import com.back.backend.Entities.User;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
-
-@Repository
 public interface MessageRepository extends JpaRepository<Message, Integer> {
-        @Query("SELECT DISTINCT m.recipient FROM Message m WHERE m.sender.id = :userId " +
-           "UNION SELECT DISTINCT m.sender FROM Message m WHERE m.recipient.id = :userId")
-    List<User> findAllContactsByUserId(int userId);
 
-    List<Message> findBySenderIdAndRecipientId(int senderId, int recipientId);
+    // Get messages exchanged between a sender and recipient
+    @Query("SELECT m FROM Message m WHERE (m.sender.id = :senderId AND m.recipient.id = :recipientId) OR (m.sender.id = :recipientId AND m.recipient.id = :senderId)")
+    List<Message> findBySenderIdAndRecipientId(@Param("senderId") int senderId, @Param("recipientId") int recipientId);
 
-    List<Message> findByRecipientIdAndSenderId(int recipientId, int senderId);
+    // Get all contact IDs (either sender or recipient) for a given user
+    @Query("SELECT DISTINCT CASE WHEN m.sender.id = :userId THEN m.recipient.id ELSE m.sender.id END FROM Message m WHERE m.sender.id = :userId OR m.recipient.id = :userId")
+    List<Integer> findContactIdsByUserId(@Param("userId") int userId);
 }
