@@ -59,5 +59,15 @@ public class CaummunauteService {
         caummunauteRepository.delete(existingCaummunaute);
     }
 
+    // Retrieve all communities
+    public List<Caummunaute> getAllCommunities() {
+        return caummunauteRepository.findAll();
+    }
+    
+     // Retrieve a specific community by ID
+    public Caummunaute getCommunityById(int id) {
+            return caummunauteRepository.findById(id).orElse(null);
+    }
+
   
 }
