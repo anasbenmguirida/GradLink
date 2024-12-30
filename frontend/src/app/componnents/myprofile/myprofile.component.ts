@@ -1,6 +1,6 @@
 import { ProfileService } from './../../services/profile/profile.service';
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -42,7 +42,15 @@ export class MyprofileComponent implements OnInit {
 
   
    ngOnInit(): void {
-   this.me = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (isPlatformBrowser(this.platformId)) {
+          console.log('hiiiiii123')
+
+          this.me = JSON.parse(localStorage.getItem('user') || '{}');
+  } else {
+          console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+        }
+ 
   // this.me = {
   //   role: 'LAUREAT',
   //   firstName: 'Charlie',
@@ -52,7 +60,7 @@ export class MyprofileComponent implements OnInit {
   //   promotion:"2025",
   // };
   
-    console.log(this.me);
+    console.log("photo",this.me.photoProfile);
     this.postService.getUserPosts(this.me.id).subscribe((data) => {
       this.posts = data;
       this.fetchPosts();
@@ -99,7 +107,7 @@ export class MyprofileComponent implements OnInit {
     return /\.pdf$/i.test(url);
   }
 
-  constructor(private fb: FormBuilder,private postService: PostService, private ProfileService: ProfileService) {
+  constructor(private fb: FormBuilder,private postService: PostService, private ProfileService: ProfileService,@Inject(PLATFORM_ID) private platformId: Object) {
 
 
     this.form = this.fb.group({
@@ -119,52 +127,50 @@ export class MyprofileComponent implements OnInit {
     });
   }
 
- 
+  selectedFiles: File[] = [];
+  selectedFileNames: string[] = [];
   submitPost(): void {
     if (this.postForm.valid) {
       const postData = this.postForm.value;
   
-      // Créer un FormData pour envoyer les fichiers
+      // Créez un objet FormData pour la requête multipart/form-data
       const formData = new FormData();
   
-      // Ajoutez la textArea du post (optionnel)
-      formData.append('textArea', postData.textArea || '');
-  
-      // Ajoutez chaque fichier à l'objet FormData
+      // Ajoutez la description au FormData
+      formData.append('textArea', postData.textArea);
+      formData.append('typePost', 'NORMAL');
+      formData.append('userId', this.me.id);
       this.selectedFiles.forEach((file) => {
-        formData.append('files', file, file.name); // 'files' est le champ attendu par le backend
-      });
-  
-     
-      console.log('Contenu du FormData :');
-      formData.forEach((value, key) => {
-          console.log(`${key}: ${value}`);
+        formData.append('files[]', file); // "files[]" correspond à l'attente du backend
       });
 
-
-formData.forEach((value, key) => {
-  if (value instanceof File) {
-      console.log(`${key}:`);
-      console.log(`  File Name: ${value.name}`);
-      console.log(`  File Size: ${value.size} bytes`);
-      console.log(`  File Type: ${value.type}`);
-  } else {
-      console.log(`${key}: ${value}`);
-  }
+      
+this.selectedFiles.forEach((file, index) => {
+  console.log(`soumaia File ${index}:`, file);
 });
-
-      this.postService.createPost(formData).subscribe((response) => {
-        this.posts.unshift(response); 
-        this.postForm.reset();
-        this.selectedFiles = [];
-        this.selectedFileNames = [];
-      });
+  
+      // Envoi des données au backend via le service
+      this.postService.createPost(formData).subscribe(
+        (response) => {
+          // Ajoutez le nouveau post localement (par exemple, dans une liste)
+          this.posts.unshift(response);
+          
+          // Réinitialisez le formulaire et les fichiers sélectionnés
+          this.postForm.reset();
+          this.selectedFiles = [];
+          this.selectedFileNames = [];
+        },
+        (error) => {
+          console.error('Erreur lors de l\'envoi du post :', error);
+        }
+      );
     }
   }
+
+
   
 
-  selectedFiles: File[] = [];
-    selectedFileNames: string[] = [];
+  
     
     onFileChange(event: Event): void {
       const input = event.target as HTMLInputElement;

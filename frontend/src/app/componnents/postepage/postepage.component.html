@@ -12,7 +12,7 @@
     <div class="post-header">
       <img 
         class="profile-image w-12 h-12 rounded-full object-cover" 
-        src="profile.png" 
+        [src]="me.photoProfile" 
         alt="Profile Image" 
       />
       <div class="user-info">
@@ -38,17 +38,22 @@
         type="file"
         accept="image/*,application/pdf"
         (change)="onFileChange($event)"
+        multiple
         style="display: none;"
         id="fileInput"
-        multiple
+       
       />
-      <label for="fileInput" class="flex items-center text-gray-500 hover:text-blue-500 cursor-pointer">
-        ➕
+
+    <label for="fileInput" class="flex items-center text-gray-500 hover:text-blue-500 cursor-pointer">
+        ➕ 
       </label>
 
      
-      <div *ngIf="selectedFileNames.length > 0" class="ml-2">
-        <span *ngFor="let fileName of selectedFileNames" class="block text-gray-700">{{ fileName }}</span>
+      <div *ngIf="selectedFileNames && selectedFileNames.length > 0" class="ml-2">
+        <p class="text-gray-700">Fichiers sélectionnés :</p>
+        <ul>
+          <li *ngFor="let fileName of selectedFileNames">{{ fileName }}</li>
+        </ul>
       </div>
     </div>
 
@@ -72,7 +77,7 @@
 
 
 
-  <div *ngFor="let post of posts" class="post-container bg-white p-6 rounded-lg shadow-md mb-6">
+  <div *ngFor="let post of classifiedPosts" class="post-container bg-white p-6 rounded-lg shadow-md mb-6">
     <div class="post-header flex items-center mb-4 space-x-3">
       <img class="profile-image w-12 h-12 rounded-full object-cover" [src]="post.profileImage" alt="Profile Image" />
       <div class="user-info">
@@ -83,17 +88,18 @@
 
     <div class="post-content">
       <p>{{ post.textArea }}</p>
-  
+      <p>lenghtttt{{post.images.length}}</p>
       <div *ngIf="post.images && post.images.length > 0" class="image-gallery grid gap-2">
         <ng-container [ngSwitch]="post.images.length">
-         
+      
           <div *ngSwitchCase="1">
             <img 
               class="post-image cursor-pointer" 
-              [src]="post.images[0]" 
+              [src]="getFileUrl(post.images[0])"  
               alt="Post Image" 
               (click)="openModalimage(post.images[0])"
             />
+           
           </div>
       
         
@@ -101,23 +107,25 @@
             <img 
               *ngFor="let image of post.images" 
               class="post-image cursor-pointer" 
-              [src]="image" 
+              [src]="getFileUrl(image)"  
               alt="Post Image" 
-              (click)="openModalimage(image)"
+              (click)="openModalimage(getFileUrl(image))"
             />
+            <p>halaaaaaaaaaaaa</p>
+
           </div>
       
           <div *ngSwitchCase="3" class="grid grid-cols-2 gap-2">
             <img 
               class="post-image cursor-pointer col-span-2" 
-              [src]="post.images[0]" 
+              [src]="getFileUrl(post.images[0])" 
               alt="Post Image" 
-              (click)="openModalimage(post.images[0])"
+              (click)="openModalimage(getFileUrl(post.images[0]))"
             />
             <img   
               *ngFor="let image of post.images.slice(1, 3)" 
               class="post-image cursor-pointer" 
-              [src]="image" 
+              [src]="getFileUrl(image)" 
               alt="Post Image" 
               (click)="openModalimage(image)"
             />
@@ -128,7 +136,7 @@
             <img 
               *ngFor="let image of post.images; let i = index" 
               class="post-image cursor-pointer"
-              [src]="image" 
+              [src]="getFileUrl(image)" 
               alt="Post Image" 
               [class.hidden]="i >= 4"
               (click)="openModalimage(image)"
@@ -183,7 +191,7 @@
   
   
      
-      <div *ngIf="post.pdfs.length > 0" class="pdf-links mt-4">
+      <div *ngIf="post.pdfs && post.pdfs.length > 0" class="pdf-links mt-4">
         <div *ngFor="let pdf of post.pdfs" class="pdf-link">
           📄 <a [href]="pdf" target="_blank" class="text-blue-600 underline">Voir le fichier PDF</a>
         </div>

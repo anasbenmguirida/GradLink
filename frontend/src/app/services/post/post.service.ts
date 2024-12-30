@@ -13,7 +13,7 @@ export class PostService {
 
   // Méthode pour récupérer les données des posts
   getPosts(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<any[]>(`${this.apiUrl}/postes`);
   }
   
 
@@ -22,20 +22,25 @@ export class PostService {
   // }
   // Méthode pour soumettre un nouveau post
   createPost(postData: any): Observable<any> {
-      const token = localStorage.getItem('authToken'); // Récupérez le token depuis le stockage local ou un autre emplacement
-  
-      console.log("Token récupéré depuis localStorage :", token);
-      
-      
-      const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}` // Ajoutez le token au format Bearer
-        });
-        console.log(postData,"hiiiiiii");
+    const token = localStorage.getItem('authToken');
+    console.log("Token récupéré depuis localStorage :", token);
+
+    // Si le token est null, vérifiez s'il est bien stocké
+    if (!token) {
+        console.error('Token manquant !');
+    }
+
+    const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+    });
+
+    console.log("Headers envoyés : ", headers);
+        console.log(postData,"WSAL n service ");
         postData.forEach((value: any, key: any) => {
           console.log(`Key: ${key}, Value: ${value}`);
       });
-      console.log("headers",headers.get('Authorization'));
-    return this.http.post<any>(`${this.apiUrl}/create-poste`, postData,{headers});
+     
+    return this.http.post<any>(`${this.apiUrl}/create-poste`, postData);
   }
   
 

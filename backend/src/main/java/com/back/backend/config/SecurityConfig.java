@@ -29,20 +29,18 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .csrf(csrf -> csrf
-                                                .disable())
-                                .authorizeRequests(requests -> requests
-                                .requestMatchers("/" , "/api/register" , "/api/login")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
-                                .sessionManagement(session -> session
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                .authenticationProvider(authenticationProvider)
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+                    .csrf(csrf -> csrf.disable())
+                    .authorizeRequests(requests -> requests
+                        .anyRequest().permitAll()  // Permet l'accès à toutes les routes sans authentification
+                    )
+                    .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Pas de gestion de session
+                    .authenticationProvider(authenticationProvider)  // Votre fournisseur d'authentification
+                    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);  // Filtre d'authentification JWT
+            
                 return http.build();
-        }
+            }
+            
         @Bean
         public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
         SimpleAuthorityMapper authorityMapper = new SimpleAuthorityMapper();

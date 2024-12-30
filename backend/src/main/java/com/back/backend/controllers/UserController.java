@@ -1,6 +1,8 @@
 package com.back.backend.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
+import com.back.backend.enums.TypePoste;
 import com.back.backend.services.PosteService;
 import com.back.backend.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,14 +37,36 @@ import lombok.AllArgsConstructor;
 public class UserController {
 private final UserService userService;
 private final PosteService posteService;
+@CrossOrigin(origins = "http://localhost:4200") 
 
+  
+@PostMapping("/api/create-poste")
 
-    @PostMapping("/api/create-poste")
-    public ResponseEntity<String> createposte(@RequestParam("poste") String posteJson
-                                ,@RequestPart(value = "file" , required = false) MultipartFile file) throws JsonMappingException, JsonProcessingException {
-        this.userService.createPoste(posteJson , file);
-        return ResponseEntity.ok("post saved ");
+public ResponseEntity<Map<String, String>> createPoste(
+        @RequestParam("textArea") String textArea,
+        @RequestParam("typePost") TypePoste typePost,
+        @RequestParam("userId") int userId,
+        @RequestPart(value = "files", required = false) MultipartFile[] files) {
+
+    try {
+        // Appel au service pour créer le poste
+        userService.createPoste(textArea, typePost, files, userId);
+
+        // Construire une réponse JSON de succès
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Poste ajouté avec succès");
+        return ResponseEntity.ok(response);
+
+    } catch (RuntimeException e) {
+        // Construire une réponse JSON en cas d'erreur
+        Map<String, String> response = new HashMap<>();
+        response.put("error", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+}
+
+
+    
     // postes can be deleted by bith admins or laureat 
     @DeleteMapping("/api/delete-poste/{id}")
     public ResponseEntity<String> deletePoste(@PathVariable int id){

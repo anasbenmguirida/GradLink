@@ -11,7 +11,7 @@
     <div class="user px-4 -mt-20 z-10">
     
       <div class="profile w-40 h-40">
-        <img [src]="me.image" (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
+        <img [src]="me.me.photoProfile" (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
       </div>
 
       <div
@@ -30,7 +30,7 @@
       <h2 class="text-xl font-bold mb-4">Photo de profil</h2>
       <div class="flex flex-col items-center">
         <img
-        [src]="me.image"
+        [src]="me.photoProfile"
           alt="Photo de profil"
           class="w-50 h-50 rounded-full mb-4"
         />
@@ -207,7 +207,7 @@
       <div class="post-header">
         <img 
           class="profile-image w-12 h-12 rounded-full object-cover" 
-         [src]="me.image"
+         [src]="me.photoProfile"
 
           alt="Profile Image" 
         />
@@ -231,21 +231,28 @@
       <div class="flex items-center space-x-4">
     
         <input
-          type="file"
-          accept="image/*,application/pdf"
-          (change)="onFileChange($event)"
-          style="display: none;"
-          id="fileInput"
-          multiple
-        />
-        <label for="fileInput" class="flex items-center text-gray-500 hover:text-blue-500 cursor-pointer">
-          ➕
-        </label>
-  
+        type="file"
+        accept="image/*,application/pdf"
+        (change)="onFileChange($event)"
+        multiple
+        style="display: none;"
+        id="fileInput"
        
-        <div *ngIf="selectedFileNames.length > 0" class="ml-2">
-          <span *ngFor="let fileName of selectedFileNames" class="block text-gray-700">{{ fileName }}</span>
+      />
+
+      
+      <label for="fileInput" class="flex items-center text-gray-500 hover:text-blue-500 cursor-pointer">
+        ➕ 
+      </label>
+  
+        <div *ngIf="selectedFileNames && selectedFileNames.length > 0" class="ml-2">
+          <p class="text-gray-700">Fichiers sélectionnés :</p>
+          <ul>
+            <li *ngFor="let fileName of selectedFileNames">{{ fileName }}</li>
+          </ul>
         </div>
+    
+       
       </div>
   
 
