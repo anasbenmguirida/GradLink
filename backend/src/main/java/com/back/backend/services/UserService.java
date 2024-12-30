@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.back.backend.Entities.Poste;
@@ -84,7 +86,7 @@ private final UserRepository userRepository;
                                     .userId(idUser)
                                     .build() ;  
             this.posteLikesRepository.save(newPosteLikes) ; 
-            return ResponseEntity.ok("Poste liké avec succes");
+           return ResponseEntity.ok("Poste liké avec succes");
             }
             return ResponseEntity.badRequest().body("Poste non trouvé et le poste est deja like par cet utilisateur");
     }
@@ -117,13 +119,13 @@ private final UserRepository userRepository;
         return ResponseEntity.ok("Image de profil sauvegardée avec succes");
     }
     // retrieving the profile picture of a user
-    public String getProfilePicture(int idUser){
-        User user = this.userRepository.findById(idUser).orElse(null);
-        if(user != null){
-            return Base64.getEncoder().encodeToString(user.getPhotoProfile());
-        }
-        return "something went wrong";
-
+   
+    public ResponseEntity<byte[]> getProfileImage(int id) {
+        byte[] image = this.userRepository.getImageById(id);
+       return ResponseEntity.ok()
+            .contentType(MediaType.IMAGE_PNG) // Adjust this depending on your image type
+            .body(image);
+   
     }
 
 

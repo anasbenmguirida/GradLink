@@ -20,5 +20,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.role = :role")
     List<User> findAllByRole(@Param("role") Role role);
 
+    @Query(value = "SELECT photo_profile FROM users WHERE id = :id"  , nativeQuery = true)
+    byte[] getImageById(int id);
 
 }

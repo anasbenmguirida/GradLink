@@ -37,7 +37,7 @@ import lombok.AllArgsConstructor;
 public class UserController {
 private final UserService userService;
 private final PosteService posteService;
-@CrossOrigin(origins = "http://localhost:4200") 
+
 
   
 @PostMapping("/api/create-poste")
@@ -81,9 +81,9 @@ public ResponseEntity<Map<String, String>> createPoste(
     public List<Poste> getPoste(@PathVariable int id){
         return this.posteService.findPostesByUserId(id) ; 
     }
-    @PutMapping("/api/unlike/{posteId}") // id dial le poste
-    public ResponseEntity<String> unlikePoste(@PathVariable int posteId , @RequestBody int userId){
-        return this.userService.unlikePoste(posteId , userId);
+    @PutMapping("/api/unlike") // id dial le poste
+    public ResponseEntity<String> unlikePoste(@RequestBody PosteLikes posteLikes){
+        return this.userService.unlikePoste(posteLikes.getPosteId() , posteLikes.getUserId());
     }
     @PutMapping("/api/save-picture")
     public ResponseEntity<String> savePicture(@RequestParam("id") int id , @RequestParam("file") MultipartFile file){
@@ -91,8 +91,8 @@ public ResponseEntity<Map<String, String>> createPoste(
     }
 
     @GetMapping("/api/profile-picture/{id}")
-    public String getProfilePicture(@PathVariable int id){
-        return this.userService.getProfilePicture(id);
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable int id){
+        return this.userService.getProfileImage(id);
     } 
 
 
