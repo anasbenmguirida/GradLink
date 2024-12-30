@@ -154,7 +154,7 @@ this.selectedFiles.forEach((file, index) => {
           this.postForm.reset();
           this.selectedFiles = [];
           this.selectedFileNames = [];
-          this.router.navigate(['/postes']);
+          this.router.navigate(['/posts']);
         },
         (error) => {
           console.error('Erreur lors de l\'envoi du post :', error);
@@ -264,8 +264,11 @@ getMimeType(fileName: string): string {
     if (input.files && input.files.length > 0) {
         Array.from(input.files).forEach((file) => {
           const mimeType = file.type;
-    
-          if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
+            const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+          if (mimeType.startsWith('image/') || mimeType === 'application/pdf'
+        ||  mimeType.startsWith('application') && validExtensions.includes(fileExtension || '')) {
             this.selectedFiles.push(file);  // Ajoute le fichier valide à la liste
             this.selectedFileNames.push(file.name); // Stocke le nom du fichier
           } else {
@@ -280,25 +283,7 @@ getMimeType(fileName: string): string {
     }
     
     
-    
-    // onFileChange(event: Event): void {
-    //   const input = event.target as HTMLInputElement;
-    //   if (input.files && input.files.length > 0) {
-    //     // Ne réinitialisez pas les tableaux, mais ajoutez les nouveaux fichiers sélectionnés
-    //     Array.from(input.files).forEach((file) => {
-    //       const mimeType = file.type;
-    
-    //       if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
-    //         this.selectedFiles.push(file);  // Ajoute les fichiers valides à la liste
-    //         this.selectedFileNames.push(file.name); // Ajoute le nom du fichier
-    //       } else {
-    //         console.error('Type de fichier non pris en charge :', file.name);
-    //       }
-    //     });
-    
-    //     console.log('Fichiers sélectionnés :', this.selectedFiles);
-    //   }
-    // }
+
   
   selectedImages: string[] = []; // Images sélectionnées pour la galerie
 isGalleryOpen: boolean = false; // Initialement fermé
