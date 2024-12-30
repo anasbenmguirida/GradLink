@@ -13,6 +13,7 @@ import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteFiles;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
+import com.back.backend.enums.TypePoste;
 import com.back.backend.repositories.PosteFilesRepository;
 import com.back.backend.repositories.PosteLikesRepository;
 import com.back.backend.repositories.PosteRepository;
@@ -35,25 +36,37 @@ private final UserRepository userRepository;
 
 
  // creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
-    public ResponseEntity<String> createPoste(String posteJson, MultipartFile file) throws JsonMappingException, JsonProcessingException {
-    Poste poste = new ObjectMapper().readValue(posteJson, Poste.class);
-    poste.setDatePoste(LocalDateTime.now());
-    poste.setNbrLikes(0);
-    this.posteRepository.save(poste);
+ public void createPoste(String textArea, TypePoste typePost, MultipartFile[] files, int userId) {
+    try {
+        // Créer un nouvel objet Poste
+        Poste poste = new Poste();
+        poste.setTextArea(textArea);
+        poste.setTypePoste(typePost);
+        poste.setDatePoste(LocalDateTime.now());
+        poste.setNbrLikes(0);
+        poste.setUserId(userId);
 
-    if (!file.isEmpty()) {
-        try {
-            PosteFiles posteFiles = new PosteFiles();
-            posteFiles.setFileName(file.getOriginalFilename());
-            posteFiles.setFileType(file.getContentType());
-            posteFiles.setData(file.getBytes());
-            posteFiles.setPoste(poste);
-            this.posteFilesRepository.save(posteFiles);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed");
+        // Sauvegarder le poste dans la base de données
+        posteRepository.save(poste);
+
+        // Gestion des fichiers (si présents)
+        if (files != null && files.length > 0) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    PosteFiles posteFiles = new PosteFiles();
+                    posteFiles.setFileName(file.getOriginalFilename());
+                    posteFiles.setFileType(file.getContentType());
+                    posteFiles.setData(file.getBytes());
+                    posteFiles.setPoste(poste); // Associer le fichier au poste
+                    posteFilesRepository.save(posteFiles);
+                }
+            }
         }
+    } catch (IOException e) {
+        throw new RuntimeException("Erreur lors du traitement des fichiers : " + e.getMessage());
+    } catch (Exception e) {
+        throw new RuntimeException("Erreur lors de la création du poste : " + e.getMessage());
     }
-    return ResponseEntity.ok("Poste ajouté avec succes");
 }
 
 
@@ -114,13 +127,6 @@ private final UserRepository userRepository;
     }
 
 
-
-
-
-
-
-    
-
     public ResponseEntity<String> deleteUser(int id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
@@ -145,5 +151,3 @@ private final UserRepository userRepository;
         return ResponseEntity.ok(existingUser);
     }
 }
-
-

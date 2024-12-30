@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, delay, Observable, of, throwError } from 'rxjs';
 
 @Injectable({
@@ -28,22 +28,25 @@ export class EventService {
   //   });
   // }
   //  // Méthode pour obtenir l'état de la réservation d'un événement
+
   addEvent(eventData: any, adminId: number): Observable<any> {
-    
-    const url = `${this.baseUrl}/admin/evenement/${adminId}`;
-
-    return this.http.post(url, eventData)
-}
+    const params = new HttpParams().set('adminId', adminId.toString()); // Ajout du paramètre adminId
   
-  private baseUrl = 'http://localhost:8080/api';
+    const url = `${this.apiUrl}/admin/evenement`; // URL sans adminId
+  
+    return this.http.post(url, eventData, { params });
+  }
+  
+  
+  private baseUrl = 'http://localhost:8080/api/events';
 
-  private apiUrl = 'jsonTest/events.json';
+  private apiUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {}
 
   // Fonction pour récupérer les événements
   getEvents(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+    return this.http.get<any>(`${this.baseUrl}`);
   }
 
 

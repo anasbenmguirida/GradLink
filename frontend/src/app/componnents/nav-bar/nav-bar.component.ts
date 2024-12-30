@@ -6,13 +6,7 @@ import { DemandeMentoratService } from '../../services/demandeMentorat/demande-m
 import { MessagerieService } from '../../services/messagerie/messagerie.service';
 
 
-export interface Message {
-  id: number; // ID du message
-  content: string; // Contenu du message
-  senderId: number; // ID de l'expéditeur
-  receiverId: number; // ID du destinataire
-  timestamp?: string; // Facultatif : Horodatage du message
-}
+
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -142,7 +136,7 @@ if (isPlatformBrowser(this.platformId)) {
     this.isMessagerie=false;
     this.selectedUser = user;
     this.messagerieService.getMessagesByUser(this.me.id,user.id).subscribe(
-      (messages: Message[]) => {
+      (messages: any[]) => {
         this.selectedMessages = messages;
         console.log('Messages récupérés:', messages);
       },

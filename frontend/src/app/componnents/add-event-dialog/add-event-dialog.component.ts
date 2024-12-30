@@ -60,6 +60,7 @@ console.log(this.userId)
       // Envoyer les données au backend avec le paramètre adminId
       this.eventService.addEvent(eventData,this.userId).subscribe(
         (response: any) => {
+          console.log(response)
           this.onSave.emit(response); // Émettre l'événement de sauvegarde
           this.closeDialog(); // Fermer le dialogue
           alert('Événement créé avec succès!');
@@ -68,11 +69,11 @@ console.log(this.userId)
           console.error('Erreur lors de la création de l\'événement:', error);
           alert('Une erreur est survenue. Veuillez réessayer.');
         }
+        
       );
     } else {
       // Marquer tous les champs comme touchés pour afficher les erreurs
       this.eventForm.markAllAsTouched();
     }
   }
-  
 }

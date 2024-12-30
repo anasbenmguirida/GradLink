@@ -11,7 +11,7 @@
     <div class="user px-4 -mt-20 z-10">
     
       <div class="profile w-40 h-40">
-        <img src="profile.png" (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
+        <img [src]="me.me.photoProfile" (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
       </div>
 
       <div
@@ -30,7 +30,7 @@
       <h2 class="text-xl font-bold mb-4">Photo de profil</h2>
       <div class="flex flex-col items-center">
         <img
-          src="profile.png"
+        [src]="me.photoProfile"
           alt="Photo de profil"
           class="w-50 h-50 rounded-full mb-4"
         />
@@ -68,21 +68,27 @@
       <div class="mt-4 flex justify-between items-center">
     
         <div>
-          <h1 class="text-lg font-semibold">{{me.firstname}} {{me.lastname}}</h1>
-          <h4
+          <h1 class="text-lg font-semibold">{{me.firstName}} {{me.lastName}}</h1>
+          <h4  *ngIf="me.role==='LAUREAT'"
+            class="text-sm font-normal"
           >
           {{me.specialite}}
           </h4>
           <h4
-            *ngIf="me.role==='laureat'"
-            class="text-sm font-normal"
-          >
-            entreprise : {{me.entreprise}}
-          </h4>
-          <h4 *ngIf="me.role==='laureat'" class="text-sm font-normal">
-            Promotion {{me.promotion}}
-          </h4>
-          <h4 *ngIf="me.role==='etudiant'" class="text-sm font-normal">
+          *ngIf="me.role === 'LAUREAT' && me.entreprise"
+          class="text-sm font-normal"
+        >
+          Entreprise : {{ me.entreprise }}
+        </h4>
+        
+        <h4
+          *ngIf="me.role === 'LAUREAT' && me.promotion"
+          class="text-sm font-normal"
+        >
+          Promotion : {{ me.promotion }}
+        </h4>
+        
+          <h4 *ngIf="me.role==='ETUDIANT'" class="text-sm font-normal">
             Filiere: {{me.filiere}}
           </h4>
         </div>
@@ -108,36 +114,36 @@
      
       <form [formGroup]="form" (Submit)="updateProfile($event)">
         <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="prenom">FirstName</label>
+          <label class="block text-sm font-medium mb-2" for="prenom">firstName</label>
           <input
             id="prenom"
             type="text"
             class="border border-gray-300 p-2 rounded w-full"
-            formControlName="firstname"
+            formControlName="firstName"
           />
           <div
-            *ngIf="form.get('firstname')?.invalid && form.get('fisrtname')?.touched"
+            *ngIf="form.get('firstName')?.invalid && form.get('fisrtname')?.touched"
             class="text-red-500 text-sm mt-1"
           >
             Le prénom est requis.
           </div>
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="nom">LastName</label>
+          <label class="block text-sm font-medium mb-2" for="nom">lastName</label>
           <input
             id="nom"
             type="text"
             class="border border-gray-300 p-2 rounded w-full"
-            formControlName="lastname"
+            formControlName="lastName"
           />
           <div
-            *ngIf="form.get('lastname')?.invalid && form.get('lastname')?.touched"
+            *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched"
             class="text-red-500 text-sm mt-1"
           >
             Le nom est requis.
           </div>
         </div>
-        <div  *ngIf="me.role==='laureat'" class="mb-4">
+        <div  *ngIf="me.role==='LAUREAT'" class="mb-4">
           <label class="block text-sm font-medium mb-2" for="nomSupp">Specialité</label>
           <input
             id="nomSupp"
@@ -146,7 +152,7 @@
             formControlName="specialite"
           />
         </div>
-        <div *ngIf="me.role==='laureat'" class="mb-4">
+        <div *ngIf="me.role==='LAUREAT'" class="mb-4">
           <label class="block text-sm font-medium mb-2" for="titre">Entreprise Actuelle</label>
           <input
             id="titre"
@@ -154,14 +160,9 @@
             class="border border-gray-300 p-2 rounded w-full"
             formControlName="entreprise"
           />
-          <div
-            *ngIf="form.get('entreprise')?.invalid && form.get('entreprise')?.touched"
-            class="text-red-500 text-sm mt-1"
-          >
-            Le titre est requis.
-          </div>
+        
         </div>
-        <div  *ngIf="me.role==='etudiant'" class="mb-4">
+        <div  *ngIf="me.role==='ETUDIANT'" class="mb-4">
           <label class="block text-sm font-medium mb-2" for="titre">Filiere</label>
           <input
             id="titre"
@@ -206,18 +207,19 @@
       <div class="post-header">
         <img 
           class="profile-image w-12 h-12 rounded-full object-cover" 
-          src="me.image" 
+         [src]="me.photoProfile"
+
           alt="Profile Image" 
         />
         <div class="user-info">
-          <h3 class="font-medium text-lg">{{me.firstname}}{{me.lastname}}</h3>
+          <h3 class="font-medium text-lg">{{me.firstName}}{{me.lastName}}</h3>
         </div>
       </div>
     </div>
   
   
     <textarea
-      formControlName="description"
+      formControlName="textArea"
       class="w-full border border-gray-300 rounded-lg p-3 text-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
       rows="4"
       placeholder="De quoi souhaitez-vous discuter ?"
@@ -229,21 +231,28 @@
       <div class="flex items-center space-x-4">
     
         <input
-          type="file"
-          accept="image/*,application/pdf"
-          (change)="onFileChange($event)"
-          style="display: none;"
-          id="fileInput"
-          multiple
-        />
-        <label for="fileInput" class="flex items-center text-gray-500 hover:text-blue-500 cursor-pointer">
-          ➕
-        </label>
-  
+        type="file"
+        accept="image/*,application/pdf"
+        (change)="onFileChange($event)"
+        multiple
+        style="display: none;"
+        id="fileInput"
        
-        <div *ngIf="selectedFileNames.length > 0" class="ml-2">
-          <span *ngFor="let fileName of selectedFileNames" class="block text-gray-700">{{ fileName }}</span>
+      />
+
+      
+      <label for="fileInput" class="flex items-center text-gray-500 hover:text-blue-500 cursor-pointer">
+        ➕ 
+      </label>
+  
+        <div *ngIf="selectedFileNames && selectedFileNames.length > 0" class="ml-2">
+          <p class="text-gray-700">Fichiers sélectionnés :</p>
+          <ul>
+            <li *ngFor="let fileName of selectedFileNames">{{ fileName }}</li>
+          </ul>
         </div>
+    
+       
       </div>
   
 
@@ -289,7 +298,7 @@
       <li (click)="editPost(post)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
         Modifier
       </li>
-      <li class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
+      <li  (click)="deletePost(post)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
         Supprimer
       </li>
     </ul>
@@ -302,8 +311,8 @@
       <h3 class="text-lg font-medium mb-4">Modifier le post</h3>
       <form (ngSubmit)="updatePost()">
         <textarea 
-          [(ngModel)]="editingPost.description" 
-          name="description" 
+          [(ngModel)]="editingPost.textArea" 
+          name="textArea" 
           rows="4" 
           class="w-full p-2 border rounded-lg" 
           placeholder="Modifier le contenu du post..." 
@@ -322,7 +331,7 @@
   
 
   <div class="post-content">
-    <p>{{ post.description }}</p>
+    <p>{{ post.textArea }}</p>
 
     <div *ngIf="post.images && post.images.length > 0" class="image-gallery grid gap-2">
       <ng-container [ngSwitch]="post.images.length">

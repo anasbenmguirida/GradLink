@@ -41,8 +41,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @MultipartConfig
 @RequestMapping(path = "/api/laureat/")
-@CrossOrigin(origins = "http://localhost:4200")
 
+
+
+@CrossOrigin(origins = "http://localhost:4200"
+) 
 public class LaureatController {
 
     
@@ -58,11 +61,14 @@ public class LaureatController {
     @PutMapping("reject/{id}")
     public String refuserDemande(@PathVariable int id) {
         return this.laureatService.refuserDemande(id) ; 
-    }
+    }  
+
+
     @GetMapping("all")
     public List<Laureat> getAllLaureats() {
         return this.laureatService.getAllLaureat() ; 
     }
+    
     @GetMapping("demandes/{id}")
     public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
         return this.laureatService.getAllLaureatDemandes(id) ;

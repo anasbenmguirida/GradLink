@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/internal/Observable';
 })
 export class MessagerieService {
 
-  private apiUrl = 'test.json';  // Remplacez par l'URL de votre backend
+  private apiUrl = 'http://localhost:8080/api';  // Remplacez par l'URL de votre backend
   private messageUrl = 'message.json'; 
     constructor(private http: HttpClient) { }
 

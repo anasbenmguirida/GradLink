@@ -9,17 +9,6 @@ import { PostService } from '../../services/post/post.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 
 
-
-interface Post {
-  id: string;
-  description: string;
-  fichiers: string[]; // Tableau de chaînes (si ce sont des URL de fichiers)
-  isLiked?: boolean; // Ajout de isLiked, qui peut être géré côté frontend
-}
-
-
-
- 
 @Component({
   selector: 'app-recherche-profile',
   imports: [
@@ -48,7 +37,7 @@ export class RechercheProfileComponent implements OnInit {
   ngOnInit(): void {
   
   this.me = JSON.parse(localStorage.getItem('user') || '{}');
-  this.selectedId = +this.route.snapshot.paramMap.get('id')! || null;
+  this.selectedId = +this.route.snapshot.paramMap.get('id')! ;
 
 
   if (this.selectedId) {
@@ -94,7 +83,7 @@ export class RechercheProfileComponent implements OnInit {
 
 
   fetchPosts(): void {
-    this.classifiedPosts = this.posts.map((post: Post) => ({
+    this.classifiedPosts = this.posts.map((post: any) => ({
       ...post,
       images: post.fichiers.filter((url: string) => this.isImage(url)),
       pdfs: post.fichiers.filter((url: string) => this.isPdf(url))
@@ -204,26 +193,32 @@ closeGallery(): void {
 
 
 toggleLike(post: any): void {
-   
+  const userId = 'myCIN'; // Identifiant de l'utilisateur
   const isLiked = !post.isLiked;
 
-    this.postService.toggleLike(post.id, isLiked).subscribe(
-    (response) => {
-      if (response.success) {
-   
-        post.isLiked = isLiked;
-        console.log(`Action "isLiked=${isLiked}" réussie pour le post :`, post);
-      } else {
-        console.error('Erreur lors de la mise à jour du like.');
+  if (isLiked) {
+    // Utiliser le service pour "liker"
+    this.postService.likePost(post.id, this.me.id).subscribe(
+      (response) => {
+        post.isLiked = true; // Met à jour l'état local
+        console.log(`Post liké avec succès :`, post);
+      },
+      (error) => {
+        console.error('Erreur lors du like du post :', error);
       }
-    },
-    (error) => {
-      console.error('Erreur de communication avec le backend :', error);
-    }
-  );
-
-
-}
+    );
+  } else {
+    // Utiliser le service pour "unliker"
+    this.postService.unlikePost(post.id, this.me.id).subscribe(
+      (response) => {
+        post.isLiked = false; // Met à jour l'état local
+        console.log(`Post unliké avec succès :`, post);
+      },
+      (error) => {
+        console.error('Erreur lors du unlike du post :', error);
+      }
+    );
+  } }
 
 
 

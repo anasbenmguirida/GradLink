@@ -8,6 +8,7 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators, ValidatorFn, A
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
 
+
   templateUrl: './registre.component.html',
   styleUrls: ['./registre.component.css']
 })

@@ -32,30 +32,40 @@ export class ShowEventComponent {
   ) {}
 
   ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.eventService.getEvents().subscribe(
-        (data) => {
-        this.events = data; 
+    this.eventService.getEvents().subscribe(
+      (data) => {
+        console.log('Données des événements:', data);
+        // Transformation des événements pour correspondre au format attendu par FullCalendar
+        this.events = data.map((event:any) => ({
+          title: event.designation,   // Utiliser la désignation comme titre
+          date: event.dateEvenement,  // Utiliser la date de l'événement
+        }));
+    
+        console.log('Événements après transformation:', this.events);
+    
         this.calendarOptions = {
           initialView: 'dayGridMonth',
           plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
-          events: this.events,  
+          events: this.events,
           eventClick: this.onEventClick.bind(this),
         };
-      }, (error) => {
+      },
+      (error) => {
         console.error('Erreur lors de la récupération des événements:', error);
-      });
-    }
+      }
+    );
+    
+    
   }
 
   onEventClick(info: any): void {
     const event = info.event;
     const serializableEvent = {
       id: event.id,
-      title: event.title,
-      date_evenement: event.start.toISOString().slice(0, 10),
-      capacite: event.extendedProps?.capacite_maximal,  
-      place_rest: event.extendedProps?.place_restant, 
+      designation: event.designation,
+      dateEvenement: event.dateEvenement.toISOString().slice(0, 10),
+      capaciteMaximal: event.extendedProps?.capaciteMaximal,  
+      //place_rest: event.extendedProps?.place_restant, 
       description: event.extendedProps?.description || 'Aucune description',
     };
     console.log(serializableEvent)
@@ -76,6 +86,8 @@ export class ShowEventComponent {
     this.eventService.getEvents().subscribe({
       next: (events) => {
         this.events = events; 
+        console.log(this.events 
+        )
       },
       error: (err) => {
         console.error('Erreur lors du rechargement des événements :', err);

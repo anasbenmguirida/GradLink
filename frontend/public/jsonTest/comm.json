@@ -1,33 +1,75 @@
 {
-    "communaute": [
-      {
-        "id": 1,
-        "name": "stage",
-        "description": "hweguyweyiy3r2i",
-        "postes": [
-          {
+  "communities": [
+    {
+      "id": 1,
+      "name": "stages",
+      "description": "C'est votre opportunité pour trouver votre stage de rêve.",
+     
+      "postes": [
+        {
+          "id": 1,
+          "textArea": "Poste disponible pour un stage en IA.",
+          "user": {
             "id": 1,
-            "description": "reuirheuiwreuiuiuq3",
-            "posteFiles": "img.png",
-            "user": {
-              "id": 1,
-              "firstName": "safae",
-              "lastName": "Lab",
-              "photoProfile":""
-            }
+            "firstName": "Safae",
+            "lastName": "Labjakh",
+            "photoProfile": "safae.jpeg"
           },
-          {
-            "id": 2,
-            "description": "reuirheuiwreuiuiuq3",
-            "posteFiles": "img.png",
-            "user": {
+          "posteFiles": [
+            {
               "id": 1,
-              "firstName": "safae",
-              "lastName": "Lab",
-              "photoProfile":""
+              "fileName": "networking.png",
+              "fileType": "image/png",
+              "data": ""
             }
-          }
-        ]
-      }
-    ]
-  }
+            
+          ]
+        },
+        {
+          "id": 2,
+          "textArea": "Rejoignez-nous pour un stage en développement web !",
+          "user": {
+            "id": 2,
+            "firstName": "Safae",
+            "lastName": "Labjakh",
+            "photoProfile": "safae.jpeg"
+          },
+          "posteFiles": [
+            {
+              "id": 2,
+              "fileName": "event.webp",
+              "fileType": "image/webp",
+              "data": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "projets",
+      "description": "Explorez des projets collaboratifs passionnants.",
+      
+      "postes": [
+        {
+          "id": 3,
+          "textArea": "Projet de développement d'une application mobile.",
+          "user": {
+        "id": 2,
+        "firstName": "Omar",
+        "lastName": "Benali",
+        "photoProfile": "omar.jpeg"
+      },
+          "posteFiles": [
+            {
+              "id": 3,
+              "fileName": "mobile-app.png",
+              "fileType": "image/png",
+              "data": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { delay, map, Observable, of } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root', // Accessible dans toute l'application
 })

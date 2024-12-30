@@ -1,17 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PostService } from '../../services/post/post.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import { Router } from '@angular/router'; 
 
-interface Post {
-  id: string;
-  description: string;
-  fichiers: string[]; // Tableau de chaînes (si ce sont des URL de fichiers)
-  isLiked?: boolean; // Ajout de isLiked, qui peut être géré côté frontend
-}
 
 @Component({
   selector: 'app-postepage',
@@ -34,32 +29,43 @@ export class PostePageComponent implements OnInit  {
   posts:any=[];
   me:any;
   classifiedPosts: any[] = [];
-  constructor(private fb: FormBuilder, private postService: PostService) {
+  constructor(private fb: FormBuilder, private postService: PostService ,@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
     this.postForm = this.fb.group({
-      description: [''],
-      images: [[]],
-      files: [[]],
+     textArea: [''],
+     PosteFiles: [[]],
+      
     });
   }
   
   ngOnInit(): void {
 
+
+    
+if (isPlatformBrowser(this.platformId)) {
+          console.log('hiiiiii123')
+
+          this.me = JSON.parse(localStorage.getItem('user') || '{}');
+  } else {
+          console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+       }
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data;
       this.fetchPosts();
       this.checkLikes();
 
     });
-    this.me = JSON.parse(localStorage.getItem('user') || '{}');
+    console.log("postes recu",this.posts)
+    console.log("Token récupéré dans /posts:", localStorage.getItem('authToken'));
 
     console.log("hi");
+    console.log(this.me);
     this.postService.getPosts().subscribe((data) => {
       this.posts = data;
     });
   }
 
   checkLikes() {
-    this.posts.forEach((post:Post) => {
+    this.posts.forEach((post:any) => {
       this.postService.isLiked(post.id, this.me.id).subscribe((isLiked) => {
         (post as any).isLiked = isLiked; 
       });
@@ -67,20 +73,55 @@ export class PostePageComponent implements OnInit  {
   }
  
   fetchPosts(): void {
-    this.classifiedPosts = this.posts.map((post: Post) => ({
-      ...post,
-      images: post.fichiers.filter((url: string) => this.isImage(url))  || [],
-      pdfs: post.fichiers.filter((url: string) => this.isPdf(url)) || [],
-    }));
+    console.log('Original Posts:', this.posts); // Log des données initiales
+  
+    this.classifiedPosts = this.posts.map((post: any) => {
+      if (!Array.isArray(post.posteFiles)) {
+        console.warn('PosteFiles is not an array:', post);
+        return {
+          ...post,
+          images: [],
+          pdfs: [],
+        };
+      }
+  
+      // const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType));
+      // const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType));
+      const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType, file.fileName)) || [];
+      const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType)) || [];
+  
+      console.log('Filtered Images:', images); // Log des images filtrées
+      console.log('Filtered PDFs:', pdfs);     // Log des PDFs filtrés
+  
+      return {
+        ...post,
+        images,
+        pdfs,
+      };
+    });
+  
+    console.log('Classified Posts:', this.classifiedPosts); // Log des résultats finaux
   }
   
+  // isImage(fileType: string | null | undefined): boolean {
+  //   return !!fileType && fileType.toLowerCase().startsWith('image/');
+  // }
 
-  isImage(url: string): boolean {
-    return /\.(jpg|jpeg|png|gif)$/i.test(url);
+  isImage(fileType: string | null | undefined, fileName: string): boolean {
+    if (!fileType || !fileName) {
+      return false;
+    }
+  
+    // Liste des extensions d'image supportées
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.jfif'];
+  
+    // Vérifier si le nom du fichier se termine par une extension d'image
+    return imageExtensions.some(extension => fileName.toLowerCase().endsWith(extension));
   }
-
-  isPdf(url: string): boolean {
-    return /\.pdf$/i.test(url);
+  
+  
+  isPdf(fileType: string): boolean {
+    return fileType === 'application/pdf';  // Vérifie si le type de fichier est un PDF
   }
 
   submitPost(): void {
@@ -91,29 +132,74 @@ export class PostePageComponent implements OnInit  {
       const formData = new FormData();
   
       // Ajoutez la description au FormData
-      formData.append('description', postData.description);
-  
-      // Ajoutez les fichiers au FormData
+      formData.append('textArea', postData.textArea);
+      formData.append('typePost', 'NORMAL');
+      formData.append('userId', this.me.id);
       this.selectedFiles.forEach((file) => {
         formData.append('files[]', file); // "files[]" correspond à l'attente du backend
       });
+
+      console.log("formData",formData);
+this.selectedFiles.forEach((file, index) => {
+  console.log(`soumaia File ${index}:`, file);
+});
   
       // Envoi des données au backend via le service
       this.postService.createPost(formData).subscribe(
         (response) => {
           // Ajoutez le nouveau post localement (par exemple, dans une liste)
-          this.posts.unshift(response);
+          // this.classifiedPosts.unshift(formData);
           
           // Réinitialisez le formulaire et les fichiers sélectionnés
           this.postForm.reset();
           this.selectedFiles = [];
           this.selectedFileNames = [];
+          this.router.navigate(['/posts']);
         },
         (error) => {
           console.error('Erreur lors de l\'envoi du post :', error);
         }
       );
     }
+
+
+
+    
+
+    // submitPost(): void {
+    //   if (this.postForm.valid) {
+    //     const postData = this.postForm.value;
+    
+    //     // Créez un objet FormData pour la requête multipart/form-data
+    //     const formData = new FormData();
+    
+    //     // Ajoutez les données de description sous forme de JSON
+    //     const posteJson = JSON.stringify({ description: postData.description });
+    //     formData.append('poste', posteJson);
+    
+    //     // Ajoutez les fichiers au FormData
+    //     this.selectedFiles.forEach((file) => {
+    //       formData.append('file', file); // Le backend attend un champ "file"
+    //     });
+    
+    //     // Envoi des données au backend via le service
+    //     this.postService.createPost(formData).subscribe(
+    //       (response) => {
+    //         // Ajoutez le nouveau post localement (par exemple, dans une liste)
+    //         this.posts.unshift(response);
+    
+    //         // Réinitialisez le formulaire et les fichiers sélectionnés
+    //         this.postForm.reset();
+    //         this.selectedFiles = [];
+    //         this.selectedFileNames = [];
+    //       },
+    //       (error) => {
+    //         console.error('Erreur lors de l\'envoi du post :', error);
+    //       }
+    //     );
+    //   }
+    // }
+    
   }
   
  //si je veux envoyer urls 
@@ -139,18 +225,50 @@ export class PostePageComponent implements OnInit  {
 // }
 
 
+
+getFileUrl(file: any): string {
+  // Si fileType est incorrect, déduire le type à partir de l'extension
+  const mimeType = this.getMimeType(file.fileName);
+
+  return `data:${mimeType};base64,${file.data}`;
+}
+
+getMimeType(fileName: string): string {
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'gif':
+      return 'image/gif';
+      case 'jfif':
+        return 'image/jfif';
+        case 'jpe':
+          return 'image/jpe';
+    case 'pdf':
+      return 'application/pdf';
+    default:
+      return 'application/octet-stream';
+  }
+}
+
+
   selectedFiles: File[] = [];
     selectedFileNames: string[] = [];
 
     onFileChange(event: Event): void {
       const input = event.target as HTMLInputElement;
-    
-      if (input.files && input.files.length > 0) {
+      
+    if (input.files && input.files.length > 0) {
         Array.from(input.files).forEach((file) => {
           const mimeType = file.type;
-    
-          // Vérifie que le fichier est une image ou un PDF
-          if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
+            const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+          if (mimeType.startsWith('image/') || mimeType === 'application/pdf'
+        ||  mimeType.startsWith('application') && validExtensions.includes(fileExtension || '')) {
             this.selectedFiles.push(file);  // Ajoute le fichier valide à la liste
             this.selectedFileNames.push(file.name); // Stocke le nom du fichier
           } else {
@@ -160,28 +278,12 @@ export class PostePageComponent implements OnInit  {
     
         // Log des fichiers sélectionnés (utile pour le débogage)
         console.log('Fichiers sélectionnés :', this.selectedFiles);
+        console.log('Noms des fichiers :', this.selectedFileNames);
       }
     }
     
     
-    // onFileChange(event: Event): void {
-    //   const input = event.target as HTMLInputElement;
-    //   if (input.files && input.files.length > 0) {
-    //     // Ne réinitialisez pas les tableaux, mais ajoutez les nouveaux fichiers sélectionnés
-    //     Array.from(input.files).forEach((file) => {
-    //       const mimeType = file.type;
-    
-    //       if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
-    //         this.selectedFiles.push(file);  // Ajoute les fichiers valides à la liste
-    //         this.selectedFileNames.push(file.name); // Ajoute le nom du fichier
-    //       } else {
-    //         console.error('Type de fichier non pris en charge :', file.name);
-    //       }
-    //     });
-    
-    //     console.log('Fichiers sélectionnés :', this.selectedFiles);
-    //   }
-    // }
+
   
   selectedImages: string[] = []; // Images sélectionnées pour la galerie
 isGalleryOpen: boolean = false; // Initialement fermé
@@ -199,37 +301,46 @@ closeGallery(): void {
 
 
 selectedImage: string | null = null;
-
+isModalOpen:boolean=false;
 openModalimage(image: string) {
   this.selectedImage = image;
+  this.isModalOpen=true;
 }
 
 closeModalimage() {
   this.selectedImage = null;
+  this.isModalOpen=false;
 }
   
 
 toggleLike(post: any): void {
-  const userId = 'myCIN'; 
+  const userId = 'myCIN'; // Identifiant de l'utilisateur
   const isLiked = !post.isLiked;
 
-    this.postService.toggleLike(post.id,  isLiked).subscribe(
-    (response) => {
-      if (response.success) {
-   
-        post.isLiked = isLiked;
-        console.log(`Action "isLiked=${isLiked}" réussie pour le post :`, post);
-      } else {
-        console.error('Erreur lors de la mise à jour du like.');
+  if (isLiked) {
+    // Utiliser le service pour "liker"
+    this.postService.likePost(post.id, this.me.id).subscribe(
+      (response) => {
+        post.isLiked = true; // Met à jour l'état local
+        console.log(`Post liké avec succès :`, post);
+      },
+      (error) => {
+        console.error('Erreur lors du like du post :', error);
       }
-    },
-    (error) => {
-      console.error('Erreur de communication avec le backend :', error);
-    }
-  );
+    );
+  } else {
+    // Utiliser le service pour "unliker"
+    this.postService.unlikePost(post.id, this.me.id).subscribe(
+      (response) => {
+        post.isLiked = false; // Met à jour l'état local
+        console.log(`Post unliké avec succès :`, post);
+      },
+      (error) => {
+        console.error('Erreur lors du unlike du post :', error);
+      }
+    );
+  }
 }
-
-
 
 
 
