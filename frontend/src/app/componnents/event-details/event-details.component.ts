@@ -44,12 +44,13 @@ export class EventDetailsComponent implements OnInit {
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       const navigation = history.state;
-      this.event = navigation.event || null;
-
-console.log("voir:" ,this.event)
-      const userRole = this.userService.getUserRole(); //deja avec getItem dans le service
-      this.isAdmin = userRole === 'admin'; 
-
+      this.event = navigation ? navigation.event : null;
+  
+      console.log("voir:", this.event);
+      const userRole = this.userService.getUserRole();
+      this.isAdmin = userRole === 'ADMIN';
+      console.log(userRole);
+  
       if (this.event) {
         this.eventId = this.event.id;
         console.log('ID de l\'événement récupéré depuis l\'URL :', this.eventId);
@@ -57,8 +58,9 @@ console.log("voir:" ,this.event)
     } else {
       console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
     }
-   // this.loadEventDetails();
+    //this.loadEventDetails();
   }
+  
 
 
   loadEventDetails() {

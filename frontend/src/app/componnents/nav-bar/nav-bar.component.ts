@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
@@ -28,15 +28,28 @@ export class NavBarComponent {
 demandesMentorat: any[] = []; 
 
 me:any;
-constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService) { }
+  islaureat: boolean=false;
+constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService,    @Inject(PLATFORM_ID) private platformId: Object,
+) { }
 private router =inject(Router);
 
 
 
 
     ngOnInit(): void {
-      this.me = JSON.parse(localStorage.getItem('user') || '{}');
-// /this.me={id:1,image:'profile.png',firstname:"soumaia",lastname:"Kerouan Salah",role:"laureat"};
+if (isPlatformBrowser(this.platformId)) {
+          console.log('hiiiiii123')
+
+        this.me = JSON.parse(localStorage.getItem('user') || '{}');
+        this.islaureat = this.me.role === 'LAUREAT'; 
+
+          console.log(this.islaureat)
+
+          
+        } else {
+          console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+        }
+        // /this.me={id:1,image:'profile.png',firstname:"soumaia",lastname:"Kerouan Salah",role:"laureat"};
    
 
 

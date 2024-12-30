@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { delay, Observable, of } from 'rxjs';
+import { catchError, delay, Observable, of, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -28,9 +28,15 @@ export class EventService {
   //   });
   // }
   //  // Méthode pour obtenir l'état de la réservation d'un événement
-  addEvent(event: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, event);
-  }
+  addEvent(eventData: any, adminId: number): Observable<any> {
+    
+    const url = `${this.baseUrl}/admin/evenement/${adminId}`;
+
+    return this.http.post(url, eventData)
+}
+  
+  private baseUrl = 'http://localhost:8080/api';
+
   private apiUrl = 'jsonTest/events.json';
 
   constructor(private http: HttpClient) {}

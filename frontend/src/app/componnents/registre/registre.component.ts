@@ -17,6 +17,7 @@ export class RegistreComponent implements OnInit {
   currentStep = 1; // Initialiser à l'étape 1
 
   formGroup!: FormGroup;
+  router: any;
   
   constructor(private userService: UserService) {} 
 
@@ -26,9 +27,9 @@ export class RegistreComponent implements OnInit {
         firstName: new FormControl('', Validators.required),
         lastName: new FormControl('', Validators.required),
   
-        cin: new FormControl('', Validators.required),
+       // cin: new FormControl('', Validators.required),
         role: new FormControl('', Validators.required),
-        filiere: new FormControl(''), 
+       filiere: new FormControl(''), 
         specialite: new FormControl(''),
         promotion: new FormControl(''),
   
@@ -60,15 +61,15 @@ export class RegistreComponent implements OnInit {
     if (this.formGroup.valid) {
       const userData = {
         ...this.formGroup.value,
-        photo: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png' 
+        photoProfile: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png' 
       };
-  
+  console.log(userData)
       this.userService.registerUser(userData).subscribe(
         (response:any) => {
           console.log('Signup successful:', response);
 
           alert('Inscription réussie !');
-          //this.router.navigate(['/success']);
+          this.router.navigate(['/login']); 
         },
         (error) => {
           alert('Une erreur s\'est produite lors de l\'inscription.');

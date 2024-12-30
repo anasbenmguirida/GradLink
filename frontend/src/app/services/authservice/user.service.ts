@@ -8,28 +8,35 @@ import { delay, map, Observable, of } from 'rxjs';
 export class UserService {
 //test json
 private mockDataUrl = 'jsonTest/users.json'; // Chemin du fichier JSON pour simulation
-private apiUrl = 'http://localhost:8080/api/register';
+private apiUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<any> {
+  // login(email: string, password: string): Observable<any> {
    
-    return this.http.get(this.mockDataUrl).pipe(
-      delay(500), 
-      map((data: any) => {
-        const user = data.users.find((u: any) => u.email === email && u.password === password);
-        if (user) {
-          return { token: data.token, user: user };
-        } else {
-          throw new Error('Identifiants invalides');
-        }
-      })
-    );
+  //   return this.http.get(this.mockDataUrl).pipe(
+  //     delay(500), 
+  //     map((data: any) => {
+  //       const user = data.users.find((u: any) => u.email === email && u.password === password);
+  //       if (user) {
+  //         return { token: data.token, user: user };
+  //       } else {
+  //         throw new Error('Identifiants invalides');
+  //       }
+  //     })
+  //   );
+  // }
+
+  login(email: string, password: string): Observable<any> {
+    const loginData = { email, password }; 
+console.log(loginData)
+    return this.http.post(`${this.apiUrl}/api/login`, loginData); 
   }
 
   registerUser(userData: any): Observable<any> {
-    return this.http.post(this.apiUrl, userData);
+    return this.http.post(`${this.apiUrl}/api/register`, userData);
   }
+  
 
   getToken() {
     return localStorage.getItem('token');
@@ -51,8 +58,13 @@ private apiUrl = 'http://localhost:8080/api/register';
 
   // Dans votre UserService
 getUserRole(): string {
+  console.log('TEEEEEEEEEST')
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  return user.role || ''; 
+  console.log('TEEEEEEEEEST2')
+  console.log(user.role)
+
+
+  return user.role ||  'GUEST'; 
 }
 
 

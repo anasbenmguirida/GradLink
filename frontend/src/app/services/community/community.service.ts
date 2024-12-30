@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CommunityService {
+  
+  
   private apiUrl = '/api'; 
 
   constructor(private http: HttpClient) {}
@@ -14,7 +16,9 @@ export class CommunityService {
   getCommunities(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
-
+  saveCommunity(data: any): Observable<any> {
+    return this.http.post(this.apiUrl, data);
+  }
   // Récupérer les messages d'une catégorie
   getMessagesByCategory(categoryId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/messages?categoryId=${categoryId}`);
@@ -27,5 +31,9 @@ export class CommunityService {
 
   deleteCommunity(communityId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${communityId}`);
+  }
+  updatePost(communityId: number, postId: number, updatedPost: any): Observable<any> {
+    const url = `${this.apiUrl}/${communityId}/posts/${postId}`;
+    return this.http.put(url, updatedPost);
   }
 }

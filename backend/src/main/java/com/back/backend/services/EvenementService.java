@@ -20,7 +20,6 @@ public class EvenementService {
         Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin with ID " + adminId + " not found"));
         evenement.setAdmin(admin);
-
         if (evenement.getCapaciteMaximal() == 0) {
             throw new IllegalArgumentException("Capacité maximale doit être supérieur à zéro.");
         }
@@ -33,7 +32,7 @@ public class EvenementService {
         if (evenement.getDateEvenement() == null) {
             throw new IllegalArgumentException("La date de l'événement est obligatoire.");
         }
-
+    
         evenement.setPlaceRestant(evenement.getCapaciteMaximal());
         return evenementRepository.save(evenement);
     }

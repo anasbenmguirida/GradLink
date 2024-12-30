@@ -64,11 +64,11 @@ export class CommunitySpaceComponent implements OnInit{
               id: 1,
               fileName: 'networking.png',
               fileType: 'image/png',
-              data: '', 
+              data: 'mentorship.webp', 
             }
           ],
           user: {
-            id: 1,
+            id: 6,
             firstName: 'Safae',
             lastName: 'Labjakh',
             photoProfile: 'safae.jpeg',
@@ -82,7 +82,7 @@ export class CommunitySpaceComponent implements OnInit{
               id: 2,
               fileName: 'event.webp',
               fileType: 'image/webp',
-              data: '', 
+              data: 'networking.png', 
             }
           ],
           user: {
@@ -161,42 +161,48 @@ export class CommunitySpaceComponent implements OnInit{
     this.isEditDialogOpen = true;
   }
 
-  async saveEdit() {
-    if (this.editPost) {
-      try {
-        // Vérifiez si une image a été sélectionnée
-        if (this.selectedImage) {
-          // Convertir le fichier sélectionné en base64
-          const base64 = await this.convertFileToBase64(this.selectedImage);
-  
-          // Formater le fichier pour l'ajouter à editPost
-          const formattedFile = {
-            id: 1, // Assurez-vous que l'ID est unique
-            fileName: this.selectedImage!.name,
-            fileType: this.selectedImage!.type,
-            data: base64,
-          };
-  
-          this.editPost.posteFiles.push(formattedFile); // Ajouter le fichier formaté à la liste
-        }
-  
-        const community = this.communities.find(c => c.id === this.selectedCommunityId);
-        if (community) {
-          const index = community.postes.findIndex(p => p.id === this.editPost.id);
-          if (index !== -1) {
-            community.postes[index] = { ...this.editPost }; // Mettre à jour le poste
-          }
-        }
-  
-        this.isEditDialogOpen = false; // Fermer le formulaire
-        this.editPost = null; // Réinitialiser le poste
-        this.selectedImage = null; // Réinitialiser l'image sélectionnée
-      } catch (error) {
-        console.error("Erreur lors de la sauvegarde de l'édition :", error);
-        // Affichez un message d'erreur à l'utilisateur ici si nécessaire
-      }
+ saveEdit() {
+    
+    if (this.selectedCommunityId === null || !this.editPost) {
+      console.error('Aucune communauté sélectionnée ou aucun post à modifier.');
+      return;
     }
+
+    const updatedPost = {
+      ...this.editPost, // Copie des données existantes
+      textArea: this.editPost.textArea.trim(),
+      posteFiles: this.editPost.posteFiles // Inclure les fichiers mis à jour, le cas échéant
+    };
+
+    // Utiliser le service pour envoyer les données mises à jour
+    this.communityService.updatePost(this.selectedCommunityId, this.editPost.id, updatedPost)
+      .subscribe(
+        (response) => {
+          console.log('Post mis à jour avec succès!', response);
+
+          // Mettez à jour l'interface utilisateur
+          const communityIndex = this.communities.findIndex(c => c.id === this.selectedCommunityId);
+          if (communityIndex !== -1) {
+            const postIndex = this.communities[communityIndex].postes.findIndex(p => p.id === this.editPost.id);
+            if (postIndex !== -1) {
+              this.communities[communityIndex].postes[postIndex] = response; // Mise à jour locale
+            }
+          }
+
+          // Fermer la boîte de dialogue
+          this.isEditDialogOpen = false;
+        },
+        (error) => {
+          console.error('Erreur lors de la mise à jour du poste :', error);
+          // Gérer l'erreur (afficher un message à l'utilisateur, par exemple)
+        }
+      );
   }
+  
+
+
+
+
   // Méthode pour convertir une image en base64
   convertFileToBase64(file: File): Promise<string | ArrayBuffer> {
     return new Promise((resolve, reject) => {
@@ -250,9 +256,10 @@ throw new Error('Method not implemented.');
         });
 
         if (isPlatformBrowser(this.platformId)) {
+          console.log('hiiiiii')
           const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-          this.isAdmin = user.role === 'admin'; 
+          this.isAdmin = user.role === 'ADMIN'; 
           this.userId=user.id
 
           
@@ -444,16 +451,18 @@ closeAddCommunityDialog(): void {
 saveCommunity(): void {
   if (this.communityForm.valid) {
     const communityData = this.communityForm.value;
-    console.log('Nouvelle communauté ajoutée :', communityData);
-    
-    // Ajoutez la logique pour sauvegarder la communauté (par exemple, appel API ou ajout local)
-    this.newCommunity = { ...communityData }; // Exemple de sauvegarde locale
 
-    // Réinitialisez le formulaire après l'ajout
-    this.communityForm.reset();
-    this.closeAddCommunityDialog();  // Fermer le formulaire
+    this.communityService.saveCommunity(communityData).subscribe({
+      next: (response) => {
+        console.log('Communauté sauvegardée avec succès :', response);
+        this.communityForm.reset();
+      },
+      error: (error) => {
+        console.error('Erreur lors de la sauvegarde de la communauté :', error);
+      }
+    });
   } else {
-    console.log('Formulaire invalide');
+    console.log('Le formulaire est invalide');
   }
 }
 

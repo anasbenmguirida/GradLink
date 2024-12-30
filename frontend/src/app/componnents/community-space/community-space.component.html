@@ -109,7 +109,23 @@
     </div>
   </div>
 
-  
+   <!--Ajouter poste -->
+   <div class="bg-gray-50 p-2 h-50 rounded-lg shadow-md flex items-center space-x-4">
+    <textarea [(ngModel)]="newMessageText" (keyup.enter)="postMessage()" placeholder="Écrivez un message..." class="flex-1 p-2 bg-white rounded-lg shadow-sm border border-gray-300" rows="2"></textarea>
+
+    <label for="message-image" class="cursor-pointer">
+      <svg class="w-6 h-6 text-indigo-600 hover:text-indigo-800" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5zm14 2v14H5V5h14zm-6.5 3.5A1.5 1.5 0 1 1 12 10a1.5 1.5 0 0 1 .5-1.5zM6 17l3-4 2.25 3L14 11l4 6H6z" />
+      </svg>
+      <input type="file" id="message-image" (change)="onImagesSelected($event)" class="hidden" />
+    </label>
+
+    <button (click)="postMessage()" class="p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition" aria-label="Poster">
+      <svg class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
+      </svg>
+    </button>
+  </div>
   
 </div>
 
