@@ -66,6 +66,16 @@ public class LaureatController {
     public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
         return this.laureatService.getAllLaureatDemandes(id) ;
     }
+    @GetMapping("mentored-students/{id}")
+    public ResponseEntity<List<DemandeMentorat>> getMentoredStudents(@PathVariable int id) {
+    try {
+        List<DemandeMentorat> mentoredStudents = laureatService.getMentoredStudents(id);
+        return ResponseEntity.ok(mentoredStudents);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+   }
+
     
 }
 

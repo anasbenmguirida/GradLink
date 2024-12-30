@@ -67,9 +67,12 @@ public class LaureatService {
         return demandeRepository.getAllDemandeLaureat(id) ;  
     }
 
+
+    public List<DemandeMentorat> getMentoredStudents(int laureatId) {
+        return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
+    }
     
- 
-                    
-        
+
+      
     
 }
