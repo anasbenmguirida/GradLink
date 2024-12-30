@@ -61,16 +61,17 @@ public class LaureatController {
     public List<Laureat> getAllLaureats() {
         return this.laureatService.getAllLaureat() ; 
     }
-    // avoir la liste des demandes de mentorat pour un laureat 
-    @GetMapping("demandes/{id}")
-    public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
-        return this.laureatService.getAllLaureatDemandes(id) ;
+
+    @GetMapping("mentored-students/{id}")
+    public ResponseEntity<List<DemandeMentorat>> getMentoredStudents(@PathVariable int id) {
+    try {
+        List<DemandeMentorat> mentoredStudents = laureatService.getMentoredStudents(id);
+        return ResponseEntity.ok(mentoredStudents);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
-    // avoir la liste les demandes accepter pour un laureat
-    @GetMapping("accepted-demandes/{id}")
-    public List<User> getAllAcceptedDemandes(@PathVariable int id) {
-        return this.laureatService.getAllAcceptedDemandes(id) ; 
-    }
+   }
+
     
 }
 

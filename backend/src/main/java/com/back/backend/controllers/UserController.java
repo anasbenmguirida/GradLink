@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.Entities.Etudiant;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
+import com.back.backend.services.EtudiantService;
 import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
 import com.back.backend.services.UserService;
@@ -33,6 +35,7 @@ import lombok.AllArgsConstructor;
 public class UserController {
 private final UserService userService;
 private final PosteService posteService;
+private final EtudiantService etudiantService;
 private final LaureatService laureatService;
 
 
@@ -93,6 +96,20 @@ private final LaureatService laureatService;
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // Search endpoint for Etudiants
+    @GetMapping("/etudiants/search")
+    public ResponseEntity<List<Etudiant>> searchEtudiants(@RequestParam(required = false) String firstName,
+                                                           @RequestParam(required = false) String lastName,
+                                                           @RequestParam(required = false) String filiere,
+                                                           @RequestParam(required = false) String email) {
+        try {
+            List<Etudiant> etudiants = etudiantService.searchEtudiants(firstName, lastName, filiere, email);
+            return new ResponseEntity<>(etudiants, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 

@@ -40,5 +40,5 @@ public class Evenement {
 
     @OneToMany(mappedBy = "evenement", cascade = CascadeType.ALL)
     @JsonManagedReference(value="event-parts")
-    private List<EventParticipants> eventParticipants ; 
+    private List<EventParticipants> eventParticipants ;
 }

@@ -68,17 +68,6 @@ public class LaureatService {
     public List<DemandeMentorat> getAllLaureatDemandes(int id){
         return demandeRepository.getAllDemandeLaureat(id) ;  
     }
-    // ACCEPTED DEMANDES ONLY 
-    public List<User> getAllAcceptedDemandes(int id){
-        List<DemandeMentorat> maListe =  demandeRepository.getAllAcceptedDemandes(id) ; 
-        List<User> etudiantAccepterAuMentorat= new ArrayList<User>();
-        for(DemandeMentorat demande : maListe){
-            User user= userRepository.findById(demande.getEtudiantId()).orElse(null);
-            System.out.println("user : " + user);
-            etudiantAccepterAuMentorat.add(user);
-        }
-        return etudiantAccepterAuMentorat ; 
-    }
     
     public ResponseEntity<String> modifierPoste(int posteId , String textArea){
        Poste posteAmodifier= this.posteRepository.findById(posteId).orElse(null); 
@@ -92,9 +81,10 @@ public class LaureatService {
        }
     }
 
-    
- 
-                    
+
+    public List<DemandeMentorat> getMentoredStudents(int laureatId) {
+        return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
+    }
         
     
 }
