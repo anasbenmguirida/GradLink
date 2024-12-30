@@ -34,9 +34,8 @@ public class AdminController {
         this.etudiantService = etudiantService;
     }
 
-    // Create a new event
-    @PostMapping("/evenement")
-    public ResponseEntity<?> createEvent(@RequestBody Evenement evenement, @RequestParam int adminId) {
+    @PostMapping("/evenement/{adminId}")
+    public ResponseEntity<?> createEvent(@RequestBody Evenement evenement, @PathVariable int adminId) {
         try {
             Evenement createdEvent = evenementService.createEvent(evenement, adminId);
             return new ResponseEntity<>(createdEvent, HttpStatus.CREATED); // HTTP 201
@@ -45,6 +44,7 @@ public class AdminController {
                     .body("Error creating event: " + e.getMessage());
         }
     }
+    
 
     // Update an existing event
     @PutMapping("/evenement/{eventId}")
