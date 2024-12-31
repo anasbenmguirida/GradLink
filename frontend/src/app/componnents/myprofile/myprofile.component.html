@@ -11,7 +11,7 @@
     <div class="user px-4 -mt-20 z-10">
     
       <div class="profile w-40 h-40">
-        <img [src]="me.me.photoProfile" (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
+        <img src="me.profile.png" (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
       </div>
 
       <div
@@ -30,7 +30,7 @@
       <h2 class="text-xl font-bold mb-4">Photo de profil</h2>
       <div class="flex flex-col items-center">
         <img
-        [src]="me.photoProfile"
+        src="profile.png"
           alt="Photo de profil"
           class="w-50 h-50 rounded-full mb-4"
         />
@@ -207,7 +207,7 @@
       <div class="post-header">
         <img 
           class="profile-image w-12 h-12 rounded-full object-cover" 
-         [src]="me.photoProfile"
+         src="profile.png"
 
           alt="Profile Image" 
         />
@@ -273,7 +273,7 @@
   
 
 
-<div *ngFor="let post of posts; let i = index" class="post-container bg-white p-6 rounded-lg shadow-md mb-6 relative">
+<div *ngFor="let post of classifiedPosts; let i = index" class="post-container bg-white p-6 rounded-lg shadow-md mb-6 relative">
   
   <div class="post-header flex items-center justify-between mb-4">
     <div class="flex items-center space-x-3">
@@ -339,10 +339,11 @@
         <div *ngSwitchCase="1">
           <img 
             class="post-image cursor-pointer" 
-            [src]="post.images[0]" 
+            [src]="getFileUrl(post.images[0])"  
             alt="Post Image" 
             (click)="openModalimage(post.images[0])"
           />
+         
         </div>
     
       
@@ -350,23 +351,25 @@
           <img 
             *ngFor="let image of post.images" 
             class="post-image cursor-pointer" 
-            [src]="image" 
+            [src]="getFileUrl(image)"  
             alt="Post Image" 
-            (click)="openModalimage(image)"
+            (click)="openModalimage(getFileUrl(image))"
           />
+          <p>halaaaaaaaaaaaa</p>
+
         </div>
     
         <div *ngSwitchCase="3" class="grid grid-cols-2 gap-2">
           <img 
             class="post-image cursor-pointer col-span-2" 
-            [src]="post.images[0]" 
+            [src]="getFileUrl(post.images[0])" 
             alt="Post Image" 
-            (click)="openModalimage(post.images[0])"
+            (click)="openModalimage(getFileUrl(post.images[0]))"
           />
-          <img 
+          <img   
             *ngFor="let image of post.images.slice(1, 3)" 
             class="post-image cursor-pointer" 
-            [src]="image" 
+            [src]="getFileUrl(image)" 
             alt="Post Image" 
             (click)="openModalimage(image)"
           />
@@ -377,7 +380,7 @@
           <img 
             *ngFor="let image of post.images; let i = index" 
             class="post-image cursor-pointer"
-            [src]="image" 
+            [src]="getFileUrl(image)" 
             alt="Post Image" 
             [class.hidden]="i >= 4"
             (click)="openModalimage(image)"

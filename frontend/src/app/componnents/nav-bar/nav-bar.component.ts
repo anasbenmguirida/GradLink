@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
@@ -22,22 +22,31 @@ export class NavBarComponent {
 demandesMentorat: any[] = []; 
 
 me:any;
-constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService) { }
+constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService
+  ,@Inject(PLATFORM_ID) private platformId: Object
+) { }
 private router =inject(Router);
 
 
 
 
     ngOnInit(): void {
-      this.me = JSON.parse(localStorage.getItem('user') || '{}');
+ if (isPlatformBrowser(this.platformId)) {
+           console.log('hiiiiii123')
+ 
+           this.me = JSON.parse(localStorage.getItem('user') || '{}');
+           console.log(this.me)
+   } else {
+           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+         }
+ 
 // /this.me={id:1,image:'profile.png',firstname:"soumaia",lastname:"Kerouan Salah",role:"laureat"};
    
 
 
-      this.demandeService.getDemandes().subscribe((data) => {
-        this.demandesMentorat = data;
-      });
-
+this.demandeService.getDemandes(this.me.id).subscribe((data) => {
+  this.demandesMentorat = data;
+});
 
       this.loadAllUsers();
     }
@@ -106,12 +115,14 @@ private router =inject(Router);
   }
 
   navigateToProfile(user: any): void {
+    console.log("userID",user.id)
+    console.log("meID",this.me.id)
     if (user.id === this.me.id) {
-      
+      console.log(user.id)
+      console.log(this.me.id)
       this.router.navigate(['/myProfile']);
     } else {
-
-      this.router.navigate(['/rechercheProfile', user.id]);
+      this.router.navigate([`/rechercheProfile/${user.id}`]);
     }
   }
 

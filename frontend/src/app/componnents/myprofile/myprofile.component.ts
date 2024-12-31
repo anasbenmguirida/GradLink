@@ -47,6 +47,7 @@ export class MyprofileComponent implements OnInit {
           console.log('hiiiiii123')
 
           this.me = JSON.parse(localStorage.getItem('user') || '{}');
+          console.log(this.me)
   } else {
           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
         }
@@ -63,6 +64,7 @@ export class MyprofileComponent implements OnInit {
     console.log("photo",this.me.photoProfile);
     this.postService.getUserPosts(this.me.id).subscribe((data) => {
       this.posts = data;
+      console.log("mesPost",this.posts)
       this.fetchPosts();
 
     });
@@ -90,24 +92,14 @@ export class MyprofileComponent implements OnInit {
 
 
   
-  fetchPosts(): void {
-    this.classifiedPosts = this.posts.map((post: any) => ({
-      ...post,
-      images: post.fichiers.filter((url: string) => this.isImage(url)),
-      pdfs: post.fichiers.filter((url: string) => this.isPdf(url))
-    }));
-  }
-  
 
-  isImage(url: string): boolean {
-    return /\.(jpg|jpeg|png|gif)$/i.test(url);
-  }
 
-  isPdf(url: string): boolean {
-    return /\.pdf$/i.test(url);
-  }
+ 
 
-  constructor(private fb: FormBuilder,private postService: PostService, private ProfileService: ProfileService,@Inject(PLATFORM_ID) private platformId: Object) {
+
+
+  constructor(private fb: FormBuilder,private postService: PostService, private ProfileService: ProfileService,
+    @Inject(PLATFORM_ID) private platformId: Object) {
 
 
     this.form = this.fb.group({
@@ -141,24 +133,31 @@ export class MyprofileComponent implements OnInit {
       formData.append('typePost', 'NORMAL');
       formData.append('userId', this.me.id);
       this.selectedFiles.forEach((file) => {
-        formData.append('files[]', file); // "files[]" correspond à l'attente du backend
+        formData.append('files', file); // "files[]" correspond à l'attente du backend
       });
 
-      
+      console.log("Fichiers dans 'files[]' :");
+const files = formData.getAll('files[]');
+files.forEach((file, index) => {
+  console.log(`File ${index + 1}:`, file);
+});
+      console.log("formData  f submit ",formData);
 this.selectedFiles.forEach((file, index) => {
   console.log(`soumaia File ${index}:`, file);
 });
   
+
       // Envoi des données au backend via le service
       this.postService.createPost(formData).subscribe(
         (response) => {
           // Ajoutez le nouveau post localement (par exemple, dans une liste)
-          this.posts.unshift(response);
-          
+          // this.classifiedPosts.unshift(formData);
+          console.log("le poste est ajoute");
           // Réinitialisez le formulaire et les fichiers sélectionnés
           this.postForm.reset();
           this.selectedFiles = [];
           this.selectedFileNames = [];
+          this.router.navigate(['/myProfile']);
         },
         (error) => {
           console.error('Erreur lors de l\'envoi du post :', error);
@@ -167,28 +166,31 @@ this.selectedFiles.forEach((file, index) => {
     }
   }
 
-
-  
-
   
     
-    onFileChange(event: Event): void {
-      const input = event.target as HTMLInputElement;
-      if (input.files && input.files.length > 0) {
-        Array.from(input.files).forEach((file) => {
-          const mimeType = file.type;
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
     
-          if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
-            this.selectedFiles.push(file);  // Ajoute les fichiers valides à la liste
-            this.selectedFileNames.push(file.name); // Ajoute le nom du fichier
-          } else {
-            console.error('Type de fichier non pris en charge :', file.name);
-          }
-        });
-    
-        console.log('Fichiers sélectionnés :', this.selectedFiles);
-      }
+  if (input.files && input.files.length > 0) {
+      Array.from(input.files).forEach((file) => {
+        const mimeType = file.type;
+          const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+        if (mimeType.startsWith('image/') || mimeType === 'application/pdf'
+      ||  mimeType.startsWith('application') && validExtensions.includes(fileExtension || '')) {
+          this.selectedFiles.push(file);  // Ajoute le fichier valide à la liste
+          this.selectedFileNames.push(file.name); // Stocke le nom du fichier
+        } else {
+          console.error('Type de fichier non pris en charge :', file.name);
+        }
+      });
+  
+      // Log des fichiers sélectionnés (utile pour le débogage)
+      console.log('Fichiers sélectionnés :', this.selectedFiles);
+      console.log('Noms des fichiers :', this.selectedFileNames);
     }
+  }
   
   selectedImages: string[] = []; // Images sélectionnées pour la galerie
 isGalleryOpen: boolean = false; // Initialement fermé
@@ -382,6 +384,96 @@ openImage() {
 
 closeImage() {
   this.isImageOpen = false;
+}
+
+
+checkLikes() {
+  this.posts.forEach((post:any) => {
+    this.postService.isLiked(post.id, this.me.id).subscribe((isLiked) => {
+      (post as any).isLiked = isLiked; 
+    });
+  });
+}
+
+fetchPosts(): void {
+  console.log('Original Posts:', this.posts); // Log des données initiales
+
+  this.classifiedPosts = this.posts.map((post: any) => {
+    if (!Array.isArray(post.posteFiles)) {
+      console.warn('PosteFiles is not an array:', post);
+      return {
+        ...post,
+        images: [],
+        pdfs: [],
+      };
+    }
+
+    // const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType));
+    // const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType));
+    const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType, file.fileName)) || [];
+    const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType)) || [];
+
+    console.log('Filtered Images:', images); // Log des images filtrées
+    console.log('Filtered PDFs:', pdfs);     // Log des PDFs filtrés
+
+    return {
+      ...post,
+      images,
+      pdfs,
+    };
+  });
+
+  console.log('Classified Posts:', this.classifiedPosts); // Log des résultats finaux
+}
+
+// isImage(fileType: string | null | undefined): boolean {
+//   return !!fileType && fileType.toLowerCase().startsWith('image/');
+// }
+
+isImage(fileType: string | null | undefined, fileName: string): boolean {
+  if (!fileType || !fileName) {
+    return false;
+  }
+
+  // Liste des extensions d'image supportées
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.jfif'];
+
+  // Vérifier si le nom du fichier se termine par une extension d'image
+  return imageExtensions.some(extension => fileName.toLowerCase().endsWith(extension));
+}
+
+
+isPdf(fileType: string): boolean {
+  return fileType === 'application/pdf';  // Vérifie si le type de fichier est un PDF
+}
+
+
+getFileUrl(file: any): string {
+  // Si fileType est incorrect, déduire le type à partir de l'extension
+  const mimeType = this.getMimeType(file.fileName);
+
+  return `data:${mimeType};base64,${file.data}`;
+}
+
+getMimeType(fileName: string): string {
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'gif':
+      return 'image/gif';
+      case 'jfif':
+        return 'image/jfif';
+        case 'jpe':
+          return 'image/jpe';
+    case 'pdf':
+      return 'application/pdf';
+    default:
+      return 'application/octet-stream';
+  }
 }
 
 

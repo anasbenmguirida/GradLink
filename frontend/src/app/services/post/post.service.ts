@@ -34,11 +34,13 @@ export class PostService {
         'Authorization': `Bearer ${token}`
     });
 
-    console.log("Headers envoyés : ", headers);
-        console.log(postData,"WSAL n service ");
-        postData.forEach((value: any, key: any) => {
-          console.log(`Key: ${key}, Value: ${value}`);
-      });
+    console.log("Fichiers dans servuce'files[]' :");
+    const files = postData.getAll('files[]');
+    files.forEach((file: any, index: number) => {
+      console.log(`File ${index + 1}:`, file);
+    });
+
+  
      
     return this.http.post<any>(`${this.apiUrl}/create-poste`, postData);
   }
@@ -54,15 +56,21 @@ export class PostService {
   }
 
 
-  likePost(postId: number, userId: string): Observable<any> {
-    const payload = { posteId: postId, userId: userId }; // Prépare l'objet à envoyer
-    return this.http.put('/api/like', payload, { responseType: 'text' });
-  }
+  likePost(postId: number, userId: number): Observable<any> {
+    const payload = { posteId: postId, userId: userId };
+console.log(payload)
+const options = { responseType: 'text' as 'json' };
+
+// Retourne une requête POST
+return this.http.post(`${this.apiUrl}/like`, payload, options);
+}
   
   
-  unlikePost(postId: number, userId: string): Observable<any> {
-    return this.http.put(`/api/unlike/${postId}`, userId, { responseType: 'text' });
+  
+  unlikePost(postId: number, userId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/api/unlike/${postId}`, userId);
   }
+  
   // toggleLike(postId: number, isLiked:boolean): Observable<any> {
   //   return this.http.post(`${this.apiUrl}/like`, { postId,  isLiked });
   // }
@@ -82,7 +90,7 @@ export class PostService {
   }
 
 
-  isLiked(postId: string, userId: string): Observable<boolean> {
-    return this.http.post<boolean>('/api/posts/is-liked', { postId, userId });
+  isLiked(postId: any, userId: any): Observable<boolean> {
+    return this.http.post<boolean>(`{${this.apiUrl}/posts/isLiked}`, { postId, userId });
   }
 }

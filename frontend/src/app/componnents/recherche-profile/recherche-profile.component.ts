@@ -1,13 +1,12 @@
 import { ProfileService } from './../../services/profile/profile.service';
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { PostService } from '../../services/post/post.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
-
 
 @Component({
   selector: 'app-recherche-profile',
@@ -26,7 +25,7 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
 export class RechercheProfileComponent implements OnInit {
 
 
-  constructor(private route: ActivatedRoute,private ProfileService :ProfileService,private postService :PostService) {}
+  constructor(private route: ActivatedRoute,@Inject(PLATFORM_ID) private platformId: Object,private ProfileService :ProfileService,private postService :PostService) {}
 
    me:any;
    selectedId: number | null = null;
@@ -35,35 +34,86 @@ export class RechercheProfileComponent implements OnInit {
    posts:any=[];
    classifiedPosts: any[] = [];
   ngOnInit(): void {
-  
-  this.me = JSON.parse(localStorage.getItem('user') || '{}');
-  this.selectedId = +this.route.snapshot.paramMap.get('id')! ;
 
+        
+    if (isPlatformBrowser(this.platformId)) {
+              console.log('hiiiiii123')
+    
+              this.me = JSON.parse(localStorage.getItem('user') || '{}');
+              console.log(this.me)
+    
+
+      } else {
+              console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+           }
+
+ 
+  this.selectedId = +this.route.snapshot.paramMap.get('id')! ;
+console.log(this.selectedId)
 
   if (this.selectedId) {
     this.ProfileService.getUserById(this.selectedId).subscribe(
       (data) => {
         this.searchUser = data;  
+        console.log("seaaaarch",this.searchUser);
       },
       (error) => {
         console.error('Erreur lors de la récupération de l\'utilisateur:', error);
       }
     );
   }
-
-
+  console.log("hooooooooola",this.searchUser)
   this.postService.getUserPosts(this.selectedId).subscribe((data) => {
     this.posts = data;
+    console.log("lesPostRecherch",this.posts)
     this.fetchPosts();
 
   });
-
-
-  
-
-  this.loadRelation();
+this.loadRelation();
 
   }
+  // platformId(platformId: any) {
+  //   throw new Error('Method not implemented.');
+  // }
+
+//fin ngoninit
+
+
+fetchPosts(): void {
+  console.log('Original Posts:', this.posts); // Log des données initiales
+
+  // Initialise classifiedPosts avec les posts modifiés
+  this.classifiedPosts = this.posts.map((post: any) => {
+    if (!Array.isArray(post.posteFiles)) {
+      console.warn('PosteFiles is not an array:', post);
+      return {
+        ...post,
+        images: [],
+        pdfs: [],
+        isLiked: false, // Ajout d'un champ par défaut
+      };
+    }
+
+    const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType, file.fileName)) || [];
+    const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType)) || [];
+
+    return {
+      ...post,
+      images,
+      pdfs,
+      isLiked: false, // Ajout d'un champ par défaut
+    };
+  });
+
+  // Vérifie si chaque post est liké
+  this.classifiedPosts.forEach((post: any) => {
+    this.postService.isLiked(post.id, this.me.id).subscribe((isLiked) => {
+      post.isLiked = isLiked; // Met à jour le champ `isLiked`
+    });
+  });
+
+  console.log('Classified Posts with Likes:', this.classifiedPosts); // Log des résultats finaux avec les likes
+}
 
 
   loadRelation() {
@@ -82,24 +132,55 @@ export class RechercheProfileComponent implements OnInit {
   }
 
 
-  fetchPosts(): void {
-    this.classifiedPosts = this.posts.map((post: any) => ({
-      ...post,
-      images: post.fichiers.filter((url: string) => this.isImage(url)),
-      pdfs: post.fichiers.filter((url: string) => this.isPdf(url))
-    }));
+  isImage(fileType: string | null | undefined, fileName: string): boolean {
+    if (!fileType || !fileName) {
+      return false;
+    }
+  
+    // Liste des extensions d'image supportées
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.jfif'];
+  
+    // Vérifier si le nom du fichier se termine par une extension d'image
+    return imageExtensions.some(extension => fileName.toLowerCase().endsWith(extension));
   }
+  
+  
+  isPdf(fileType: string): boolean {
+    return fileType === 'application/pdf';  // Vérifie si le type de fichier est un PDF
+  }
+
 
 
   
-  isImage(url: string): boolean {
-    return /\.(jpg|jpeg|png|gif)$/i.test(url);
-  }
 
-  isPdf(url: string): boolean {
-    return /\.pdf$/i.test(url);
+  getFileUrl(file: any): string {
+    // Si fileType est incorrect, déduire le type à partir de l'extension
+    const mimeType = this.getMimeType(file.fileName);
+  
+    return `data:${mimeType};base64,${file.data}`;
   }
-
+  
+  getMimeType(fileName: string): string {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+        case 'jfif':
+          return 'image/jfif';
+          case 'jpe':
+            return 'image/jpe';
+      case 'pdf':
+        return 'application/pdf';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+  
   sendInvitation() {
     this.ProfileService
       .sendInvitation(this.me.id, this.selectedId)

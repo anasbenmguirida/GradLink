@@ -171,9 +171,9 @@
         <div *ngSwitchCase="1">
           <img 
             class="post-image cursor-pointer" 
-            [src]="post.images[0]" 
+            [src]="getFileUrl(post.images[0])" 
             alt="Post Image" 
-            (click)="openModalimage(post.images[0])"
+            (click)="openModalimage(getFileUrl(post.images[0]))"
           />
         </div>
     
@@ -182,54 +182,47 @@
           <img 
             *ngFor="let image of post.images" 
             class="post-image cursor-pointer" 
-            [src]="image" 
+              [src]="getFileUrl(image)"
             alt="Post Image" 
-            (click)="openModalimage(image)"
+            (click)="openModalimage(getFileUrl(image))"
           />
         </div>
     
         <!-- Trois images -->
         <div *ngSwitchCase="3" class="grid grid-cols-2 gap-2">
           <img 
-            class="post-image cursor-pointer col-span-2" 
-            [src]="post.images[0]" 
-            alt="Post Image" 
-            (click)="openModalimage(post.images[0])"
-          />
-          <img 
-            *ngFor="let image of post.images.slice(1, 3)" 
-            class="post-image cursor-pointer" 
-            [src]="image" 
-            alt="Post Image" 
-            (click)="openModalimage(image)"
-          />
+          class="post-image cursor-pointer col-span-2" 
+          [src]="getFileUrl(post.images[0])" 
+          alt="Post Image" 
+          (click)="openModalimage(getFileUrl(post.images[0]))"
+        />
+        <img   
+          *ngFor="let image of post.images.slice(1, 3)" 
+          class="post-image cursor-pointer" 
+          [src]="getFileUrl(image)" 
+          alt="Post Image" 
+          (click)="openModalimage(image)"
+        />
         </div>
     
        
         <div *ngSwitchDefault class="grid grid-cols-2 gap-2">
-          <ng-container *ngFor="let image of post.images; let i = index">
-           
-            <img 
-              *ngIf="i < 4"
-              class="post-image cursor-pointer"
-              [src]="image"
-              alt="Post Image"
-              (click)="openModalimage(image)"
-            />
-          </ng-container>
-        
-       
-          <div 
-            *ngIf="post.images.length > 4"
-            class="relative flex items-center justify-center bg-gray-200 rounded-lg cursor-pointer"
-            (click)="openGallery(post.images.slice(4))"
-          >
-            <span class="text-lg font-bold text-gray-700">
-              +{{ post.images.length - 4 }}
-            </span>
-          </div>
+          <img 
+            *ngFor="let image of post.images; let i = index" 
+            class="post-image cursor-pointer"
+            [src]="getFileUrl(image)" 
+            alt="Post Image" 
+            [class.hidden]="i >= 4"
+            (click)="openModalimage(image)"
+          />
+          <div *ngIf="post.images.length > 4" class="relative flex items-center justify-center bg-gray-200 rounded-lg">
+            <span 
+            (click)="openGallery(post.images.slice(4))" 
+            class="text-lg font-bold text-gray-700 cursor-pointer"
+            >
+            +{{ post.images.length - 4 }}
+          </span>          </div>
         </div>
-        
         <div *ngIf="isGalleryOpen" class="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div class="bg-white p-4 rounded-lg shadow-lg max-w-md w-full">
          

@@ -73,7 +73,7 @@ public ResponseEntity<Map<String, String>> createPoste(
         return this.posteService.deletePoste(id);
     }
 
-    @PutMapping("/api/like")
+    @PostMapping("/api/like")
     public ResponseEntity<String> likePoste(@RequestBody PosteLikes posteLikes){
         return this.userService.likePoste(posteLikes.getPosteId() ,posteLikes.getUserId());
     }
@@ -85,6 +85,8 @@ public ResponseEntity<Map<String, String>> createPoste(
     public ResponseEntity<String> unlikePoste(@PathVariable int posteId , @RequestBody int userId){
         return this.userService.unlikePoste(posteId , userId);
     }
+
+  
     @PutMapping("/api/save-picture")
     public ResponseEntity<String> savePicture(@RequestParam("id") int id , @RequestParam("file") MultipartFile file){
         return this.userService.SaveProfilePicture( file , id);
@@ -95,7 +97,11 @@ public ResponseEntity<Map<String, String>> createPoste(
         return this.userService.getProfilePicture(id);
     } 
 
-
+    @GetMapping("/api/isLiked")
+    public ResponseEntity<Boolean> isLikedPoste(@RequestBody PosteLikes posteLikes) {
+        boolean isLiked = posteService.checkLikedPoste(posteLikes);
+        return ResponseEntity.ok(isLiked);
+    }
 
 
 

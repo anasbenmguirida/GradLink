@@ -51,7 +51,7 @@ if (isPlatformBrowser(this.platformId)) {
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data;
       this.fetchPosts();
-      this.checkLikes();
+    //  this.checkLikes();
 
     });
     console.log("postes recu",this.posts)
@@ -75,6 +75,7 @@ if (isPlatformBrowser(this.platformId)) {
   fetchPosts(): void {
     console.log('Original Posts:', this.posts); // Log des données initiales
   
+    // Initialise classifiedPosts avec les posts modifiés
     this.classifiedPosts = this.posts.map((post: any) => {
       if (!Array.isArray(post.posteFiles)) {
         console.warn('PosteFiles is not an array:', post);
@@ -82,25 +83,29 @@ if (isPlatformBrowser(this.platformId)) {
           ...post,
           images: [],
           pdfs: [],
+          isLiked: false, // Ajout d'un champ par défaut
         };
       }
   
-      // const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType));
-      // const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType));
       const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType, file.fileName)) || [];
       const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType)) || [];
-  
-      console.log('Filtered Images:', images); // Log des images filtrées
-      console.log('Filtered PDFs:', pdfs);     // Log des PDFs filtrés
   
       return {
         ...post,
         images,
         pdfs,
+        isLiked: false, // Ajout d'un champ par défaut
       };
     });
   
-    console.log('Classified Posts:', this.classifiedPosts); // Log des résultats finaux
+    // Vérifie si chaque post est liké
+    this.classifiedPosts.forEach((post: any) => {
+      this.postService.isLiked(post.id, this.me.id).subscribe((isLiked) => {
+        post.isLiked = isLiked; // Met à jour le champ `isLiked`
+      });
+    });
+  
+    console.log('Classified Posts with Likes:', this.classifiedPosts); // Log des résultats finaux avec les likes
   }
   
   // isImage(fileType: string | null | undefined): boolean {
@@ -136,20 +141,26 @@ if (isPlatformBrowser(this.platformId)) {
       formData.append('typePost', 'NORMAL');
       formData.append('userId', this.me.id);
       this.selectedFiles.forEach((file) => {
-        formData.append('files[]', file); // "files[]" correspond à l'attente du backend
+        formData.append('files', file); // "files[]" correspond à l'attente du backend
       });
 
+      console.log("Fichiers dans 'files[]' :");
+const files = formData.getAll('files[]');
+files.forEach((file, index) => {
+  console.log(`File ${index + 1}:`, file);
+});
       console.log("formData",formData);
 this.selectedFiles.forEach((file, index) => {
   console.log(`soumaia File ${index}:`, file);
 });
   
+
       // Envoi des données au backend via le service
       this.postService.createPost(formData).subscribe(
         (response) => {
           // Ajoutez le nouveau post localement (par exemple, dans une liste)
           // this.classifiedPosts.unshift(formData);
-          
+          console.log("le poste est ajoute");
           // Réinitialisez le formulaire et les fichiers sélectionnés
           this.postForm.reset();
           this.selectedFiles = [];
@@ -314,33 +325,47 @@ closeModalimage() {
   
 
 toggleLike(post: any): void {
-  const userId = 'myCIN'; // Identifiant de l'utilisateur
-  const isLiked = !post.isLiked;
+  const userId = this.me.id; // Utilise l'identifiant de l'utilisateur connecté
+  const isLiked = !post.isLiked; // L'inverse de l'état actuel du like
 
   if (isLiked) {
     // Utiliser le service pour "liker"
-    this.postService.likePost(post.id, this.me.id).subscribe(
+    this.postService.likePost(post.id, userId).subscribe(
       (response) => {
-        post.isLiked = true; // Met à jour l'état local
-        console.log(`Post liké avec succès :`, post);
+        if (response) {
+          post.isLiked = true; // Met à jour l'état local
+          post.nbrLikes = (post.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
+          console.log(`Post liké avec succès :`, post);
+        } else {
+          console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
+        }
       },
       (error) => {
         console.error('Erreur lors du like du post :', error);
+        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   } else {
     // Utiliser le service pour "unliker"
-    this.postService.unlikePost(post.id, this.me.id).subscribe(
+    this.postService.unlikePost(post.id, userId).subscribe(
       (response) => {
-        post.isLiked = false; // Met à jour l'état local
-        console.log(`Post unliké avec succès :`, post);
+        if (response && response.message === "Poste unliké avec succès") {
+          post.isLiked = false; // Met à jour l'état local
+          post.nbrLikes = (post.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
+          console.log(`Post unliké avec succès :`, post);
+        } else {
+          console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
+        }
       },
       (error) => {
         console.error('Erreur lors du unlike du post :', error);
+        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   }
 }
+
+
 
 
 

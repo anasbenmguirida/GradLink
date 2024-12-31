@@ -31,7 +31,7 @@ export class ProfileService {
       'Authorization': `Bearer ${token}` // Ajoutez le token au format Bearer
     });
   
-    return this.http.get<any>(`${this.apiUrl}/${id}`,{ headers });
+    return this.http.get<any>(`${this.apiUrl}/profile/${id}`);
   }
 
   getRelation(id_emitter: any, id_receiver: any) {

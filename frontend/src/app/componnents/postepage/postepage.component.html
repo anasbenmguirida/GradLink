@@ -111,7 +111,7 @@
               alt="Post Image" 
               (click)="openModalimage(getFileUrl(image))"
             />
-            <p>halaaaaaaaaaaaa</p>
+           
 
           </div>
       
@@ -145,7 +145,7 @@
               <span 
               (click)="openGallery(post.images.slice(4))" 
               class="text-lg font-bold text-gray-700 cursor-pointer"
-            >
+              >
               +{{ post.images.length - 4 }}
             </span>          </div>
           </div>
@@ -222,11 +222,11 @@
           />
         </svg>
       </button>
-      <span>{{ post.likes }}</span>
+      <span>{{ post.nbrLikes }}</span>
     </div>
     
     
-  </div>
+   </div>
   
     </div>
     
