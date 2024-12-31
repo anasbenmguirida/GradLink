@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -143,6 +144,18 @@ private final UserRepository userRepository;
 
     public List<User> getAllUsersExceptAdmins() {
         return userRepository.findByRoleNot(Role.ADMIN);
+    }
+
+    public Optional<User> getUserByIdUser(int id) {
+        return userRepository.findById(id);
+    }
+
+    public Optional<User> getUserByName(String firstName, String lastName) {
+        return userRepository.findByFirstNameAndLastName(firstName, lastName);
+    }
+
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
 

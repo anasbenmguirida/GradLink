@@ -1,6 +1,7 @@
 package com.back.backend.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -116,6 +117,23 @@ private final LaureatService laureatService;
     @GetMapping("/api/except-admins")
     public List<User> getAllUsersExceptAdmins() {
         return userService.getAllUsersExceptAdmins();
+    }
+
+    @GetMapping("/api/searchuser")
+    public Optional<User> searchUser(
+        @RequestParam(value = "id", required = false) Integer id,
+        @RequestParam(value = "firstName", required = false) String firstName,
+        @RequestParam(value = "lastName", required = false) String lastName,
+        @RequestParam(value = "email", required = false) String email
+    ) {
+        if (id != null) {
+            return userService.getUserByIdUser(id);
+        } else if (firstName != null && lastName != null) {
+            return userService.getUserByName(firstName, lastName);
+        } else if (email != null) {
+            return userService.getUserByEmail(email);
+        }
+        return Optional.empty();
     }
 
 }
