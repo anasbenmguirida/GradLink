@@ -36,15 +36,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
-        
+
         http
-            .csrf(csrf -> csrf
-            .disable())
+            .securityMatcher("/api/**")  // Ensure this filter chain applies only to API routes
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(requests -> requests
-            .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern("/api/login")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern("/api/register")).permitAll()
-            .anyRequest().authenticated()
+                .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern("/api/login")).permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern("/api/register")).permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern("/api/communities")).permitAll()
+                .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,5 +1,9 @@
 package com.back.backend.Entities;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.back.backend.dto.CaummunauteDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
@@ -37,4 +41,8 @@ public class Caummunaute {
     @JsonBackReference(value = "admin-caum")
     private Admin admin;
     // it can have mu
+    // One-to-many relationship with Poste
+    @OneToMany(mappedBy = "caummunaute", fetch = FetchType.LAZY)
+    private List<Poste> postes;
+
 }

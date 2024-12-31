@@ -1,6 +1,7 @@
 package com.back.backend.controllers;
 
 import com.back.backend.Entities.Caummunaute;
+import com.back.backend.dto.CaummunauteDTO;
 import com.back.backend.services.CaummunauteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +19,14 @@ public class CaummunauteController {
     private CaummunauteService caummunauteService;
 
     // Endpoint to get all communities
+    //@GetMapping
+    //public List<Caummunaute> getAllCommunities() {
+        //return caummunauteService.getAllCommunities();
+    //}
+
     @GetMapping
-    public List<Caummunaute> getAllCommunities() {
-        return caummunauteService.getAllCommunities();
+    public List<CaummunauteDTO> getAllCommunitiesWithPostes() {
+        return caummunauteService.getAllCommunitiesWithPostes();
     }
 
     // Endpoint to get a community by ID
@@ -28,4 +34,5 @@ public class CaummunauteController {
     public Caummunaute getCommunityById(@PathVariable int id) {
         return caummunauteService.getCommunityById(id);
     }
+
 }

@@ -13,10 +13,11 @@ public class WebSecurityConfig {
     @Bean(name = "webSecurityFilterChain")
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll() // Allow all requests without authentication
-                )
-                .csrf(csrf -> csrf.disable()); // Optionally disable CSRF protection
+            .securityMatcher("/ws/**")  // Ensure this filter chain applies only to WebSocket routes or others
+            .authorizeHttpRequests(authorize -> authorize
+                .anyRequest().permitAll() // Allow all requests for WebSocket or other specific paths
+            )
+            .csrf(csrf -> csrf.disable()); // Optionally disable CSRF protection
 
         return http.build();
     }
