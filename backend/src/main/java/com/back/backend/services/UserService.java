@@ -72,7 +72,13 @@ private final UserRepository userRepository;
 }
 
 
-
+    public boolean checklikes(int idUser , int idPoste){
+        PosteLikes posteLikes= this.posteLikesRepository.checklikes(idUser, idPoste);
+        if(posteLikes != null){
+            return true ; 
+        }
+        return false ; 
+    }
 
     public ResponseEntity<String> likePoste(int idPoste , int idUser){
         Poste poste = this.posteRepository.findById(idPoste).orElse(null);

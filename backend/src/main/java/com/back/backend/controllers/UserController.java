@@ -94,6 +94,10 @@ public ResponseEntity<Map<String, String>> createPoste(
     public ResponseEntity<byte[]> getProfilePicture(@PathVariable int id){
         return this.userService.getProfileImage(id);
     } 
+    @GetMapping("/api/check-likes")
+    public boolean checkLikes(@RequestBody PosteLikes posteLikes){
+        return this.userService.checklikes(posteLikes.getUserId(), posteLikes.getPosteId());
+    }
 
 
 
