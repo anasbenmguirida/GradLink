@@ -113,4 +113,9 @@ private final LaureatService laureatService;
         }
     }
 
+    @GetMapping("/api/except-admins")
+    public List<User> getAllUsersExceptAdmins() {
+        return userService.getAllUsersExceptAdmins();
+    }
+
 }

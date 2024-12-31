@@ -16,10 +16,12 @@ import com.back.backend.Entities.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findById(Integer id);
     Optional<User> findByEmail(String email);  // For finding user by email
+    List<User> findByRoleNot(com.back.backend.enums.Role admin);
 
 
     @Query("SELECT u FROM User u WHERE u.role = :role")
     List<User> findAllByRole(@Param("role") Role role);
+
 
 
 }

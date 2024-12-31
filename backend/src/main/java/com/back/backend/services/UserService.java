@@ -3,6 +3,7 @@ package com.back.backend.services;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteFiles;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
+import com.back.backend.enums.Role;
 import com.back.backend.repositories.PosteFilesRepository;
 import com.back.backend.repositories.PosteLikesRepository;
 import com.back.backend.repositories.PosteRepository;
@@ -137,6 +139,10 @@ private final UserRepository userRepository;
         existingUser.setPassword(updatedUser.getPassword());
         userRepository.save(existingUser);
         return ResponseEntity.ok(existingUser);
+    }
+
+    public List<User> getAllUsersExceptAdmins() {
+        return userRepository.findByRoleNot(Role.ADMIN);
     }
 }
 
