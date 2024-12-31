@@ -7,8 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data // generates all the getters and setters for non final fields
-@Builder // generates a builder for the class
+@Data 
+@Builder 
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {

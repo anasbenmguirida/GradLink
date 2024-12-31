@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.back.backend.DTO.PosteWithUserDTO;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.services.PosteService;
@@ -22,9 +23,10 @@ public class PosteController {
 
     private final PosteService posteService;
 
-    @GetMapping("/api/postes")  // for the feed 
-    public List<Poste> getAllPostes(){
-        return this.posteService.getAllPoste();
+    @GetMapping("/api/postes")  // for the feed
+    // fixing the order of the posts
+    public List<PosteWithUserDTO> getAllPostes(){
+        return this.posteService.findPostesByOrder();
     }
     
 }

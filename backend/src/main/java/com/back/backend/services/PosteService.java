@@ -3,21 +3,28 @@ package com.back.backend.services;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.DTO.PosteWithUserDTO;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteFiles;
 import com.back.backend.Entities.PosteLikes;
+import com.back.backend.Entities.User;
 import com.back.backend.repositories.PosteFilesRepository;
 import com.back.backend.repositories.PosteLikesRepository;
 import com.back.backend.repositories.PosteRepository;
+import com.back.backend.repositories.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,14 +37,27 @@ public class PosteService {
     private final PosteRepository posteRepository ; 
     private final PosteLikesRepository posteLikesRepository ; 
     private final PosteFilesRepository posteFilesRepository ;
+    private final UserRepository userRepository ;
+    
     
     public List<Poste> findPostesByUserId(int id){
         return this.posteRepository.findPostesByUserId(id) ; 
     }
 
-    public List<Poste> getAllPoste() {
-        return this.posteRepository.findAll() ; 
-    }
+   public List<PosteWithUserDTO> findPostesByOrder() {
+    List<Poste> postes = this.posteRepository.findPostesByOrder();
+    return postes.stream()
+        .map(poste -> {
+            User user = this.userRepository.findById(poste.getUserId())
+                           .orElse(null);
+            String firstName = user.getFirstName();
+            String lastName = user.getLastName();
+            byte[] photoProfile = user.getPhotoProfile();
+            return new PosteWithUserDTO(poste, firstName, lastName , photoProfile);
+        })
+        .collect(Collectors.toList());
+}
+
 
     public boolean checkLikedPoste(PosteLikes posteLikes){
         PosteLikes isLiked = this.posteLikesRepository.checklikes(posteLikes.getPosteId(), posteLikes.getUserId()) ; 

@@ -37,7 +37,7 @@ import lombok.AllArgsConstructor;
 public class UserController {
 private final UserService userService;
 private final PosteService posteService;
-@CrossOrigin(origins = "http://localhost:4200") 
+
 
   
 @PostMapping("/api/create-poste")
@@ -81,9 +81,9 @@ public ResponseEntity<Map<String, String>> createPoste(
     public List<Poste> getPoste(@PathVariable int id){
         return this.posteService.findPostesByUserId(id) ; 
     }
-    @PutMapping("/api/unlike/{posteId}") // id dial le poste
-    public ResponseEntity<String> unlikePoste(@PathVariable int posteId , @RequestBody int userId){
-        return this.userService.unlikePoste(posteId , userId);
+    @PutMapping("/api/unlike") // id dial le poste
+    public ResponseEntity<String> unlikePoste(@RequestBody PosteLikes posteLikes){
+        return this.userService.unlikePoste(posteLikes.getPosteId() , posteLikes.getUserId());
     }
 
   
@@ -93,9 +93,13 @@ public ResponseEntity<Map<String, String>> createPoste(
     }
 
     @GetMapping("/api/profile-picture/{id}")
-    public String getProfilePicture(@PathVariable int id){
-        return this.userService.getProfilePicture(id);
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable int id){
+        return this.userService.getProfileImage(id);
     } 
+    @GetMapping("/api/check-likes")
+    public boolean checkLikes(@RequestBody PosteLikes posteLikes){
+        return this.userService.checklikes(posteLikes.getUserId(), posteLikes.getPosteId());
+    }
 
     @GetMapping("/api/isLiked")
     public ResponseEntity<Boolean> isLikedPoste(@RequestBody PosteLikes posteLikes) {
