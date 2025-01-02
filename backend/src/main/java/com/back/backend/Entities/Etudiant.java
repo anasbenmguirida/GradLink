@@ -1,5 +1,6 @@
 package com.back.backend.Entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -24,8 +25,9 @@ private String filiere ;
 @JsonManagedReference(value = "etu-demande")
 private List<DemandeMentorat> demandes;
 
-@OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL)
-@JsonManagedReference(value = "etu-msg")
-private List<Message> messages ; 
+@OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<Message> sentMessages = new ArrayList<>();
 
+@OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<Message> receivedMessages = new ArrayList<>();
 }

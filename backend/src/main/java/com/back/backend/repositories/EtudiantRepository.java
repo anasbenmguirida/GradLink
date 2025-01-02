@@ -2,6 +2,7 @@ package com.back.backend.repositories;
 
 import com.back.backend.Entities.Etudiant;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
