@@ -205,6 +205,8 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
   }
 
 
+
+  
     usersAll: any[] = [
     {id:1, firstname: 'Soumaia ', lastname: 'Kerouan salah', image: 'profile.png',messages:['hi','ana maja'],specialite:'develop' },
     { id:2,firstname: 'safae ', lastname: 'Kerouan salah', image: 'profile.png',messages:['hi','ana maja'] ,specialite:'full stac'},

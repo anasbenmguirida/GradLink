@@ -101,7 +101,7 @@ public ResponseEntity<Map<String, String>> createPoste(
         return this.userService.checklikes(userId, postId);
     }
     
-
+  
     @GetMapping("/api/isLiked")
     public ResponseEntity<Boolean> isLikedPoste(@RequestBody PosteLikes posteLikes) {
         boolean isLiked = posteService.checkLikedPoste(posteLikes);
@@ -110,15 +110,19 @@ public ResponseEntity<Map<String, String>> createPoste(
 
 
 
+   
     
-
-    
-    @GetMapping("/profile/{id}")
+    @GetMapping("/api/profile/{id}")
     public ResponseEntity<User> getUserProfile(@PathVariable int id) {
         User user = userService.getUserById(id);  
         return ResponseEntity.ok(user);  
     }
 
+    
+    @GetMapping("/api/except-admins")
+    public List<User> getAllUsersExceptAdmins() {
+        return userService.getAllUsersExceptAdmins();
+    }
     @PutMapping("/profile")
     public ResponseEntity<ResponseEntity<User>> updateUserProfile(@RequestBody User updatedUser) {
 

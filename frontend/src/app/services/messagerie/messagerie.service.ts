@@ -28,7 +28,11 @@ export class MessagerieService {
 
 
     getAllUsers(): Observable<any[]> {
-      return this.http.get<any[]>(`${this.apiUrl}`);
+      return this.http.get<any[]>(`${this.apiUrl}/except-admins`);
+    }
+
+    getAllsearchUsers(): Observable<any[]> {
+      return this.http.get<any[]>(`${this.apiUrl}/except-admins`);
     }
   
 }

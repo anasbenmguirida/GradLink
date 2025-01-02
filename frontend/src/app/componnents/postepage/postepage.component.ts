@@ -51,14 +51,14 @@ if (isPlatformBrowser(this.platformId)) {
           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
        }
 this.photoUser=this.postService. getUserImage(this.me.id);
+console.log("photo",this.photoUser)
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data;
-   
+   console.log(this.posts)
       this.fetchPosts();
     //  this.checkLikes();
 
     });
-    console.log("postes recu",this.posts)
     console.log("Token récupéré dans /posts:", localStorage.getItem('authToken'));
 
     console.log("hi");
@@ -109,7 +109,7 @@ this.photoUser=this.postService. getUserImage(this.me.id);
   
   // isImage(fileType: string | null | undefined): boolean {
   //   return !!fileType && fileType.toLowerCase().startsWith('image/');
-  // }
+
 
 
 
@@ -395,159 +395,6 @@ console.log(isLiked)
 
 
 
-
-
-//   posts = [
-//     {
-//       profileImage: 'profile.png',
-//       username: 'Mouad Ajmani',
-//       role: '1337 student',
-//       daysAgo: 4,
-//       description: `🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉`,
-//       images: ['windows-design.jpg', 'additional-image.jpg'], // Plusieurs images
-//       pdfs: ['projet_use_case.pdf'],                          // Plusieurs fichiers PDF
-//       likes: 891,
-//       likeIcon: 'like.png',
-//       isLiked: false,
-//     },
-//     {
-//       profileImage: 'profile.png',
-//       username: 'Mouad Ajmani',
-//       role: '1337 student',
-//       daysAgo: 4,
-//       description: `🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉`,
-//       images: ['laravel.png'],        // Une seule image
-//       pdfs: [],                       // Aucun fichier PDF
-//       likes: 891,
-//       likeIcon: 'like.png',
-//       isLiked: false,
-//     },
-//   ];
-  
-
-//   isLiked: boolean = false; // État de "J'aime" pour un post
-//   postForm: FormGroup; // Formulaire pour soumettre un post
-
-//   constructor(private fb: FormBuilder) {
-//     // Initialisation du formulaire avec FormBuilder
-//     this.postForm = this.fb.group({
-//       description: [''],   // Champ de description
-//       images: [[]],        // Champ pour plusieurs images
-//       files: [[]]          // Champ pour plusieurs fichiers PDF
-//     });
-    
-//   }
-
-//   // Fonction pour gérer le changement du champ "description"
-//   onContentChange(event: any): void {
-//     const description = event.target.value.trim();
-//     this.postForm.get('description')?.setValue(description);
-//   }
-
-
-
-
-
-//   selectedFiles: File[] = [];
-//   selectedFileNames: string[] = [];
-  
-//   onFileChange(event: Event): void {
-//     const input = event.target as HTMLInputElement;
-//     if (input.files && input.files.length > 0) {
-//       // Ne réinitialisez pas les tableaux, mais ajoutez les nouveaux fichiers sélectionnés
-//       Array.from(input.files).forEach((file) => {
-//         const mimeType = file.type;
-  
-//         if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
-//           this.selectedFiles.push(file);  // Ajoute les fichiers valides à la liste
-//           this.selectedFileNames.push(file.name); // Ajoute le nom du fichier
-//         } else {
-//           console.error('Type de fichier non pris en charge :', file.name);
-//         }
-//       });
-  
-//       console.log('Fichiers sélectionnés :', this.selectedFiles);
-//     }
-//   }
-  
-//   // Soumission du post
-//   submitPost(): void {
-//     if (this.postForm.valid) {
-//       const postData = this.postForm.value;
-//       console.log('Post soumis :', postData);
-  
-//       // Traitez les fichiers images
-//       const images = this.selectedFiles
-//         .filter((file) => file.type.startsWith('image/'))
-//         .map((file) => URL.createObjectURL(file));  // Crée des URL temporaires pour les images
-  
-//       // Traitez les fichiers PDF
-//       const pdfs = this.selectedFiles
-//         .filter((file) => file.type === 'application/pdf')
-//         .map((file) => URL.createObjectURL(file));  // Crée des URL temporaires pour les PDF
-  
-//       const newPost = {
-//         profileImage: 'profile.png', // Remplace par le chemin de l'image du profil utilisateur
-//         username: 'Soumaia Kerouan', // Remplace par le nom de l'utilisateur connecté
-//         role: 'User', // Ajout de la propriété 'role'
-//         daysAgo: 0, // Nouveau post, donc publié aujourd'hui
-//         description: postData.description || '', // Description vide par défaut si non renseignée
-//         images, // Liste des URL temporaires pour les images
-//         pdfs,   // Liste des URL temporaires pour les fichiers PDF
-//         likes: 0, // Initialisation des likes à 0
-//         likeIcon: 'like.png', // Ajout de la propriété 'likeIcon'
-//         isLiked: false, // Par défaut, le post n'est pas aimé
-//       };
-  
-//       // Ajouter le nouveau post au début du tableau posts
-//       this.posts.unshift(newPost);
-  
-//       // Réinitialisation du formulaire après soumission
-//       this.postForm.reset();
-//       this.selectedFiles = []; // Réinitialise la liste des fichiers
-//       this.selectedFileNames = []; // Réinitialise les noms des fichiers
-//     }
-//   }
-  
-  
-
-
-
-
-
-  
-
-
-
-// toggleLike(post: any): void {
-//   post.isLiked = !post.isLiked;
-
-
-// }
-
-
-// selectedImages: string[] = []; // Images sélectionnées pour la galerie
-// isGalleryOpen: boolean = false; // Initialement fermé
-// openGallery(images: string[]): void {
-//   this.selectedImages = images; // Stocke les images restantes
-//   console.log('Opening gallery with images:', images);
-//   // Ajoutez ici la logique pour ouvrir un modal ou une galerie
-//   this.isGalleryOpen = true; // Exemple : activer un état pour afficher un modal
-// }
-
-// closeGallery(): void {
-//   this.isGalleryOpen = false;
-// }
-
-// selectedImage: string | null = null;
-
-// openModalimage(image: string) {
-//   this.selectedImage = image;
-// }
-
-// closeModalimage() {
-//   this.selectedImage = null;
-// }
 
 
 }
