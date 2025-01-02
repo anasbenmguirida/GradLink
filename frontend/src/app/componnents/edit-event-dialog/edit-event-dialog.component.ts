@@ -19,11 +19,11 @@ export class EditEventDialogComponent {
 
   constructor(private fb: FormBuilder) {
     this.editForm = this.fb.group({
-      title: ['', Validators.required],
+      designation: ['', Validators.required],
       description: ['', Validators.required],
-      capacite: [0, [Validators.required, Validators.min(1)]],
-      date_evenement: ['', [Validators.required]],
-      place_rest: ['', Validators.required],
+      capaciteMaximal: [0, [Validators.required, Validators.min(1)]],
+      dateEvenement: ['', [Validators.required]],
+      placeRestant: ['', Validators.required],
 
     });
   }

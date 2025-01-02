@@ -104,44 +104,49 @@ public class EvenementService {
     /**
      * Reserve a place for a user in an event.
      */
-    public String reservePlace(int eventId, int userId) {
-        Optional<Evenement> eventOptional = evenementRepository.findById(eventId);
-        Optional<User> userOptional = userRepository.findById(userId);
+public String reservePlace(int eventId, int userId) {
+    System.out.println("Tentative de réservation pour l'événement ID: " + eventId + " par l'utilisateur ID: " + userId);
 
-        if (eventOptional.isEmpty()) {
-            return "Event not found.";
-        }
+    Optional<Evenement> eventOptional = evenementRepository.findById(eventId);
+    Optional<User> userOptional = userRepository.findById(userId);
 
-        if (userOptional.isEmpty()) {
-            return "User not found.";
-        }
-
-        Evenement event = eventOptional.get();
-        User user = userOptional.get();
-
-        if (event.getPlaceRestant() <= 0) {
-            return "No places available.";
-        }
-
-        // Check if the user is already registered
-        boolean alreadyRegistered = event.getEventParticipants().stream()
-                .anyMatch(participant -> participant.getUser().getId() == user.getId());
-
-        if (alreadyRegistered) {
-            return "User already registered for this event.";
-        }
-
-        // Register the user and decrement the remaining places
-        EventParticipants participant = new EventParticipants();
-        participant.setEvenement(event);
-        participant.setUser(user);
-        event.getEventParticipants().add(participant);
-        event.setPlaceRestant(event.getPlaceRestant() - 1);
-
-        // Save changes
-        eventParticipantsRepository.save(participant);
-        evenementRepository.save(event);
-
-        return "Reservation successful.";
+    if (eventOptional.isEmpty()) {
+        System.out.println("Événement introuvable.");
+        return "Event not found.";
     }
+
+    if (userOptional.isEmpty()) {
+        System.out.println("Utilisateur introuvable.");
+        return "User not found.";
+    }
+
+    Evenement event = eventOptional.get();
+    User user = userOptional.get();
+
+    if (event.getPlaceRestant() <= 0) {
+        System.out.println("Pas de places disponibles.");
+        return "No places available.";
+    }
+
+    boolean alreadyRegistered = event.getEventParticipants().stream()
+            .anyMatch(participant -> participant.getUser().getId() == user.getId());
+
+    if (alreadyRegistered) {
+        System.out.println("Utilisateur déjà inscrit.");
+        return "User already registered for this event.";
+    }
+
+    EventParticipants participant = new EventParticipants();
+    participant.setEvenement(event);
+    participant.setUser(user);
+    event.getEventParticipants().add(participant);
+    event.setPlaceRestant(event.getPlaceRestant() - 1);
+
+    eventParticipantsRepository.save(participant);
+    evenementRepository.save(event);
+
+    System.out.println("Réservation réussie.");
+    return "Reservation successful.";
+}
+
 }

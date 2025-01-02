@@ -32,7 +32,7 @@ export class EventService {
   addEvent(eventData: any, adminId: number): Observable<any> {
     const params = new HttpParams().set('adminId', adminId.toString()); // Ajout du paramètre adminId
   
-    const url = `${this.apiUrl}/admin/evenement`; // URL sans adminId
+    const url = `${this.apiUrl}/evenement`; // URL sans adminId
   
     return this.http.post(url, eventData, { params });
   }
@@ -40,7 +40,7 @@ export class EventService {
   
   private baseUrl = 'http://localhost:8080/api/events';
 
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8080/api/admin';
 
   constructor(private http: HttpClient) {}
 
@@ -98,10 +98,20 @@ getEventDetails(eventId: number): Observable<any> {
 }
 //Méthode pour réserver un événement
 reserverEvent(eventId: number): Observable<any> {
-  const token = localStorage.getItem('authToken'); 
-  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`); 
-  return this.http.post(`${this.apiUrl}/${eventId}/reserve`, {}, { headers });
+  const user = localStorage.getItem('user');
+  if (!user) {
+    throw new Error('User not found in local storage');
+  }
+
+  const userId = JSON.parse(user).id;
+  const requestBody = { userId };
+  console.log('Request body:', requestBody); // Vérifiez ici ce qui est envoyé
+  const options = { responseType: 'text' as 'json' };
+  return this.http.post(`${this.baseUrl}/${eventId}/reserve`, requestBody,options);
 }
+
+
+
 
 // Méthode pour annuler une réservation
 cancelReservation(eventId: number): Observable<any> {
@@ -112,13 +122,12 @@ cancelReservation(eventId: number): Observable<any> {
 }
 
 deleteEvent(eventId: number): Observable<any> {
-  const token = localStorage.getItem('authToken'); 
-  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  return this.http.delete(`${this.apiUrl}/${eventId}`, { headers });
+ 
+  return this.http.delete(`${this.apiUrl}/evenement/${eventId}`);
 }
 
 
 updateEvent(eventId: number, updatedEvent: any): Observable<any> {
-  return this.http.put(`${this.apiUrl}/${eventId}`, updatedEvent);
+  return this.http.put(`${this.apiUrl}/evenement/${eventId}`, updatedEvent);
 }
 }

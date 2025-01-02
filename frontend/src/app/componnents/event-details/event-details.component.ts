@@ -42,6 +42,7 @@ export class EventDetailsComponent implements OnInit {
   
 
   ngOnInit() {
+    this.checkReservationStatus();
     if (isPlatformBrowser(this.platformId)) {
       const navigation = history.state;
       this.event = navigation ? navigation.event : null;
@@ -106,7 +107,7 @@ export class EventDetailsComponent implements OnInit {
 
 
 
-  deleteEvent(): void {
+  deleteEvent(): void { 
     if (!this.eventId) {
       alert('Impossible de supprimer : l\'ID de l\'événement est invalide.');
       return;
@@ -116,8 +117,7 @@ export class EventDetailsComponent implements OnInit {
     if (confirmation) {
       this.eventService.deleteEvent(this.eventId).subscribe(
         (response) => {
-          alert('Événement supprimé avec succès !');
-          this.router.navigate(['/events']); 
+          this.router.navigate(['/Events']); 
         },
         (error) => {
           console.error('Erreur lors de la suppression', error);
@@ -228,4 +228,5 @@ export class EventDetailsComponent implements OnInit {
       );
     }
   }
-}
+  }
+

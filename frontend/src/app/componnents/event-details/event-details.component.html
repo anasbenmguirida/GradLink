@@ -1,26 +1,26 @@
 <app-nav-bar></app-nav-bar>
 
-<div *ngIf="event" class="back flex flex-col items-center bg-gray-50 min-h-screen py-8">
+<div *ngIf="event" class="back flex flex-col items-center bg-gray-50 min-h-screen py-8 mt-10">
   <div class="bg-white rounded-2xl shadow-md w-full max-w-3xl p-8">
     <div class="text-center mb-6">
-      <h2 class="text-3xl font-semibold text-gray-800">{{ event.title }}</h2>
+      <h2 class="text-3xl font-semibold text-gray-800">{{ event.designation }}</h2>
       <p class="text-lg text-gray-500 mt-2">Détails de l'événement</p>
     </div>
 
     <div class="space-y-6">
       <p class="text-lg text-gray-700 flex items-center">
         <span class="text-indigo-500 text-2xl mr-2">📅</span>
-        <strong class="text-gray-800">Début :</strong> {{ event.date_evenement | date: 'fullDate' }}
+        <strong class="text-gray-800">Début :</strong> {{ event.dateEvenement | date: 'fullDate' }}
       </p>
       <p class="text-lg text-gray-700 flex items-center">
         <span class="text-indigo-500 text-2xl mr-2">📋</span>
         <strong class="text-gray-800">Capacité maximale :</strong>
-        <span class="ml-2">{{ event.capacite }}</span>
+        <span class="ml-2">{{ event.capaciteMaximal }}</span>
       </p>
       <p class="text-lg text-gray-700 flex items-center">
         <span class="text-indigo-500 text-2xl mr-2">🪑</span>
         <strong class="text-gray-800">Les places restantes :</strong>
-        <span class="ml-2">{{ event.place_rest }}</span>
+        <span class="ml-2">{{ event.placeRestant }}</span>
       </p>
       <p class="text-lg text-gray-700 flex items-center">
         <span class="text-indigo-500 text-2xl mr-2">📝</span>
