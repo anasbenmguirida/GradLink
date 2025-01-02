@@ -93,7 +93,7 @@ return this.http.post(`${this.apiUrl}/like`, payload, options);
   }
 
 
-  getUserProfile(userId: number): Observable<any[]> {
+  getUserImage(userId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/profile-picture/{id}")/${userId}`);
   }
 

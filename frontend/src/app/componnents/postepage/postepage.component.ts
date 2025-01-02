@@ -29,6 +29,7 @@ export class PostePageComponent implements OnInit  {
   postForm: FormGroup;
   posts:any=[];
   me:any;
+  photoUser:any;
   classifiedPosts: any[] = [];
   constructor(private fb: FormBuilder, private postService: PostService ,@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
     this.postForm = this.fb.group({
@@ -49,6 +50,7 @@ if (isPlatformBrowser(this.platformId)) {
   } else {
           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
        }
+this.photoUser=this.postService. getUserImage(this.me.id);
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data;
    

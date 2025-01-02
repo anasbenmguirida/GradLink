@@ -39,6 +39,7 @@ export class MyprofileComponent implements OnInit {
  postForm: FormGroup;
   posts:any=[];
   me:any;
+  photoUser:any;
   classifiedPosts: any[] = [];
 
   
@@ -52,7 +53,8 @@ export class MyprofileComponent implements OnInit {
   } else {
           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
         }
- 
+this.photoUser=this.postService. getUserImage(this.me.id);
+
   // this.me = {
   //   role: 'LAUREAT',
   //   firstName: 'Charlie',
