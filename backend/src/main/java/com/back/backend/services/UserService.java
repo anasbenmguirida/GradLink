@@ -72,8 +72,8 @@ private final UserRepository userRepository;
 }
 
 
-    public boolean checklikes(int idUser , int idPoste){
-        PosteLikes posteLikes= this.posteLikesRepository.checklikes(idUser, idPoste);
+    public boolean checklikes(int userId , int postId){
+        PosteLikes posteLikes= this.posteLikesRepository.checklikes(userId, postId);
         if(posteLikes != null){
             return true ; 
         }

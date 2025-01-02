@@ -68,7 +68,10 @@ return this.http.post(`${this.apiUrl}/like`, payload, options);
   
   
   unlikePost(postId: number, userId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/api/unlike/${postId}`, userId);
+    const payload = { posteId: postId, userId: userId };
+    const options = { responseType: 'text' as 'json' };
+
+    return this.http.put(`${this.apiUrl}/unlike`,payload,options );
   }
   
   // toggleLike(postId: number, isLiked:boolean): Observable<any> {
@@ -90,7 +93,16 @@ return this.http.post(`${this.apiUrl}/like`, payload, options);
   }
 
 
-  isLiked(postId: any, userId: any): Observable<boolean> {
-    return this.http.post<boolean>(`{${this.apiUrl}/posts/isLiked}`, { postId, userId });
+  getUserProfile(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/profile-picture/{id}")/${userId}`);
   }
+
+
+  isLiked(postId: number, userId: number): Observable<boolean> {
+    const params = { postId: postId.toString(), userId: userId.toString() }; // Conversion en chaîne de caractères
+    return this.http.get<boolean>(`${this.apiUrl}/check-likes`, { params });
+}
+
+
+
 }

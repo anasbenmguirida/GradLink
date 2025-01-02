@@ -97,9 +97,10 @@ public ResponseEntity<Map<String, String>> createPoste(
         return this.userService.getProfileImage(id);
     } 
     @GetMapping("/api/check-likes")
-    public boolean checkLikes(@RequestBody PosteLikes posteLikes){
-        return this.userService.checklikes(posteLikes.getUserId(), posteLikes.getPosteId());
+    public boolean checkLikes(@RequestParam int postId, @RequestParam int userId) {
+        return this.userService.checklikes(userId, postId);
     }
+    
 
     @GetMapping("/api/isLiked")
     public ResponseEntity<Boolean> isLikedPoste(@RequestBody PosteLikes posteLikes) {

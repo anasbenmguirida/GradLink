@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { PostService } from '../../services/post/post.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import { forkJoin, tap } from 'rxjs';
 
 @Component({
   selector: 'app-recherche-profile',
@@ -80,42 +81,35 @@ this.loadRelation();
 
 
 fetchPosts(): void {
-  console.log('Original Posts:', this.posts); // Log des données initiales
-
-  // Initialise classifiedPosts avec les posts modifiés
-  this.classifiedPosts = this.posts.map((post: any) => {
-    if (!Array.isArray(post.posteFiles)) {
-      console.warn('PosteFiles is not an array:', post);
-      return {
-        ...post,
-        images: [],
-        pdfs: [],
-        isLiked: false, // Ajout d'un champ par défaut
-      };
+    if (!this.posts || this.posts.length === 0) {
+      console.warn("Aucun post à classer.");
+      return;
     }
-
-    const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType, file.fileName)) || [];
-    const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType)) || [];
-
-    return {
+    
+    this.classifiedPosts = this.posts.map((post: any) => ({
       ...post,
-      images,
-      pdfs,
-      isLiked: false, // Ajout d'un champ par défaut
-    };
-  });
-
-  // Vérifie si chaque post est liké
-  this.classifiedPosts.forEach((post: any) => {
-    this.postService.isLiked(post.id, this.me.id).subscribe((isLiked) => {
-      post.isLiked = isLiked; // Met à jour le champ `isLiked`
+      isLiked: false,
+    }));
+    
+    const userId = this.me?.id;
+    if (!userId) {
+      console.error("Utilisateur non authentifié.");
+      return;
+    }
+    
+    forkJoin(
+      this.classifiedPosts.map((post) => 
+        this.postService.isLiked(post.poste.id, userId).pipe(
+          tap((isLiked: any) => (post.isLiked = isLiked))
+        )
+      )
+    ).subscribe({
+      next: () => console.log("Likes mis à jour :", this.classifiedPosts),
+      error: (err) => console.error("Erreur lors de la mise à jour des likes :", err),
     });
-  });
-
-  console.log('Classified Posts with Likes:', this.classifiedPosts); // Log des résultats finaux avec les likes
-}
-
-
+  }
+  
+  
   loadRelation() {
     this.ProfileService
       .getRelation(this.me.id, this.selectedId)
@@ -274,29 +268,42 @@ closeGallery(): void {
 
 
 toggleLike(post: any): void {
-  const userId = 'myCIN'; // Identifiant de l'utilisateur
-  const isLiked = !post.isLiked;
-
+  const userId = this.me.id; // Utilise l'identifiant de l'utilisateur connecté
+  console.log(post)
+  const isLiked = !post.isLiked; // L'inverse de l'état actuel du like
+console.log(isLiked)
   if (isLiked) {
     // Utiliser le service pour "liker"
-    this.postService.likePost(post.id, this.me.id).subscribe(
+    this.postService.likePost(post.poste.id, userId).subscribe(
       (response) => {
-        post.isLiked = true; // Met à jour l'état local
-        console.log(`Post liké avec succès :`, post);
+        if (response) {
+          post.isLiked = true; // Met à jour l'état local
+          post.nbrLikes = (post.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
+          console.log(`Post liké avec succès :`, post);
+        } else {
+          console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
+        }
       },
       (error) => {
         console.error('Erreur lors du like du post :', error);
+        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   } else {
     // Utiliser le service pour "unliker"
-    this.postService.unlikePost(post.id, this.me.id).subscribe(
+    this.postService.unlikePost(post.poste.id, userId).subscribe(
       (response) => {
-        post.isLiked = false; // Met à jour l'état local
-        console.log(`Post unliké avec succès :`, post);
+        if (response ) {
+          post.isLiked = false; // Met à jour l'état local
+          post.nbrLikes = (post.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
+          console.log(`Post unliké avec succès :`, post);
+        } else {
+          console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
+        }
       },
       (error) => {
         console.error('Erreur lors du unlike du post :', error);
+        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   } }

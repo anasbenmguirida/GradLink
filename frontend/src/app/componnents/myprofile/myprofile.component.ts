@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { PostService } from '../../services/post/post.service';
 import { Router, RouterLink } from '@angular/router';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import { forkJoin, tap } from 'rxjs';
 
 
 
@@ -61,10 +62,10 @@ export class MyprofileComponent implements OnInit {
   //   promotion:"2025",
   // };
   
-    console.log("photo",this.me.photoProfile);
     this.postService.getUserPosts(this.me.id).subscribe((data) => {
       this.posts = data;
       console.log("mesPost",this.posts)
+
       this.fetchPosts();
 
     });
@@ -91,7 +92,33 @@ export class MyprofileComponent implements OnInit {
 
 
 
-  
+  fetchPosts(): void {
+    if (!this.posts || this.posts.length === 0) {
+      console.warn("Aucun post à classer.");
+      return;
+    }
+    this.classifiedPosts = this.posts.map((post: any) => ({
+      ...post,
+      isLiked: false,
+    }));
+   
+    const userId = this.me?.id;
+    if (!userId) {
+      console.error("Utilisateur non authentifié.");
+      return;
+    }
+    
+    forkJoin(
+      this.classifiedPosts.map((post) => 
+        this.postService.isLiked(post.poste.id, userId).pipe(
+          tap((isLiked) => (post.isLiked = isLiked))
+        )
+      )
+    ).subscribe({
+      next: () => console.log("Likes mis à jour :", this.classifiedPosts),
+      error: (err) => console.error("Erreur lors de la mise à jour des likes :", err),
+    });
+  }
 
 
  
@@ -219,33 +246,45 @@ closeModalimage() {
   
 
 toggleLike(post: any): void {
-  const isLiked = !post.isLiked;
-
+  const userId = this.me.id; // Utilise l'identifiant de l'utilisateur connecté
+  console.log(post)
+  const isLiked = !post.isLiked; // L'inverse de l'état actuel du like
+console.log(isLiked)
   if (isLiked) {
     // Utiliser le service pour "liker"
-    this.postService.likePost(post.id, this.me.id).subscribe(
+    this.postService.likePost(post.poste.id, userId).subscribe(
       (response) => {
-        post.isLiked = true; // Met à jour l'état local
-        console.log(`Post liké avec succès :`, post);
+        if (response) {
+          post.isLiked = true; // Met à jour l'état local
+          post.nbrLikes = (post.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
+          console.log(`Post liké avec succès :`, post);
+        } else {
+          console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
+        }
       },
       (error) => {
         console.error('Erreur lors du like du post :', error);
+        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   } else {
     // Utiliser le service pour "unliker"
-    this.postService.unlikePost(post.id, this.me.id).subscribe(
+    this.postService.unlikePost(post.poste.id, userId).subscribe(
       (response) => {
-        post.isLiked = false; // Met à jour l'état local
-        console.log(`Post unliké avec succès :`, post);
+        if (response ) {
+          post.isLiked = false; // Met à jour l'état local
+          post.nbrLikes = (post.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
+          console.log(`Post unliké avec succès :`, post);
+        } else {
+          console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
+        }
       },
       (error) => {
         console.error('Erreur lors du unlike du post :', error);
+        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   }}
-  
-
 
 updateProfile(event: Event): void {
   event.preventDefault();
@@ -267,6 +306,19 @@ updateProfile(event: Event): void {
     );
   } else {
     console.error('Formulaire invalide');
+  }
+}
+
+
+navigateToProfile(user: any): void {
+  console.log("userID",user.id)
+  console.log("meID",this.me.id)
+  if (user.id === this.me.id) {
+    console.log(user.id)
+    console.log(this.me.id)
+    this.router.navigate(['/myProfile']);
+  } else {
+    this.router.navigate([`/rechercheProfile/${user.id}`]);
   }
 }
 
@@ -395,37 +447,9 @@ checkLikes() {
   });
 }
 
-fetchPosts(): void {
-  console.log('Original Posts:', this.posts); // Log des données initiales
 
-  this.classifiedPosts = this.posts.map((post: any) => {
-    if (!Array.isArray(post.posteFiles)) {
-      console.warn('PosteFiles is not an array:', post);
-      return {
-        ...post,
-        images: [],
-        pdfs: [],
-      };
-    }
-
-    // const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType));
-    // const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType));
-    const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType, file.fileName)) || [];
-    const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType)) || [];
-
-    console.log('Filtered Images:', images); // Log des images filtrées
-    console.log('Filtered PDFs:', pdfs);     // Log des PDFs filtrés
-
-    return {
-      ...post,
-      images,
-      pdfs,
-    };
-  });
-
-  console.log('Classified Posts:', this.classifiedPosts); // Log des résultats finaux
-}
-
+  
+  
 // isImage(fileType: string | null | undefined): boolean {
 //   return !!fileType && fileType.toLowerCase().startsWith('image/');
 // }

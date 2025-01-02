@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { PostService } from '../../services/post/post.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { Router } from '@angular/router'; 
+import { forkJoin, tap } from 'rxjs';
 
 
 @Component({
@@ -50,6 +51,7 @@ if (isPlatformBrowser(this.platformId)) {
        }
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data;
+   
       this.fetchPosts();
     //  this.checkLikes();
 
@@ -59,9 +61,9 @@ if (isPlatformBrowser(this.platformId)) {
 
     console.log("hi");
     console.log(this.me);
-    this.postService.getPosts().subscribe((data) => {
-      this.posts = data;
-    });
+  
+
+    console.log(this.posts);
   }
 
   checkLikes() {
@@ -73,44 +75,56 @@ if (isPlatformBrowser(this.platformId)) {
   }
  
   fetchPosts(): void {
-    console.log('Original Posts:', this.posts); // Log des données initiales
-  
-    // Initialise classifiedPosts avec les posts modifiés
-    this.classifiedPosts = this.posts.map((post: any) => {
-      if (!Array.isArray(post.posteFiles)) {
-        console.warn('PosteFiles is not an array:', post);
-        return {
-          ...post,
-          images: [],
-          pdfs: [],
-          isLiked: false, // Ajout d'un champ par défaut
-        };
-      }
-  
-      const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType, file.fileName)) || [];
-      const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType)) || [];
-  
-      return {
-        ...post,
-        images,
-        pdfs,
-        isLiked: false, // Ajout d'un champ par défaut
-      };
+    if (!this.posts || this.posts.length === 0) {
+      console.warn("Aucun post à classer.");
+      return;
+    }
+    
+    this.classifiedPosts = this.posts.map((post: any) => ({
+      ...post,
+      isLiked: false,
+    }));
+    
+    const userId = this.me?.id;
+    if (!userId) {
+      console.error("Utilisateur non authentifié.");
+      return;
+    }
+    
+    forkJoin(
+      this.classifiedPosts.map((post) => 
+        this.postService.isLiked(post.poste.id, userId).pipe(
+          tap((isLiked) => (post.isLiked = isLiked))
+        )
+      )
+    ).subscribe({
+      next: () => console.log("Likes mis à jour :", this.classifiedPosts),
+      error: (err) => console.error("Erreur lors de la mise à jour des likes :", err),
     });
-  
-    // Vérifie si chaque post est liké
-    this.classifiedPosts.forEach((post: any) => {
-      this.postService.isLiked(post.id, this.me.id).subscribe((isLiked) => {
-        post.isLiked = isLiked; // Met à jour le champ `isLiked`
-      });
-    });
-  
-    console.log('Classified Posts with Likes:', this.classifiedPosts); // Log des résultats finaux avec les likes
   }
+  
+  
   
   // isImage(fileType: string | null | undefined): boolean {
   //   return !!fileType && fileType.toLowerCase().startsWith('image/');
   // }
+
+
+
+  
+navigateToProfile(user: any): void {
+  console.log("userID",user.id)
+  console.log("meID",this.me.id)
+  if (user.id === this.me.id) {
+    console.log(user.id)
+    console.log(this.me.id)
+    this.router.navigate(['/myProfile']);
+  } else {
+    this.router.navigate([`/rechercheProfile/${user.id}`]);
+  }
+}
+
+
 
   isImage(fileType: string | null | undefined, fileName: string): boolean {
     if (!fileType || !fileName) {
@@ -326,11 +340,12 @@ closeModalimage() {
 
 toggleLike(post: any): void {
   const userId = this.me.id; // Utilise l'identifiant de l'utilisateur connecté
+  console.log(post)
   const isLiked = !post.isLiked; // L'inverse de l'état actuel du like
-
+console.log(isLiked)
   if (isLiked) {
     // Utiliser le service pour "liker"
-    this.postService.likePost(post.id, userId).subscribe(
+    this.postService.likePost(post.poste.id, userId).subscribe(
       (response) => {
         if (response) {
           post.isLiked = true; // Met à jour l'état local
@@ -347,9 +362,9 @@ toggleLike(post: any): void {
     );
   } else {
     // Utiliser le service pour "unliker"
-    this.postService.unlikePost(post.id, userId).subscribe(
+    this.postService.unlikePost(post.poste.id, userId).subscribe(
       (response) => {
-        if (response && response.message === "Poste unliké avec succès") {
+        if (response ) {
           post.isLiked = false; // Met à jour l'état local
           post.nbrLikes = (post.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
           console.log(`Post unliké avec succès :`, post);
