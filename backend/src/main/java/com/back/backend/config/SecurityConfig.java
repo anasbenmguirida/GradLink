@@ -41,19 +41,32 @@ public class SecurityConfig {
             .securityMatcher("/api/**")  // Ensure this filter chain applies only to API routes
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(requests -> requests
-                .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/login")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/register")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/evenement")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/evenement/**")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/user/**")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/caummunaute")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/caummunaute/**")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/communities")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/communities/**")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/events")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/api/events/**")).permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern("/messages/**")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/login")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/register")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/evenement")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/evenement/")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/user/")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/caummunaute")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/caummunaute/")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/communities")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/communities/")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/events")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/events/")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/messages/")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/etudiant/demander-mentorat")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/postes")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/create-poste")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/like")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/poste/{id}")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/unlike")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/save-picture")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/profile-picture/{id}")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/check-likes")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/profile/{id}")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/except-admins")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/profile")).permitAll()
+        
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
@@ -64,3 +77,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+

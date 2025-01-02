@@ -20,6 +20,7 @@ export class NavBarComponent {
   usersMessage :any=[];
   filteredUsers: any[] = []; 
 demandesMentorat: any[] = []; 
+isFocused: boolean = false;
 
 me:any;
 constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService
@@ -57,6 +58,7 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
       this.messagerieService.getAllUsers().subscribe(
         data => {
           this.usersAll = data; 
+          console.log("userAll",this.usersAll)
         },
         error => {
           console.error('Erreur lors du chargement des utilisateurs:', error);
@@ -213,7 +215,7 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     {id:3, firstname: 'malak ', lastname: 'Kerouan salah', image: 'groupeIcon.png',messages:['hi','ana maja'] ,filiere:'ginf'},
   ];
  
-  search(): void {
+  onSearch(): void {
     console.log('Valeur de query :', this.query);
   
     const queryLower = this.query.toLowerCase().trim();
@@ -221,13 +223,14 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     console.log('Recherche pour :', queryLower);
   
     this.filteredUsers = this.usersAll.filter((user) =>
-      user.firstname.toLowerCase().startsWith(queryLower) || 
-    user.lastname.toLowerArCase().startsWith(queryLower)||
-      user.specialisation?.toLowerCase().startsWith(queryLower) 
+      user.firstName.toLowerCase().startsWith(queryLower) ||
+      user.lastName.toLowerCase().startsWith(queryLower) || // Correction ici
+      user.specialite?.toLowerCase().startsWith(queryLower)
     );
   
     console.log('Utilisateurs filtrés:', this.filteredUsers);
   }
+  
   
 
 
