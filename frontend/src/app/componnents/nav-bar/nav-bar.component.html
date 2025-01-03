@@ -145,7 +145,7 @@
                     [class.selected]="user === selectedUser"
                     class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100"
                     (click)="onSelectUser(user)">
-                    <img [src]="user.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                    <img src="profile.png" class="h-8 w-8 rounded-full object-cover" alt="User Image">
                     <div>
                       <p class="text-sm font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</p>
                       <p class="text-xs text-gray-500">{{ user.messages.slice(-1)[0].content }}</p>

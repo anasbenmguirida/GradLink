@@ -188,6 +188,7 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
 
     // Charger les messages si la boîte est ouverte et les données sont vides
     if (this.isMessagerie ) {
+      console.log("wsal n toggle msj")
       this.loadUsersMessages();
     }
   }
@@ -198,6 +199,7 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     this.messagerieService.getUsersMessages(this.me.id).subscribe(
       data => {
         this.usersMessage = data;
+        console.log("listeMessage",this.usersMessage)
       },
       error => {
         console.error('Erreur lors du chargement des messages:', error);
