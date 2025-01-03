@@ -40,8 +40,18 @@ public class PosteService {
     private final UserRepository userRepository ;
     
     
-    public List<Poste> findPostesByUserId(int id){
-        return this.posteRepository.findPostesByUserId(id) ; 
+    public List<PosteWithUserDTO> findPostesByUserId(int id){
+        List<Poste> userPostes = this.posteRepository.findPostesByUserId(id) ; 
+         return userPostes.stream()
+        .map(poste -> {
+            User user = this.userRepository.findById(poste.getUserId())
+                           .orElse(null);
+            String firstName = user.getFirstName();
+            String lastName = user.getLastName();
+            byte[] photoProfile = user.getPhotoProfile();
+            return new PosteWithUserDTO(poste, firstName, lastName , photoProfile);
+        })
+        .collect(Collectors.toList());
     }
 
    public List<PosteWithUserDTO> findPostesByOrder() {

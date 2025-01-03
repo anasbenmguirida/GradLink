@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.DTO.PosteWithUserDTO;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
@@ -78,7 +79,7 @@ public ResponseEntity<Map<String, String>> createPoste(
         return this.userService.likePoste(posteLikes.getPosteId() ,posteLikes.getUserId());
     }
     @GetMapping("/api/poste/{id}") // for the profile page admins/laureats
-    public List<Poste> getPoste(@PathVariable int id){
+    public List<PosteWithUserDTO> getPoste(@PathVariable int id){
         return this.posteService.findPostesByUserId(id) ; 
     }
     @PutMapping("/api/unlike") // id dial le poste

@@ -73,6 +73,12 @@ public class LaureatController {
     public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
         return this.laureatService.getAllLaureatDemandes(id) ;
     }
+    // status mentorat  :  pending (0)   , accepted (1) , rejected (2)
+    @GetMapping("status")
+    public int getStatusMentorat(@RequestBody DemandeMentorat demande) {
+        return this.laureatService.getStatusMentorat(demande) ; 
+    }
+
     
 }
 

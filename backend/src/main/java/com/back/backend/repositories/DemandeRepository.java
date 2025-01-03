@@ -13,4 +13,9 @@ import com.back.backend.Entities.DemandeMentorat;
 public interface DemandeRepository extends JpaRepository<DemandeMentorat , Integer>{
 @Query(value = "select *FROM demande_mentorat WHERE laureat_id=:id" , nativeQuery = true)
 List<DemandeMentorat> getAllDemandeLaureat(@Param("id") int id) ; 
+
+// status mentorat est de type enum 
+// pending (0)   , accepted (1) , makaynach ou rejete(2)
+@Query(value = "select status_mentorat from demande_mentorat where laureat_id=:idLaureat and etudiant_id=:idEtudiant", nativeQuery = true)
+int getStatusMentorat(@Param("idLaureat") int idLaureat, @Param("idEtudiant") int idEtudiant);
 }

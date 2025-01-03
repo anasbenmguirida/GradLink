@@ -56,15 +56,23 @@ public class LaureatService {
     public String refuserDemande(int idDemande){
         Optional<DemandeMentorat> demandeMentorat = demandeRepository.findById(idDemande) ; 
         if(demandeMentorat.isPresent()){
-            DemandeMentorat demande = demandeMentorat.get();
-            demande.setStatusMentorat(StatusMentorat.REJECTED);
-            demandeRepository.save(demande) ; 
-            return "demnade rejetee" ; 
+            demandeRepository.deleteById(idDemande) ;
+            return "demnade rejetee et supprimer de la table" ; 
         }
         return "demande introuvable" ; 
     }
     public List<DemandeMentorat> getAllLaureatDemandes(int id){
         return demandeRepository.getAllDemandeLaureat(id) ;  
+    }
+    // status mentorat 
+    public int getStatusMentorat(DemandeMentorat demandeMentorat){
+        Optional<DemandeMentorat> demande = demandeRepository.findById(demandeMentorat.getId()) ; 
+        if(demande.isPresent()){
+        return demandeRepository.getStatusMentorat(demandeMentorat.getLaureatId() , demandeMentorat.getEtudiantId()) ;
+        }
+        else{
+            return 2 ; 
+        }
     }
 
     
