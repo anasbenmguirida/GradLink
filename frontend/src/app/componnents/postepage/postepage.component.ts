@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { PostService } from '../../services/post/post.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { Router } from '@angular/router'; 
+import { forkJoin, tap } from 'rxjs';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class PostePageComponent implements OnInit  {
   postForm: FormGroup;
   posts:any=[];
   me:any;
+  photoUser:any;
   classifiedPosts: any[] = [];
   constructor(private fb: FormBuilder, private postService: PostService ,@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
     this.postForm = this.fb.group({
@@ -48,20 +50,22 @@ if (isPlatformBrowser(this.platformId)) {
   } else {
           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
        }
+this.photoUser=this.postService. getUserImage(this.me.id);
+console.log("photo",this.photoUser)
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data;
+   console.log(this.posts)
       this.fetchPosts();
-      this.checkLikes();
+    //  this.checkLikes();
 
     });
-    console.log("postes recu",this.posts)
     console.log("Token récupéré dans /posts:", localStorage.getItem('authToken'));
 
     console.log("hi");
     console.log(this.me);
-    this.postService.getPosts().subscribe((data) => {
-      this.posts = data;
-    });
+  
+
+    console.log(this.posts);
   }
 
   checkLikes() {
@@ -73,39 +77,56 @@ if (isPlatformBrowser(this.platformId)) {
   }
  
   fetchPosts(): void {
-    console.log('Original Posts:', this.posts); // Log des données initiales
-  
-    this.classifiedPosts = this.posts.map((post: any) => {
-      if (!Array.isArray(post.posteFiles)) {
-        console.warn('PosteFiles is not an array:', post);
-        return {
-          ...post,
-          images: [],
-          pdfs: [],
-        };
-      }
-  
-      // const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType));
-      // const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType));
-      const images = post.posteFiles.filter((file: any) => this.isImage(file.fileType, file.fileName)) || [];
-      const pdfs = post.posteFiles.filter((file: any) => this.isPdf(file.fileType)) || [];
-  
-      console.log('Filtered Images:', images); // Log des images filtrées
-      console.log('Filtered PDFs:', pdfs);     // Log des PDFs filtrés
-  
-      return {
-        ...post,
-        images,
-        pdfs,
-      };
+    if (!this.posts || this.posts.length === 0) {
+      console.warn("Aucun post à classer.");
+      return;
+    }
+    
+    this.classifiedPosts = this.posts.map((post: any) => ({
+      ...post,
+      isLiked: false,
+    }));
+    
+    const userId = this.me?.id;
+    if (!userId) {
+      console.error("Utilisateur non authentifié.");
+      return;
+    }
+    
+    forkJoin(
+      this.classifiedPosts.map((post) => 
+        this.postService.isLiked(post.poste.id, userId).pipe(
+          tap((isLiked) => (post.isLiked = isLiked))
+        )
+      )
+    ).subscribe({
+      next: () => console.log("Likes mis à jour :", this.classifiedPosts),
+      error: (err) => console.error("Erreur lors de la mise à jour des likes :", err),
     });
-  
-    console.log('Classified Posts:', this.classifiedPosts); // Log des résultats finaux
   }
+  
+  
   
   // isImage(fileType: string | null | undefined): boolean {
   //   return !!fileType && fileType.toLowerCase().startsWith('image/');
-  // }
+
+
+
+
+  
+navigateToProfile(user: any): void {
+  console.log("userID",user.id)
+  console.log("meID",this.me.id)
+  if (user.id === this.me.id) {
+    console.log(user.id)
+    console.log(this.me.id)
+    this.router.navigate(['/myProfile']);
+  } else {
+    this.router.navigate([`/rechercheProfile/${user.id}`]);
+  }
+}
+
+
 
   isImage(fileType: string | null | undefined, fileName: string): boolean {
     if (!fileType || !fileName) {
@@ -136,20 +157,26 @@ if (isPlatformBrowser(this.platformId)) {
       formData.append('typePost', 'NORMAL');
       formData.append('userId', this.me.id);
       this.selectedFiles.forEach((file) => {
-        formData.append('files[]', file); // "files[]" correspond à l'attente du backend
+        formData.append('files', file); // "files[]" correspond à l'attente du backend
       });
 
+      console.log("Fichiers dans 'files[]' :");
+const files = formData.getAll('files[]');
+files.forEach((file, index) => {
+  console.log(`File ${index + 1}:`, file);
+});
       console.log("formData",formData);
 this.selectedFiles.forEach((file, index) => {
   console.log(`soumaia File ${index}:`, file);
 });
   
+
       // Envoi des données au backend via le service
       this.postService.createPost(formData).subscribe(
         (response) => {
           // Ajoutez le nouveau post localement (par exemple, dans une liste)
           // this.classifiedPosts.unshift(formData);
-          
+          console.log("le poste est ajoute");
           // Réinitialisez le formulaire et les fichiers sélectionnés
           this.postForm.reset();
           this.selectedFiles = [];
@@ -314,29 +341,42 @@ closeModalimage() {
   
 
 toggleLike(post: any): void {
-  const userId = 'myCIN'; // Identifiant de l'utilisateur
-  const isLiked = !post.isLiked;
-
+  const userId = this.me.id; // Utilise l'identifiant de l'utilisateur connecté
+  console.log(post)
+  const isLiked = !post.isLiked; // L'inverse de l'état actuel du like
+console.log(isLiked)
   if (isLiked) {
     // Utiliser le service pour "liker"
-    this.postService.likePost(post.id, this.me.id).subscribe(
+    this.postService.likePost(post.poste.id, userId).subscribe(
       (response) => {
-        post.isLiked = true; // Met à jour l'état local
-        console.log(`Post liké avec succès :`, post);
+        if (response) {
+          post.isLiked = true; // Met à jour l'état local
+          post.nbrLikes = (post.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
+          console.log(`Post liké avec succès :`, post);
+        } else {
+          console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
+        }
       },
       (error) => {
         console.error('Erreur lors du like du post :', error);
+        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   } else {
     // Utiliser le service pour "unliker"
-    this.postService.unlikePost(post.id, this.me.id).subscribe(
+    this.postService.unlikePost(post.poste.id, userId).subscribe(
       (response) => {
-        post.isLiked = false; // Met à jour l'état local
-        console.log(`Post unliké avec succès :`, post);
+        if (response ) {
+          post.isLiked = false; // Met à jour l'état local
+          post.nbrLikes = (post.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
+          console.log(`Post unliké avec succès :`, post);
+        } else {
+          console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
+        }
       },
       (error) => {
         console.error('Erreur lors du unlike du post :', error);
+        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   }
@@ -355,157 +395,6 @@ toggleLike(post: any): void {
 
 
 
-//   posts = [
-//     {
-//       profileImage: 'profile.png',
-//       username: 'Mouad Ajmani',
-//       role: '1337 student',
-//       daysAgo: 4,
-//       description: `🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉`,
-//       images: ['windows-design.jpg', 'additional-image.jpg'], // Plusieurs images
-//       pdfs: ['projet_use_case.pdf'],                          // Plusieurs fichiers PDF
-//       likes: 891,
-//       likeIcon: 'like.png',
-//       isLiked: false,
-//     },
-//     {
-//       profileImage: 'profile.png',
-//       username: 'Mouad Ajmani',
-//       role: '1337 student',
-//       daysAgo: 4,
-//       description: `🌟 Excited to Share My Portfolio! 🌟 I'm thrilled to unveil the first version of my personal portfolio website! 🎉`,
-//       images: ['laravel.png'],        // Une seule image
-//       pdfs: [],                       // Aucun fichier PDF
-//       likes: 891,
-//       likeIcon: 'like.png',
-//       isLiked: false,
-//     },
-//   ];
-  
-
-//   isLiked: boolean = false; // État de "J'aime" pour un post
-//   postForm: FormGroup; // Formulaire pour soumettre un post
-
-//   constructor(private fb: FormBuilder) {
-//     // Initialisation du formulaire avec FormBuilder
-//     this.postForm = this.fb.group({
-//       description: [''],   // Champ de description
-//       images: [[]],        // Champ pour plusieurs images
-//       files: [[]]          // Champ pour plusieurs fichiers PDF
-//     });
-    
-//   }
-
-//   // Fonction pour gérer le changement du champ "description"
-//   onContentChange(event: any): void {
-//     const description = event.target.value.trim();
-//     this.postForm.get('description')?.setValue(description);
-//   }
-
-
-
-
-
-//   selectedFiles: File[] = [];
-//   selectedFileNames: string[] = [];
-  
-//   onFileChange(event: Event): void {
-//     const input = event.target as HTMLInputElement;
-//     if (input.files && input.files.length > 0) {
-//       // Ne réinitialisez pas les tableaux, mais ajoutez les nouveaux fichiers sélectionnés
-//       Array.from(input.files).forEach((file) => {
-//         const mimeType = file.type;
-  
-//         if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
-//           this.selectedFiles.push(file);  // Ajoute les fichiers valides à la liste
-//           this.selectedFileNames.push(file.name); // Ajoute le nom du fichier
-//         } else {
-//           console.error('Type de fichier non pris en charge :', file.name);
-//         }
-//       });
-  
-//       console.log('Fichiers sélectionnés :', this.selectedFiles);
-//     }
-//   }
-  
-//   // Soumission du post
-//   submitPost(): void {
-//     if (this.postForm.valid) {
-//       const postData = this.postForm.value;
-//       console.log('Post soumis :', postData);
-  
-//       // Traitez les fichiers images
-//       const images = this.selectedFiles
-//         .filter((file) => file.type.startsWith('image/'))
-//         .map((file) => URL.createObjectURL(file));  // Crée des URL temporaires pour les images
-  
-//       // Traitez les fichiers PDF
-//       const pdfs = this.selectedFiles
-//         .filter((file) => file.type === 'application/pdf')
-//         .map((file) => URL.createObjectURL(file));  // Crée des URL temporaires pour les PDF
-  
-//       const newPost = {
-//         profileImage: 'profile.png', // Remplace par le chemin de l'image du profil utilisateur
-//         username: 'Soumaia Kerouan', // Remplace par le nom de l'utilisateur connecté
-//         role: 'User', // Ajout de la propriété 'role'
-//         daysAgo: 0, // Nouveau post, donc publié aujourd'hui
-//         description: postData.description || '', // Description vide par défaut si non renseignée
-//         images, // Liste des URL temporaires pour les images
-//         pdfs,   // Liste des URL temporaires pour les fichiers PDF
-//         likes: 0, // Initialisation des likes à 0
-//         likeIcon: 'like.png', // Ajout de la propriété 'likeIcon'
-//         isLiked: false, // Par défaut, le post n'est pas aimé
-//       };
-  
-//       // Ajouter le nouveau post au début du tableau posts
-//       this.posts.unshift(newPost);
-  
-//       // Réinitialisation du formulaire après soumission
-//       this.postForm.reset();
-//       this.selectedFiles = []; // Réinitialise la liste des fichiers
-//       this.selectedFileNames = []; // Réinitialise les noms des fichiers
-//     }
-//   }
-  
-  
-
-
-
-
-
-  
-
-
-
-// toggleLike(post: any): void {
-//   post.isLiked = !post.isLiked;
-
-
-// }
-
-
-// selectedImages: string[] = []; // Images sélectionnées pour la galerie
-// isGalleryOpen: boolean = false; // Initialement fermé
-// openGallery(images: string[]): void {
-//   this.selectedImages = images; // Stocke les images restantes
-//   console.log('Opening gallery with images:', images);
-//   // Ajoutez ici la logique pour ouvrir un modal ou une galerie
-//   this.isGalleryOpen = true; // Exemple : activer un état pour afficher un modal
-// }
-
-// closeGallery(): void {
-//   this.isGalleryOpen = false;
-// }
-
-// selectedImage: string | null = null;
-
-// openModalimage(image: string) {
-//   this.selectedImage = image;
-// }
-
-// closeModalimage() {
-//   this.selectedImage = null;
-// }
 
 
 }

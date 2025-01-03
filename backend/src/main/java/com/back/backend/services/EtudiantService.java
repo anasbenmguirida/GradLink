@@ -7,8 +7,6 @@ import com.back.backend.repositories.DemandeRepository;
 import com.back.backend.repositories.EtudiantRepository;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +16,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@Data
 @AllArgsConstructor
-
 public class EtudiantService {
 
-    @Autowired
-    private  EtudiantRepository etudiantRepository;
-    @Autowired
-    private DemandeRepository demandeMentoratRepository;
+    
+    private final EtudiantRepository etudiantRepository;
+    private final DemandeRepository demandeRepository;
 
     public List<Etudiant> searchEtudiants(String firstName, String lastName, String filiere, String email) {
         if (firstName != null && lastName != null && filiere != null && email != null) {
@@ -45,18 +40,14 @@ public class EtudiantService {
             return etudiantRepository.findAll();
         }
     }
-    
+
     public ResponseEntity<String> demanderMentorat(DemandeMentorat demandeMentorat) {
-    try{   
     demandeMentorat.setDateDemande(LocalDate.now());
     demandeMentorat.setStatusMentorat(StatusMentorat.PENDING);
-    demandeMentoratRepository.save(demandeMentorat);
-    }catch(Exception e){
-        return ResponseEntity.badRequest().body("Erreur lors de l'envoi de la demande de mentorat");
+    demandeMentorat.setEtudiantId(demandeMentorat.getEtudiantId());
+    demandeMentorat.setLaureatId(demandeMentorat.getLaureatId());
+    this.demandeRepository.save(demandeMentorat) ; 
+    return ResponseEntity.ok("Demande de mentorat envoyée");
     }
-    return ResponseEntity.ok("Demande de mentorat envoyée avec succès");
-    }
+
 }
-
-    
-

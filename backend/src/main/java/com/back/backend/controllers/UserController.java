@@ -74,7 +74,7 @@ public ResponseEntity<Map<String, String>> createPoste(
         return this.posteService.deletePoste(id);
     }
 
-    @PutMapping("/api/like")
+    @PostMapping("/api/like")
     public ResponseEntity<String> likePoste(@RequestBody PosteLikes posteLikes){
         return this.userService.likePoste(posteLikes.getPosteId() ,posteLikes.getUserId());
     }
@@ -86,6 +86,8 @@ public ResponseEntity<Map<String, String>> createPoste(
     public ResponseEntity<String> unlikePoste(@RequestBody PosteLikes posteLikes){
         return this.userService.unlikePoste(posteLikes.getPosteId() , posteLikes.getUserId());
     }
+
+  
     @PutMapping("/api/save-picture")
     public ResponseEntity<String> savePicture(@RequestParam("id") int id , @RequestParam("file") MultipartFile file){
         return this.userService.SaveProfilePicture( file , id);
@@ -96,23 +98,32 @@ public ResponseEntity<Map<String, String>> createPoste(
         return this.userService.getProfileImage(id);
     } 
     @GetMapping("/api/check-likes")
-    public boolean checkLikes(@RequestBody PosteLikes posteLikes){
-        return this.userService.checklikes(posteLikes.getUserId(), posteLikes.getPosteId());
+    public boolean checkLikes(@RequestParam int postId, @RequestParam int userId) {
+        return this.userService.checklikes(userId, postId);
+    }
+    
+  
+    @GetMapping("/api/isLiked")
+    public ResponseEntity<Boolean> isLikedPoste(@RequestBody PosteLikes posteLikes) {
+        boolean isLiked = posteService.checkLikedPoste(posteLikes);
+        return ResponseEntity.ok(isLiked);
     }
 
 
 
-
-
+   
     
-
-    
-    @GetMapping("/profile/{id}")
+    @GetMapping("/api/profile/{id}")
     public ResponseEntity<User> getUserProfile(@PathVariable int id) {
         User user = userService.getUserById(id);  
         return ResponseEntity.ok(user);  
     }
 
+    
+    @GetMapping("/api/except-admins")
+    public List<User> getAllUsersExceptAdmins() {
+        return userService.getAllUsersExceptAdmins();
+    }
     @PutMapping("/profile")
     public ResponseEntity<ResponseEntity<User>> updateUserProfile(@RequestBody User updatedUser) {
 

@@ -2,8 +2,16 @@ package com.back.backend.services;
 
 import com.back.backend.Entities.Admin;
 import com.back.backend.Entities.Caummunaute;
+import com.back.backend.dto.CaummunauteDTO;
+import com.back.backend.dto.PosteDTO;
+import com.back.backend.dto.PosteFileDTO;
+import com.back.backend.dto.UserDTO;
 import com.back.backend.repositories.AdminRepository;
 import com.back.backend.repositories.CaummunauteRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,5 +63,51 @@ public class CaummunauteService {
                 .orElseThrow(() -> new IllegalArgumentException("Caummunaute with ID " + id + " not found"));
         caummunauteRepository.delete(existingCaummunaute);
     }
+    
+     // Retrieve a specific community by ID
+    public Caummunaute getCommunityById(int id) {
+            return caummunauteRepository.findById(id).orElse(null);
+    }
 
+        public List<CaummunauteDTO> getAllCommunitiesWithPostes() {
+        List<Caummunaute> caummunauteList = caummunauteRepository.findAll();
+
+        return caummunauteList.stream().map(caummunaute -> {
+            CaummunauteDTO caummunauteDTO = new CaummunauteDTO();
+            caummunauteDTO.setId(caummunaute.getId());
+            caummunauteDTO.setName(caummunaute.getTitre());
+            caummunauteDTO.setDescription(caummunaute.getDescription());
+
+            // Mapping postes to DTOs
+            List<PosteDTO> posteDTOs = caummunaute.getPostes().stream().map(poste -> {
+                PosteDTO posteDTO = new PosteDTO();
+                posteDTO.setId(poste.getId());
+                posteDTO.setTextArea(poste.getTextArea());
+
+                // Mapping user to UserDTO with null check
+                UserDTO userDTO = null;
+                if (poste.getUser() != null) {
+                    userDTO = new UserDTO(poste.getUser().getId(),
+                            poste.getUser().getFirstName(),
+                            poste.getUser().getLastName(),
+                            poste.getUser().getPhotoProfile());
+                }
+                posteDTO.setUser(userDTO);
+
+                // Mapping files for the post
+                List<PosteFileDTO> posteFileDTOs = poste.getPosteFiles().stream().map(posteFile -> 
+                    new PosteFileDTO(posteFile.getId(), posteFile.getFileName(), posteFile.getFileType(), "")
+                ).collect(Collectors.toList());
+
+                posteDTO.setPosteFiles(posteFileDTOs);
+
+                return posteDTO;
+            }).collect(Collectors.toList());
+
+            caummunauteDTO.setPostes(posteDTOs);
+            return caummunauteDTO;
+        }).collect(Collectors.toList());
+    }
+
+  
 }

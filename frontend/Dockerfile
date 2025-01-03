@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Build angular application 
-RUN npm install
+RUN npm install 
 
 # Copy the source code to the container
 COPY . .

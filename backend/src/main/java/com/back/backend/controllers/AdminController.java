@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin") // Group admin-related endpoints
 @CrossOrigin(origins = "http://localhost:4200")
-
 public class AdminController {
 
     private final EvenementService evenementService;
@@ -119,18 +118,6 @@ public class AdminController {
                     .body("Error deleting community: " + e.getMessage());
         }
     }
-    @GetMapping("/etudiants/search")
-    public ResponseEntity<List<Etudiant>> searchEtudiants(@RequestParam(required = false) String firstName,
-                                                           @RequestParam(required = false) String lastName,
-                                                           @RequestParam(required = false) String filiere,
-                                                           @RequestParam(required = false) String email) {
-        try {
-            List<Etudiant> etudiants = etudiantService.searchEtudiants(firstName, lastName, filiere, email);
-            return new ResponseEntity<>(etudiants, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null);
-        }
-    }
+
     
 }

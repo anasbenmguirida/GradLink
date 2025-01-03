@@ -17,7 +17,7 @@ export class MessagerieService {
     }
     
     getUsersMessages(currentUserId: number): Observable<any[]> {
-      return this.http.get<any[]>(`${this.messageUrl}?currentUserId=${currentUserId}`);
+      return this.http.get<any[]>(`${this.apiUrl}/messages/${currentUserId}`);
     }
 
 
@@ -28,7 +28,11 @@ export class MessagerieService {
 
 
     getAllUsers(): Observable<any[]> {
-      return this.http.get<any[]>(`${this.apiUrl}`);
+      return this.http.get<any[]>(`${this.apiUrl}/except-admins`);
     }
+
+    // getAllsearchUsers(): Observable<any[]> {
+    //   return this.http.get<any[]>(`${this.apiUrl}/except-admins`);
+    // }
   
 }

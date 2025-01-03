@@ -11,7 +11,7 @@
     <div class="user px-4 -mt-20 z-10">
     
       <div class="profile w-40 h-40">
-        <img [src]="me.me.photoProfile" (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
+        <img  [src]="getFileUrl(photoUser)"  (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
       </div>
 
       <div
@@ -30,7 +30,7 @@
       <h2 class="text-xl font-bold mb-4">Photo de profil</h2>
       <div class="flex flex-col items-center">
         <img
-        [src]="me.photoProfile"
+        src="getFileUrl(photoUser)"
           alt="Photo de profil"
           class="w-50 h-50 rounded-full mb-4"
         />
@@ -207,7 +207,7 @@
       <div class="post-header">
         <img 
           class="profile-image w-12 h-12 rounded-full object-cover" 
-         [src]="me.photoProfile"
+         src="profile.png"
 
           alt="Profile Image" 
         />
@@ -273,13 +273,13 @@
   
 
 
-<div *ngFor="let post of posts; let i = index" class="post-container bg-white p-6 rounded-lg shadow-md mb-6 relative">
+<div *ngFor="let post of classifiedPosts; let i = index" class="post-container bg-white p-6 rounded-lg shadow-md mb-6 relative">
   
   <div class="post-header flex items-center justify-between mb-4">
     <div class="flex items-center space-x-3">
       <img class="profile-image w-12 h-12 rounded-full object-cover" [src]="post.profileImage" alt="Profile Image" />
       <div class="user-info">
-        <h3 class="font-medium text-lg">{{ post.username }}</h3>
+        <h3 class="font-medium text-lg">{{ post.firstName }}{{ post.lastName }}</h3>
         <p class="text-sm text-gray-500">{{ post.daysAgo }}j</p>
       </div>
     </div>
@@ -298,7 +298,7 @@
       <li (click)="editPost(post)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
         Modifier
       </li>
-      <li  (click)="deletePost(post)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
+      <li  (click)="deletePost(post.poste.id)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
         Supprimer
       </li>
     </ul>
@@ -331,42 +331,45 @@
   
 
   <div class="post-content">
-    <p>{{ post.textArea }}</p>
+    <p>{{ post.poste.textArea }}</p>
 
-    <div *ngIf="post.images && post.images.length > 0" class="image-gallery grid gap-2">
-      <ng-container [ngSwitch]="post.images.length">
-       
+    <div *ngIf="post.poste.posteFiles && post.poste.posteFiles.length > 0" class="image-gallery grid gap-2">
+      <ng-container [ngSwitch]="post.poste.posteFiles.length">
+    
         <div *ngSwitchCase="1">
           <img 
             class="post-image cursor-pointer" 
-            [src]="post.images[0]" 
+            [src]="getFileUrl(post.poste.posteFiles[0])"  
             alt="Post Image" 
-            (click)="openModalimage(post.images[0])"
+            (click)="openModalimage(post.poste.posteFiles[0])"
           />
+         
         </div>
     
       
         <div *ngSwitchCase="2" class="grid grid-cols-2 gap-2">
           <img 
-            *ngFor="let image of post.images" 
+            *ngFor="let image of post.poste.posteFiles" 
             class="post-image cursor-pointer" 
-            [src]="image" 
+            [src]="getFileUrl(image)"  
             alt="Post Image" 
-            (click)="openModalimage(image)"
+            (click)="openModalimage(getFileUrl(image))"
           />
+         
+
         </div>
     
         <div *ngSwitchCase="3" class="grid grid-cols-2 gap-2">
           <img 
             class="post-image cursor-pointer col-span-2" 
-            [src]="post.images[0]" 
+            [src]="getFileUrl(post.poste.posteFiles[0])" 
             alt="Post Image" 
-            (click)="openModalimage(post.images[0])"
+            (click)="openModalimage(getFileUrl(post.images[0]))"
           />
-          <img 
-            *ngFor="let image of post.images.slice(1, 3)" 
+          <img   
+            *ngFor="let image of post.poste.posteFiles.slice(1, 3)" 
             class="post-image cursor-pointer" 
-            [src]="image" 
+            [src]="getFileUrl(image)" 
             alt="Post Image" 
             (click)="openModalimage(image)"
           />
@@ -375,19 +378,19 @@
         
         <div *ngSwitchDefault class="grid grid-cols-2 gap-2">
           <img 
-            *ngFor="let image of post.images; let i = index" 
+            *ngFor="let image of post.poste.posteFiles; let i = index" 
             class="post-image cursor-pointer"
-            [src]="image" 
+            [src]="getFileUrl(image)" 
             alt="Post Image" 
             [class.hidden]="i >= 4"
             (click)="openModalimage(image)"
           />
-          <div *ngIf="post.images.length > 4" class="relative flex items-center justify-center bg-gray-200 rounded-lg">
+          <div *ngIf="post.poste.posteFiles.length > 4" class="relative flex items-center justify-center bg-gray-200 rounded-lg">
             <span 
             (click)="openGallery(post.images.slice(4))" 
             class="text-lg font-bold text-gray-700 cursor-pointer"
-          >
-            +{{ post.images.length - 4 }}
+            >
+            +{{ post.poste.posteFiles.length - 4 }}
           </span>          </div>
         </div>
         <div *ngIf="isGalleryOpen" class="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -411,7 +414,20 @@
         
       </ng-container>
 
+      <div *ngIf="isModalOpen" class="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-4 rounded-lg shadow-lg max-w-md w-full">
+          <img [src]="selectedImage" alt="Selected Image" class="w-full h-auto rounded-lg" />
+          <button 
+            (click)="closeModalimage()" 
+            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+
     </div>
+    
     
     
  
@@ -447,12 +463,12 @@
 
   <div class="flex items-center space-x-2">
     <button
-      (click)="toggleLike(post)"
-      [ngClass]="{
-        'text-red-500': post.isLiked,
-        'text-gray-300': !post.isLiked
-      }"
-      class="p-0"
+    (click)="toggleLike(post)"
+    [ngClass]="{
+      'text-red-500': post.isLiked,
+      'text-gray-300': !post.isLiked
+    }"
+     class="p-0"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -465,7 +481,7 @@
         />
       </svg>
     </button>
-    <span>{{ post.likes }}</span>
+    <span *ngIf="post.poste.nbrLikes!=0">{{ post.poste.nbrLikes }}</span>
   </div>
   
   

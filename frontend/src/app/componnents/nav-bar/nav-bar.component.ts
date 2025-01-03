@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
@@ -20,24 +20,34 @@ export class NavBarComponent {
   usersMessage :any=[];
   filteredUsers: any[] = []; 
 demandesMentorat: any[] = []; 
+isFocused: boolean = false;
 
 me:any;
-constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService) { }
+constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService
+  ,@Inject(PLATFORM_ID) private platformId: Object
+) { }
 private router =inject(Router);
 
 
 
 
     ngOnInit(): void {
-      this.me = JSON.parse(localStorage.getItem('user') || '{}');
+ if (isPlatformBrowser(this.platformId)) {
+           console.log('hiiiiii123')
+ 
+           this.me = JSON.parse(localStorage.getItem('user') || '{}');
+           console.log(this.me)
+   } else {
+           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+         }
+ 
 // /this.me={id:1,image:'profile.png',firstname:"soumaia",lastname:"Kerouan Salah",role:"laureat"};
    
 
 
-      this.demandeService.getDemandes().subscribe((data) => {
-        this.demandesMentorat = data;
-      });
-
+this.demandeService.getDemandes(this.me.id).subscribe((data) => {
+  this.demandesMentorat = data;
+});
 
       this.loadAllUsers();
     }
@@ -48,6 +58,7 @@ private router =inject(Router);
       this.messagerieService.getAllUsers().subscribe(
         data => {
           this.usersAll = data; 
+          console.log("userAll",this.usersAll)
         },
         error => {
           console.error('Erreur lors du chargement des utilisateurs:', error);
@@ -106,12 +117,14 @@ private router =inject(Router);
   }
 
   navigateToProfile(user: any): void {
+    console.log("userID",user.id)
+    console.log("meID",this.me.id)
     if (user.id === this.me.id) {
-      
+      console.log(user.id)
+      console.log(this.me.id)
       this.router.navigate(['/myProfile']);
     } else {
-
-      this.router.navigate(['/rechercheProfile', user.id]);
+      this.router.navigate([`/rechercheProfile/${user.id}`]);
     }
   }
 
@@ -175,6 +188,7 @@ private router =inject(Router);
 
     // Charger les messages si la boîte est ouverte et les données sont vides
     if (this.isMessagerie ) {
+      console.log("wsal n toggle msj")
       this.loadUsersMessages();
     }
   }
@@ -185,6 +199,7 @@ private router =inject(Router);
     this.messagerieService.getUsersMessages(this.me.id).subscribe(
       data => {
         this.usersMessage = data;
+        console.log("listeMessage",this.usersMessage)
       },
       error => {
         console.error('Erreur lors du chargement des messages:', error);
@@ -194,13 +209,15 @@ private router =inject(Router);
   }
 
 
+
+  
     usersAll: any[] = [
     {id:1, firstname: 'Soumaia ', lastname: 'Kerouan salah', image: 'profile.png',messages:['hi','ana maja'],specialite:'develop' },
     { id:2,firstname: 'safae ', lastname: 'Kerouan salah', image: 'profile.png',messages:['hi','ana maja'] ,specialite:'full stac'},
     {id:3, firstname: 'malak ', lastname: 'Kerouan salah', image: 'groupeIcon.png',messages:['hi','ana maja'] ,filiere:'ginf'},
   ];
  
-  search(): void {
+  onSearch(): void {
     console.log('Valeur de query :', this.query);
   
     const queryLower = this.query.toLowerCase().trim();
@@ -208,13 +225,14 @@ private router =inject(Router);
     console.log('Recherche pour :', queryLower);
   
     this.filteredUsers = this.usersAll.filter((user) =>
-      user.firstname.toLowerCase().startsWith(queryLower) || 
-    user.lastname.toLowerArCase().startsWith(queryLower)||
-      user.specialisation?.toLowerCase().startsWith(queryLower) 
+      user.firstName.toLowerCase().startsWith(queryLower) ||
+      user.lastName.toLowerCase().startsWith(queryLower) || // Correction ici
+      user.specialite?.toLowerCase().startsWith(queryLower)
     );
   
     console.log('Utilisateurs filtrés:', this.filteredUsers);
   }
+  
   
 
 
