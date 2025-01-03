@@ -21,7 +21,7 @@ public class MessageController {
     private MessageService messageService;
 
     // Endpoint to get messages with all contacts
-    @GetMapping("/api/messages/{userId}")
+    @GetMapping("/messages/{userId}")
     public List<ContactMessagesDTO> getMessagesWithAllContacts(@PathVariable int userId) {
         return messageService.getMessagesWithAllContacts(userId);
     }

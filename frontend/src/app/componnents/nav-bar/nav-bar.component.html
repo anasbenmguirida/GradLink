@@ -148,8 +148,12 @@
                     <img src="profile.png" class="h-8 w-8 rounded-full object-cover" alt="User Image">
                     <div>
                       <p class="text-sm font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</p>
-                      <p class="text-xs text-gray-500">{{ user.messages.slice(-1)[0].content }}</p>
-                    </div>
+                      <p class="text-xs text-gray-500" *ngIf="user.messages.length > 0">
+                        <span *ngIf="user.messages.slice(-1)[0].senderId === me.id">vous:</span>
+                        {{ user.messages.slice(-1)[0].contenue }} 
+                       
+                      </p>
+                                          </div>
                   </li>
                 </ul>
               </div>
@@ -157,7 +161,7 @@
             </div>
             
             <div *ngIf="selectedUser" class="fixed bottom-0 right-0 w-full sm:w-96 bg-white shadow-xl rounded-t-xl border border-gray-200">
-              <div class="flex items-center p-4 bg-gray-100 rounded-t-xl">
+             <div class="flex items-center p-4 bg-gray-100 rounded-t-xl">
                 <img [src]="selectedUser.image" alt="profile" class="w-10 h-10 rounded-full object-cover mr-4">
                 <h3 class="text-lg font-semibold">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h3>
             
@@ -172,12 +176,12 @@
                   
                   <div 
                   [ngClass]="{
-                    'self-end bg-green-100': message.id_emitter === me.id,
-                    'self-start bg-gray-100': message.id_receiver === me.id
+                    'self-end bg-green-100': message.senderId === me.id,
+                    'self-start bg-gray-100': message.recipientId === me.id
                   }"
                     class="p-3 rounded-xl max-w-max flex items-end relative">
                     
-                    <p class="text-sm">{{ message.content }}</p>
+                    <p class="text-sm">{{ message.contenue }}</p>
                     
                     <span class="text-xs text-gray-500 ml-2 relative top-0.5">{{ message.time }}</span>
                   </div>
