@@ -25,23 +25,26 @@ public class MessageService {
     public List<ContactMessagesDTO> getMessagesWithAllContacts(int userId) {
         // Find all contacts who have communicated with the user
         List<Integer> contactIds = messageRepository.findContactIdsByUserId(userId);
-        
+    
         // For each contact, retrieve messages exchanged with the user
         return contactIds.stream().map(contactId -> {
             // Retrieve the contact's messages
             List<Message> messages = getMessagesWithUser(userId, contactId);
-
+    
             // Retrieve the contact's user details
             User contact = userRepository.findById(contactId).orElse(null);
-            
-            // Get firstName and lastName directly from the contact (or fallback to "Unknown" if null)
+    
+            // Get firstName, lastName, and photoProfile
             String firstName = contact != null ? contact.getFirstName() : "Unknown";
             String lastName = contact != null ? contact.getLastName() : "Unknown";
-            
-            // Return a new ContactMessagesDTO with firstName and lastName
-            return new ContactMessagesDTO(contactId, firstName, lastName, messages);
+    
+            byte[] profilePhoto = contact != null ? contact.getPhotoProfile() : null;
+    
+            // Return a new ContactMessagesDTO
+            return new ContactMessagesDTO(contactId, firstName, lastName, profilePhoto, messages);
         }).collect(Collectors.toList());
     }
+    
 
     // Method to get messages exchanged between two users
     public List<Message> getMessagesWithUser(int userId, int contactId) {
@@ -60,5 +63,9 @@ public class MessageService {
 
     public Message saveMessage(Message message) {
         throw new UnsupportedOperationException("Unimplemented method 'saveMessage'");
+    }
+
+    public List<Message> getDiscussionBetweenUsers(int userId, int contactId) {
+        return messageRepository.findDiscussion(userId, contactId);
     }
 }
