@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.back.backend.DTO.PosteWithUserDTO;
+import com.back.backend.dto.PosteWithUserDTO;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
