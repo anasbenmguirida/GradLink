@@ -49,7 +49,7 @@ export class MyprofileComponent implements OnInit {
           console.log('hiiiiii123')
 
           this.me = JSON.parse(localStorage.getItem('user') || '{}');
-          console.log(this.me)
+          console.log("userayth",this.me)
   } else {
           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
         }

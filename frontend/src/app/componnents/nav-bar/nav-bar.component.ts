@@ -153,7 +153,7 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     this.messagerieService.getMessages().subscribe(
       (newMessage: any) => {
         // Si le message est destiné à l'utilisateur sélectionné, l'ajouter à la liste des messages
-        if (newMessage.senderId === user.id || newMessage.receiverId === user.id) {
+        if (newMessage.senderId === user.id || newMessage. recipientId === user.id) {
           this.selectedMessages.push(newMessage);
           console.log('Nouveau message reçu:', newMessage);
         }
@@ -178,8 +178,8 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
   
     const message = {
       senderId: this.me.id,
-      receiverId: this.selectedUser.id,
-      content: this.newMessage.trim(),
+      recipientId: this.selectedUser.id,
+      contenue: this.newMessage.trim(),
     };
   
     try {
@@ -207,8 +207,8 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
       // Ajouter le message localement pour mise à jour instantanée de l'interface
       const outgoingMessage = {
         senderId: message.senderId,
-        recipientId: message.receiverId,
-        content: message.content,
+        recipientId: message.recipientId,
+        content: message.contenue,
         time: new Date().toLocaleTimeString(),
       };
   
