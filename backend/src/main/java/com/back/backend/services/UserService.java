@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.Entities.Etudiant;
+import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteFiles;
 import com.back.backend.Entities.PosteLikes;
@@ -149,17 +151,33 @@ private final UserRepository userRepository;
         .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
     }
 
-    public ResponseEntity<User> updateUserProfile(int id, User updatedUser) {
-        User existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser == null) {
-            return ResponseEntity.notFound().build();
-        }
-        existingUser.setFirstName(updatedUser.getFirstName());
-        existingUser.setLastName(updatedUser.getLastName());
-        existingUser.setPassword(updatedUser.getPassword());
-        userRepository.save(existingUser);
-        return ResponseEntity.ok(existingUser);
+public ResponseEntity<User> updateUserProfile(int id, User updatedUser) {
+    User existingUser = userRepository.findById(id).orElse(null);
+    if (existingUser == null) {
+        return ResponseEntity.notFound().build();
     }
+
+    // Handle type-specific updates
+    if (existingUser instanceof Etudiant etudiant && updatedUser instanceof Etudiant updatedEtudiant) {
+        etudiant.setFiliere(updatedEtudiant.getFiliere());
+        etudiant.setPhotoProfile(updatedEtudiant.getPhotoProfile());
+    } else if (existingUser instanceof Laureat laureat && updatedUser instanceof Laureat updatedLaureat) {
+        laureat.setPromotion(updatedLaureat.getPromotion());
+        laureat.setSpecialite(updatedLaureat.getSpecialite());
+        laureat.setPhotoProfile(updatedLaureat.getPhotoProfile());
+    }
+
+    // Update common fields
+    existingUser.setFirstName(updatedUser.getFirstName());
+    existingUser.setLastName(updatedUser.getLastName());
+    existingUser.setPassword(updatedUser.getPassword());
+    existingUser.setEmail(updatedUser.getEmail());
+    existingUser.setPhotoProfile(updatedUser.getPhotoProfile());
+
+    userRepository.save(existingUser);
+    return ResponseEntity.ok(existingUser);
+}
+
 
     
     public List<User> getAllUsersExceptAdmins() {
