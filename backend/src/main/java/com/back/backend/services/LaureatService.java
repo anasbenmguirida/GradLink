@@ -91,9 +91,9 @@ public class LaureatService {
     }
 
 
-    /*public List<DemandeMentorat> getMentoredStudents(int laureatId) {
+    public List<DemandeMentorat> getMentoredStudents(int laureatId) {
         return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
     }
-        */
+        
     
 }
