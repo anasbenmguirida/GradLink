@@ -133,10 +133,14 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
   newMessage = '';
 
   onSelectUser(user: any) {
-    this.isMessagerie=false;
+    this.isMessagerie = false;
     this.selectedUser = user;
-    this.messagerieService.getMessagesByUser(this.me.id,user.id).subscribe(
+    console.log("ba9i maconsoma");
+  
+    // Récupérer les messages existants entre l'utilisateur actuel et l'utilisateur sélectionné
+    this.messagerieService.getMessagesByUser(this.me.id, user.id).subscribe(
       (messages: any[]) => {
+        console.log("wsal n onSelectUser");
         this.selectedMessages = messages;
         console.log('Messages récupérés:', messages);
       },
@@ -144,7 +148,22 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
         console.error('Erreur lors de la récupération des messages:', error);
       }
     );
+  
+    // Écouter les nouveaux messages via WebSocket
+    this.messagerieService.getMessages().subscribe(
+      (newMessage: any) => {
+        // Si le message est destiné à l'utilisateur sélectionné, l'ajouter à la liste des messages
+        if (newMessage.senderId === user.id || newMessage.receiverId === user.id) {
+          this.selectedMessages.push(newMessage);
+          console.log('Nouveau message reçu:', newMessage);
+        }
+      },
+      (error: any) => {
+        console.error('Erreur lors de la réception des messages:', error);
+      }
+    );
   }
+  
 
   closeChat() {
     this.selectedUser = null;
@@ -156,32 +175,53 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
       console.warn('Le message est vide ou aucun utilisateur n’est sélectionné.');
       return;
     }
-
-    const senderId = this.me.id;
-    const receiverId = this.selectedUser.id;
-    const content = this.newMessage.trim();
-
-    this.messagerieService.sendMessage(senderId, receiverId, content).subscribe(
-      response => {
-        console.log('Message envoyé avec succès:', response);
-
-        // Ajouter le message localement pour mise à jour instantanée de l'interface
-        const message = {
-          content,
-          isOutgoing: true,
-          time: new Date().toLocaleTimeString() // Optionnel : formatage de l'heure
-        };
-        this.selectedUser.messages.push(message);
-
-        // Réinitialiser le champ de saisie
-        this.newMessage = '';
-      },
-      error => {
-        console.error('Erreur lors de l’envoi du message:', error);
+  
+    const message = {
+      senderId: this.me.id,
+      receiverId: this.selectedUser.id,
+      content: this.newMessage.trim(),
+    };
+  
+    try {
+      // Vérifier si le WebSocket est encore ouvert
+      if (!this.messagerieService.isSocketOpen()) {
+        console.error('La connexion WebSocket est fermée.');
+        return;
       }
-    );
+  
+      // Envoyer le message via WebSocket
+      this.messagerieService.sendMessage(message);
+  
+      console.log('Message envoyé via WebSocket:', message);
+  
+      // Enregistrer le message dans la base de données
+      this.messagerieService.saveMessage(message).subscribe(
+        (response) => {
+          console.log('Message enregistré dans la base de données:', response);
+        },
+        (error) => {
+          console.error('Erreur lors de l\'enregistrement du message dans la base de données:', error);
+        }
+      );
+  
+      // Ajouter le message localement pour mise à jour instantanée de l'interface
+      const outgoingMessage = {
+        senderId: message.senderId,
+        recipientId: message.receiverId,
+        content: message.content,
+        time: new Date().toLocaleTimeString(),
+      };
+  
+      // Ajouter le message envoyé à la liste des messages de la conversation
+      this.selectedMessages.push(outgoingMessage);
+  
+      // Réinitialiser le champ de saisie
+      this.newMessage = '';
+    } catch (error) {
+      console.error('Erreur lors de l’envoi du message via WebSocket:', error);
+    }
   }
-
+  
 
   toggleMessagerie() {
     this.isMessagerie = !this.isMessagerie;
@@ -199,7 +239,7 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     this.messagerieService.getUsersMessages(this.me.id).subscribe(
       data => {
         this.usersMessage = data;
-        console.log("listeMessage",this.usersMessage)
+        console.log("listeUserMessage",this.usersMessage)
       },
       error => {
         console.error('Erreur lors du chargement des messages:', error);
@@ -233,6 +273,33 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     console.log('Utilisateurs filtrés:', this.filteredUsers);
   }
   
+  getFileUrl(file: any): string {
+    // Si fileType est incorrect, déduire le type à partir de l'extension
+    const mimeType = this.getMimeType(file.fileName);
+  
+    return `data:${mimeType};base64,${file.data}`;
+  }
+  
+  getMimeType(fileName: string): string {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+        case 'jfif':
+          return 'image/jfif';
+          case 'jpe':
+            return 'image/jpe';
+      case 'pdf':
+        return 'application/pdf';
+      default:
+        return 'application/octet-stream';
+    }
+  }
   
 
 
