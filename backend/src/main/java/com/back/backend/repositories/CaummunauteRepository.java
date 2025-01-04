@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CaummunauteRepository extends JpaRepository<Caummunaute, Integer> {
+    
 }

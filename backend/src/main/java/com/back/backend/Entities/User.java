@@ -52,7 +52,6 @@ public class User implements UserDetails {
  private String password ; 
 
 @Column(columnDefinition = "BYTEA")
-@JsonIgnore
 private byte[] photoProfile ; 
 
     

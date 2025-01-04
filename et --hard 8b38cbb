@@ -1,0 +1,68 @@
+[33m8b38cbb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfrontendsafae[m[33m, [m[1;31morigin/frontendsafae[m[33m)[m lier events
+[33mb457bfe[m lier add event and show events calendar
+[33m8f139da[m[33m ([m[1;31morigin/frontend/safae[m[33m)[m linkage login/register
+[33m95a9a1d[m version
+[33macbb5bd[m upd
+[33m45bc758[m Mise à jour des fichiers liés aux utilisateurs
+[33m09e657c[m commit
+[33m84df6ba[m link
+[33mb9b441d[m add communitie &&edit post
+[33m084fa22[m hi
+[33mf42f1fb[m hh hh
+[33mec42525[m[33m ([m[1;32mdevelop[m[33m)[m jj
+[33mdb7004e[m jkrjk
+[33m640d5f4[m Update pom.xml
+[33m8804db1[m[33m ([m[1;31morigin/backend-malika[m[33m)[m fixing the error in pom
+[33m31fdab2[m Merge branch 'backend-anas' into backend-malika
+[33mc9e36f7[m[33m ([m[1;31morigin/backend-anas[m[33m)[m before merge
+[33mbe3f0f7[m project
+[33mcf16ccf[m[33m ([m[1;31morigin/front[m[33m, [m[1;32mfrontSoumaia[m[33m)[m frontend 1vs
+[33m1c04bef[m before merge
+[33m8bc13bf[m more modifications, still trying to know how the hell can i deal with http vs WebSocket protocol
+[33mee35f41[m profile pictures is done
+[33mfaa49d4[m more postes logic checkout UserController
+[33m96b4671[m adding the usercontroller li kayjm3 chi hajat commune bin l users
+[33m55bf005[m updating the WebSocket  Configuration
+[33m7aeefcc[m first attempt with WebSockets, still needs to know why the hell it can't connect to the endpoint :/
+[33mfe67f2d[m poste files finally working
+[33m96c10a0[m making progress and getting different error messages !
+[33m0a5dcfb[m liking postes logic fixed
+[33m16f06a9[m modifying the database again
+[33mfc7adbb[m minor change
+[33md076e7d[m a small change regardless the latest commit
+[33mf67b09d[m Add PUT endpoint to update user profile with email validation
+[33mce161bd[m Add GET endpoint to retrieve user profile by email
+[33m35acb01[m Fix search functionality for Etudiants with dynamic query parameters
+[33mc005c55[m modifying the database again
+[33m5069d2a[m Add deleteCaummunaute API to allow removal of communities
+[33mdb2cb2c[m Add updateCaummunaute API to update community details
+[33mf5d346c[m Add @JsonManagedReference for correct JSON serialization in Admin and Caummunaute entities
+[33me420fd3[m add create event functionality
+[33mc4315e5[m Fix bidirectional serialization in Admin and Evenement entities with @JsonManagedReference and @JsonBackReference
+[33m07f14cf[m changed the structure, added the event endpoints in the AdminController
+[33m90f934e[m Add API endpoints for event creation, update, and deletion
+[33m1accabb[m Add user deletion endpoint in AdminController
+[33m8ae1657[m ending this before i lose my shyt
+[33mf46d470[m fixing the laureat-demande-mentorat api
+[33mb9b605a[m fixing a database bug
+[33m629afe1[m adding three APIs for the laureat
+[33maaed7d4[m fixing the double insertion in users table
+[33m44fd251[m Merge branch 'backend-anas' into develop
+[33m45a1836[m security almost done
+[33m13ea045[m implementing spring security
+[33m2d10788[m resolving the target folder problem in the backend Docker image (it's in the .gitignore file)
+[33mbc2f358[m second try just to make sure
+[33m0c9667c[m CI/CD first attempt
+[33maa626d3[m Merging branch 'backend-anas' into develop database ready
+[33m36ee841[m Add Dockerfiles for frontend and backend, and docker-compose for multi-container setup
+[33m9c55025[m adding a small update
+[33mdb8b5f9[m adding the database V1
+[33m759dd05[m[33m ([m[1;32mfront[m[33m)[m adding folders
+[33ma499a2c[m log
+[33m699967a[m Installation des packages necessaire
+[33mfb1d24f[m[33m ([m[1;31morigin/frontSafae[m[33m, [m[1;32mmaster[m[33m, [m[1;32mfrontSafae[m[33m)[m adding the backend and the frontend folders
+[33m50c80c5[m about us
+[33mb431d1d[m about us
+[33m3ba9777[m Delete backend directory
+[33m5370d4f[m first commit
+[33m8bacb95[m first one

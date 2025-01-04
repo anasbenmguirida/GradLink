@@ -45,7 +45,7 @@
       <form [formGroup]="communityForm" (ngSubmit)="saveCommunity()">
         <div class="mb-4">
           <label for="community-name" class="block text-sm font-medium text-gray-700">Nom de la communauté</label>
-          <input id="community-name" formControlName="name" class="w-full border border-gray-300 p-2 rounded" placeholder="Nom de la communauté" />
+          <input id="community-name" formControlName="titre" class="w-full border border-gray-300 p-2 rounded" placeholder="Nom de la communauté" />
         </div>
         
         <div class="mb-4">
@@ -75,7 +75,7 @@
           <div class="flex justify-between items-center mb-2">
             <div>
               <h4 class="text-lg font-semibold text-gray-800">{{ poste.user.firstName }} {{ poste.user.lastName }}</h4>
-              <p class="text-sm text-gray-500">{{ poste.textArea }}</p>
+              <!-- <p class="text-sm text-gray-500">{{ poste.textArea }}</p> -->
             </div>
 
             <!-- Menu des options (Modifier / Supprimer) -->

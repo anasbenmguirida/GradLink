@@ -20,10 +20,11 @@ export class NavBarComponent {
   usersMessage :any=[];
   filteredUsers: any[] = []; 
 demandesMentorat: any[] = []; 
+isFocused: boolean = false;
 
 me:any;
-  islaureat: boolean=false;
-constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService,    @Inject(PLATFORM_ID) private platformId: Object,
+constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService
+  ,@Inject(PLATFORM_ID) private platformId: Object
 ) { }
 private router =inject(Router);
 
@@ -31,26 +32,22 @@ private router =inject(Router);
 
 
     ngOnInit(): void {
-if (isPlatformBrowser(this.platformId)) {
-          console.log('hiiiiii123')
-
-        this.me = JSON.parse(localStorage.getItem('user') || '{}');
-        this.islaureat = this.me.role === 'LAUREAT'; 
-
-          console.log(this.islaureat)
-
-          
-        } else {
-          console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
-        }
-        // /this.me={id:1,image:'profile.png',firstname:"soumaia",lastname:"Kerouan Salah",role:"laureat"};
+ if (isPlatformBrowser(this.platformId)) {
+           console.log('hiiiiii123')
+ 
+           this.me = JSON.parse(localStorage.getItem('user') || '{}');
+           console.log(this.me)
+   } else {
+           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+         }
+ 
+// /this.me={id:1,image:'profile.png',firstname:"soumaia",lastname:"Kerouan Salah",role:"laureat"};
    
 
 
-      this.demandeService.getDemandes().subscribe((data) => {
-        this.demandesMentorat = data;
-      });
-
+this.demandeService.getDemandes(this.me.id).subscribe((data) => {
+  this.demandesMentorat = data;
+});
 
       this.loadAllUsers();
     }
@@ -61,6 +58,7 @@ if (isPlatformBrowser(this.platformId)) {
       this.messagerieService.getAllUsers().subscribe(
         data => {
           this.usersAll = data; 
+          console.log("userAll",this.usersAll)
         },
         error => {
           console.error('Erreur lors du chargement des utilisateurs:', error);
@@ -119,12 +117,14 @@ if (isPlatformBrowser(this.platformId)) {
   }
 
   navigateToProfile(user: any): void {
+    console.log("userID",user.id)
+    console.log("meID",this.me.id)
     if (user.id === this.me.id) {
-      
+      console.log(user.id)
+      console.log(this.me.id)
       this.router.navigate(['/myProfile']);
     } else {
-
-      this.router.navigate(['/rechercheProfile', user.id]);
+      this.router.navigate([`/rechercheProfile/${user.id}`]);
     }
   }
 
@@ -133,10 +133,14 @@ if (isPlatformBrowser(this.platformId)) {
   newMessage = '';
 
   onSelectUser(user: any) {
-    this.isMessagerie=false;
+    this.isMessagerie = false;
     this.selectedUser = user;
-    this.messagerieService.getMessagesByUser(this.me.id,user.id).subscribe(
+    console.log("ba9i maconsoma");
+  
+    // Récupérer les messages existants entre l'utilisateur actuel et l'utilisateur sélectionné
+    this.messagerieService.getMessagesByUser(this.me.id, user.id).subscribe(
       (messages: any[]) => {
+        console.log("wsal n onSelectUser");
         this.selectedMessages = messages;
         console.log('Messages récupérés:', messages);
       },
@@ -144,7 +148,22 @@ if (isPlatformBrowser(this.platformId)) {
         console.error('Erreur lors de la récupération des messages:', error);
       }
     );
+  
+    // Écouter les nouveaux messages via WebSocket
+    this.messagerieService.getMessages().subscribe(
+      (newMessage: any) => {
+        // Si le message est destiné à l'utilisateur sélectionné, l'ajouter à la liste des messages
+        if (newMessage.senderId === user.id || newMessage. recipientId === user.id) {
+          this.selectedMessages.push(newMessage);
+          console.log('Nouveau message reçu:', newMessage);
+        }
+      },
+      (error: any) => {
+        console.error('Erreur lors de la réception des messages:', error);
+      }
+    );
   }
+  
 
   closeChat() {
     this.selectedUser = null;
@@ -156,38 +175,60 @@ if (isPlatformBrowser(this.platformId)) {
       console.warn('Le message est vide ou aucun utilisateur n’est sélectionné.');
       return;
     }
-
-    const senderId = this.me.id;
-    const receiverId = this.selectedUser.id;
-    const content = this.newMessage.trim();
-
-    this.messagerieService.sendMessage(senderId, receiverId, content).subscribe(
-      response => {
-        console.log('Message envoyé avec succès:', response);
-
-        // Ajouter le message localement pour mise à jour instantanée de l'interface
-        const message = {
-          content,
-          isOutgoing: true,
-          time: new Date().toLocaleTimeString() // Optionnel : formatage de l'heure
-        };
-        this.selectedUser.messages.push(message);
-
-        // Réinitialiser le champ de saisie
-        this.newMessage = '';
-      },
-      error => {
-        console.error('Erreur lors de l’envoi du message:', error);
+  
+    const message = {
+      senderId: this.me.id,
+      recipientId: this.selectedUser.id,
+      contenue: this.newMessage.trim(),
+    };
+  
+    try {
+      // Vérifier si le WebSocket est encore ouvert
+      if (!this.messagerieService.isSocketOpen()) {
+        console.error('La connexion WebSocket est fermée.');
+        return;
       }
-    );
+  
+      // Envoyer le message via WebSocket
+      this.messagerieService.sendMessage(message);
+  
+      console.log('Message envoyé via WebSocket:', message);
+  
+      // Enregistrer le message dans la base de données
+      this.messagerieService.saveMessage(message).subscribe(
+        (response) => {
+          console.log('Message enregistré dans la base de données:', response);
+        },
+        (error) => {
+          console.error('Erreur lors de l\'enregistrement du message dans la base de données:', error);
+        }
+      );
+  
+      // Ajouter le message localement pour mise à jour instantanée de l'interface
+      const outgoingMessage = {
+        senderId: message.senderId,
+        recipientId: message.recipientId,
+        content: message.contenue,
+        time: new Date().toLocaleTimeString(),
+      };
+  
+      // Ajouter le message envoyé à la liste des messages de la conversation
+      this.selectedMessages.push(outgoingMessage);
+  
+      // Réinitialiser le champ de saisie
+      this.newMessage = '';
+    } catch (error) {
+      console.error('Erreur lors de l’envoi du message via WebSocket:', error);
+    }
   }
-
+  
 
   toggleMessagerie() {
     this.isMessagerie = !this.isMessagerie;
 
     // Charger les messages si la boîte est ouverte et les données sont vides
     if (this.isMessagerie ) {
+      console.log("wsal n toggle msj")
       this.loadUsersMessages();
     }
   }
@@ -198,6 +239,7 @@ if (isPlatformBrowser(this.platformId)) {
     this.messagerieService.getUsersMessages(this.me.id).subscribe(
       data => {
         this.usersMessage = data;
+        console.log("listeUserMessage",this.usersMessage)
       },
       error => {
         console.error('Erreur lors du chargement des messages:', error);
@@ -207,13 +249,15 @@ if (isPlatformBrowser(this.platformId)) {
   }
 
 
+
+  
     usersAll: any[] = [
     {id:1, firstname: 'Soumaia ', lastname: 'Kerouan salah', image: 'profile.png',messages:['hi','ana maja'],specialite:'develop' },
     { id:2,firstname: 'safae ', lastname: 'Kerouan salah', image: 'profile.png',messages:['hi','ana maja'] ,specialite:'full stac'},
     {id:3, firstname: 'malak ', lastname: 'Kerouan salah', image: 'groupeIcon.png',messages:['hi','ana maja'] ,filiere:'ginf'},
   ];
  
-  search(): void {
+  onSearch(): void {
     console.log('Valeur de query :', this.query);
   
     const queryLower = this.query.toLowerCase().trim();
@@ -221,12 +265,40 @@ if (isPlatformBrowser(this.platformId)) {
     console.log('Recherche pour :', queryLower);
   
     this.filteredUsers = this.usersAll.filter((user) =>
-      user.firstname.toLowerCase().startsWith(queryLower) || 
-    user.lastname.toLowerArCase().startsWith(queryLower)||
-      user.specialisation?.toLowerCase().startsWith(queryLower) 
+      user.firstName.toLowerCase().startsWith(queryLower) ||
+      user.lastName.toLowerCase().startsWith(queryLower) || // Correction ici
+      user.specialite?.toLowerCase().startsWith(queryLower)
     );
   
     console.log('Utilisateurs filtrés:', this.filteredUsers);
+  }
+  
+  getFileUrl(file: any): string {
+    // Si fileType est incorrect, déduire le type à partir de l'extension
+    const mimeType = this.getMimeType(file.fileName);
+  
+    return `data:${mimeType};base64,${file.data}`;
+  }
+  
+  getMimeType(fileName: string): string {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+        case 'jfif':
+          return 'image/jfif';
+          case 'jpe':
+            return 'image/jpe';
+      case 'pdf':
+        return 'application/pdf';
+      default:
+        return 'application/octet-stream';
+    }
   }
   
 

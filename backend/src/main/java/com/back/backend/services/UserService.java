@@ -3,16 +3,22 @@ package com.back.backend.services;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.Entities.Etudiant;
+import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteFiles;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
+import com.back.backend.enums.Role;
 import com.back.backend.enums.TypePoste;
 import com.back.backend.repositories.PosteFilesRepository;
 import com.back.backend.repositories.PosteLikesRepository;
@@ -70,7 +76,13 @@ private final UserRepository userRepository;
 }
 
 
-
+    public boolean checklikes(int userId , int postId){
+        PosteLikes posteLikes= this.posteLikesRepository.checklikes(userId, postId);
+        if(posteLikes != null){
+            return true ; 
+        }
+        return false ; 
+    }
 
     public ResponseEntity<String> likePoste(int idPoste , int idUser){
         Poste poste = this.posteRepository.findById(idPoste).orElse(null);
@@ -84,7 +96,7 @@ private final UserRepository userRepository;
                                     .userId(idUser)
                                     .build() ;  
             this.posteLikesRepository.save(newPosteLikes) ; 
-            return ResponseEntity.ok("Poste liké avec succes");
+           return ResponseEntity.ok("Poste liké avec succes");
             }
             return ResponseEntity.badRequest().body("Poste non trouvé et le poste est deja like par cet utilisateur");
     }
@@ -117,13 +129,13 @@ private final UserRepository userRepository;
         return ResponseEntity.ok("Image de profil sauvegardée avec succes");
     }
     // retrieving the profile picture of a user
-    public String getProfilePicture(int idUser){
-        User user = this.userRepository.findById(idUser).orElse(null);
-        if(user != null){
-            return Base64.getEncoder().encodeToString(user.getPhotoProfile());
-        }
-        return "something went wrong";
-
+   
+    public ResponseEntity<byte[]> getProfileImage(int id) {
+        byte[] image = this.userRepository.getImageById(id);
+       return ResponseEntity.ok()
+            .contentType(MediaType.IMAGE_PNG) // Adjust this depending on your image type
+            .body(image);
+   
     }
 
 
@@ -139,15 +151,37 @@ private final UserRepository userRepository;
         .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
     }
 
-    public ResponseEntity<User> updateUserProfile(int id, User updatedUser) {
-        User existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser == null) {
-            return ResponseEntity.notFound().build();
-        }
-        existingUser.setFirstName(updatedUser.getFirstName());
-        existingUser.setLastName(updatedUser.getLastName());
-        existingUser.setPassword(updatedUser.getPassword());
-        userRepository.save(existingUser);
-        return ResponseEntity.ok(existingUser);
+public ResponseEntity<User> updateUserProfile(int id, User updatedUser) {
+    User existingUser = userRepository.findById(id).orElse(null);
+    if (existingUser == null) {
+        return ResponseEntity.notFound().build();
     }
+
+    // Handle type-specific updates
+    if (existingUser instanceof Etudiant etudiant && updatedUser instanceof Etudiant updatedEtudiant) {
+        etudiant.setFiliere(updatedEtudiant.getFiliere());
+        etudiant.setPhotoProfile(updatedEtudiant.getPhotoProfile());
+    } else if (existingUser instanceof Laureat laureat && updatedUser instanceof Laureat updatedLaureat) {
+        laureat.setPromotion(updatedLaureat.getPromotion());
+        laureat.setSpecialite(updatedLaureat.getSpecialite());
+        laureat.setPhotoProfile(updatedLaureat.getPhotoProfile());
+    }
+
+    // Update common fields
+    existingUser.setFirstName(updatedUser.getFirstName());
+    existingUser.setLastName(updatedUser.getLastName());
+    existingUser.setPassword(updatedUser.getPassword());
+    existingUser.setEmail(updatedUser.getEmail());
+    existingUser.setPhotoProfile(updatedUser.getPhotoProfile());
+
+    userRepository.save(existingUser);
+    return ResponseEntity.ok(existingUser);
+}
+
+
+    
+    public List<User> getAllUsersExceptAdmins() {
+        return userRepository.findByRoleNot(Role.ADMIN);
+    }
+
 }

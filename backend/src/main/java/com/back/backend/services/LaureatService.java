@@ -2,6 +2,7 @@ package com.back.backend.services;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ public class LaureatService {
     private final DemandeRepository demandeRepository;
     private final LaureatRepository laureatRepository ; 
     private final PosteRepository posteRepository ; 
+    private final UserRepository userRepository ;
     
     public List<Laureat> getAllLaureat(){
       return laureatRepository.findAllByRole(Role.LAUREAT) ;     
@@ -56,20 +58,42 @@ public class LaureatService {
     public String refuserDemande(int idDemande){
         Optional<DemandeMentorat> demandeMentorat = demandeRepository.findById(idDemande) ; 
         if(demandeMentorat.isPresent()){
-            DemandeMentorat demande = demandeMentorat.get();
-            demande.setStatusMentorat(StatusMentorat.REJECTED);
-            demandeRepository.save(demande) ; 
-            return "demnade rejetee" ; 
+            demandeRepository.deleteById(idDemande) ;
+            return "demnade rejetee et supprimer de la table" ; 
         }
         return "demande introuvable" ; 
     }
     public List<DemandeMentorat> getAllLaureatDemandes(int id){
         return demandeRepository.getAllDemandeLaureat(id) ;  
     }
+    // status mentorat 
+    public int getStatusMentorat(DemandeMentorat demandeMentorat){
+        Optional<DemandeMentorat> demande = demandeRepository.findById(demandeMentorat.getId()) ; 
+        if(demande.isPresent()){
+        return demandeRepository.getStatusMentorat(demandeMentorat.getLaureatId() , demandeMentorat.getEtudiantId()) ;
+        }
+        else{
+            return 2 ; 
+        }
+    }
 
     
- 
-                    
+    public ResponseEntity<String> modifierPoste(int posteId , String textArea){
+       Poste posteAmodifier= this.posteRepository.findById(posteId).orElse(null); 
+       if(posteAmodifier !=null){
+           posteAmodifier.setTextArea(textArea);
+           this.posteRepository.save(posteAmodifier);
+           return ResponseEntity.ok("poste modifie");
+       }
+       else{
+           return ResponseEntity.ok("poste introuvable");
+       }
+    }
+
+
+    public List<DemandeMentorat> getMentoredStudents(int laureatId) {
+        return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
+    }
         
     
 }

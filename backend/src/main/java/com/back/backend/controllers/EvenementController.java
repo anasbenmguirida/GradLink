@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/events")
 @CrossOrigin(origins = "http://localhost:4200")
 
+@RequestMapping("/api/events")
 public class EvenementController {
 
     @Autowired

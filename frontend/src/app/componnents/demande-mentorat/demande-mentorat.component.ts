@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
@@ -17,18 +17,29 @@ export class DemandeMentoratComponent implements OnInit {
 
 
 
-constructor(private router: Router, private location: Location,private demandeService: DemandeMentoratService) {}
+constructor(private router: Router, private location: Location,private demandeService: DemandeMentoratService,@Inject(PLATFORM_ID) private platformId: Object) {}
 
 demandesMentorat: any[] = []; 
-
+me:any;
 ngOnInit(): void {
+
+   if (isPlatformBrowser(this.platformId)) {
+          console.log('hiiiiii123')
+
+          this.me = JSON.parse(localStorage.getItem('user') || '{}');
+          console.log(this.me)
+  } else {
+          console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+        }
+
+
   const state = this.location.getState() as { id: number };
   const selectedId = state?.id || null;
   console.log(selectedId);
   console.log("hii");
 
 
-        this.demandeService.getDemandes().subscribe((data) => {
+        this.demandeService.getDemandes(this.me.id).subscribe((data) => {
            this.demandesMentorat = data;
          });
       

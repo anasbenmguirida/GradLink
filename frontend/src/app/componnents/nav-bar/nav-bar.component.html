@@ -17,7 +17,7 @@
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5v10M3 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0V6a3 3 0 0 0-3-3H9m1.5-2-2 2 2 2"/>
               </svg>
             </div>
-            <input type="text" [(ngModel)]="query" (input)="search()" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-noir-500 block w-full sm:w-80 pl-10 p-2" placeholder="Search..." required />
+            <input type="text" [(ngModel)]="query" (input)="onSearch()" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-noir-500 block w-full sm:w-80 pl-10 p-2" placeholder="Search..." required />
           </div>
         </div>
         
@@ -33,7 +33,25 @@
                 class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100">
               <img [src]="user.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
               <div>
-                <p class="text-sm font-medium text-gray-900">{{ user.firstname }}  {{ user.lastname}}</p>
+                <p 
+                class="text-sm font-medium text-gray-900"
+                [ngClass]="{'underline font-bold': isFocused}" 
+                (focus)="isFocused = true" 
+                (blur)="isFocused = false">
+                {{ user.firstName }} {{ user.lastName }}
+              </p>
+              
+             
+              
+              <p class="text-xs font-medium text-gray-900" *ngIf="user.role == 'LAUREAT'">
+                {{ user.specialite }}
+              </p>
+              
+              <p class="text-xs font-medium text-gray-900" *ngIf="user.role == 'ETUDIANT'">
+                {{ user.filiere }}
+              </p>
+              
+
                 <p class="text-xs text-gray-500">
                 
                   <span *ngIf="user.id == me.id" class="text-blue-500 font-semibold">(Vous)</span> 
@@ -82,7 +100,7 @@
                 
                     <div>
                       <p class="text-sm font-medium text-gray-900">
-                        <strong>{{demande.firstname}} {{demande.lastname}}</strong> {{ demande.content }}
+                        <strong>{{demande.firstName}} {{demande.lastName}}</strong> {{ demande.content }}
                       </p>
                                   <p class="text-xs text-gray-500">{{ demande.time }}</p>
                     </div>
@@ -127,11 +145,15 @@
                     [class.selected]="user === selectedUser"
                     class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100"
                     (click)="onSelectUser(user)">
-                    <img [src]="user.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                    <img src="profile.png" class="h-8 w-8 rounded-full object-cover" alt="User Image">
                     <div>
-                      <p class="text-sm font-medium text-gray-900">{{ user.firstname }} {{ user.lastname }}</p>
-                      <p class="text-xs text-gray-500">{{ user.messages.slice(-1)[0].content }}</p>
-                    </div>
+                      <p class="text-sm font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</p>
+                      <p class="text-xs text-gray-500" *ngIf="user.messages.length > 0">
+                        <span *ngIf="user.messages.slice(-1)[0].senderId === me.id">vous:</span>
+                        {{ user.messages.slice(-1)[0].contenue }} 
+                       
+                      </p>
+                                          </div>
                   </li>
                 </ul>
               </div>
@@ -139,9 +161,9 @@
             </div>
             
             <div *ngIf="selectedUser" class="fixed bottom-0 right-0 w-full sm:w-96 bg-white shadow-xl rounded-t-xl border border-gray-200">
-              <div class="flex items-center p-4 bg-gray-100 rounded-t-xl">
+             <div class="flex items-center p-4 bg-gray-100 rounded-t-xl">
                 <img [src]="selectedUser.image" alt="profile" class="w-10 h-10 rounded-full object-cover mr-4">
-                <h3 class="text-lg font-semibold">{{ selectedUser.firstname }} {{ selectedUser.lastname }}</h3>
+                <h3 class="text-lg font-semibold">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h3>
             
   
                 <button (click)="closeChat()" class="ml-auto text-gray-600 hover:text-gray-900">
@@ -154,12 +176,12 @@
                   
                   <div 
                   [ngClass]="{
-                    'self-end bg-green-100': message.id_emitter === me.id,
-                    'self-start bg-gray-100': message.id_receiver === me.id
+                    'self-end bg-green-100': message.senderId === me.id,
+                    'self-start bg-gray-100': message.recipientId === me.id
                   }"
                     class="p-3 rounded-xl max-w-max flex items-end relative">
                     
-                    <p class="text-sm">{{ message.content }}</p>
+                    <p class="text-sm">{{ message.contenue }}</p>
                     
                     <span class="text-xs text-gray-500 ml-2 relative top-0.5">{{ message.time }}</span>
                   </div>
@@ -183,7 +205,7 @@
             
             
   
-            <div  *ngIf="islaureat" class="flex items-center space-x-6 ml-8 relative">
+            <div  *ngIf="me.role==='LAUREAT'" class="flex items-center space-x-6 ml-8 relative">
               <button type="button" (click)="toggleNotif()" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
                 <span class="sr-only">View invitation</span>
               <img src="groupeIcon.jpg" class="h-7 w-7 rounded-full object-cover">
@@ -204,7 +226,7 @@
                   
                       <div>
                         <p  class="text-sm font-medium text-gray-900">
-                          {{demande.firstname}} {{demande.lastname}}
+                          {{demande.firstName}} {{demande.lastName}}
                           <span class="font-normal">{{ demande.content }}</span>
                         </p>
                                             
@@ -239,10 +261,10 @@
               *ngIf="isMenu"
             >
           
-              <div  (click)=navigateToProfile(me.id) class="flex items-center px-4 py-3 border-b border-gray-200">
-                <img src="profile.png" alt="User photo" class="h-12 w-12 rounded-full object-cover">
+              <div  (click)=navigateToProfile(me) class="flex items-center px-4 py-3 border-b border-gray-200">
+                <img (click)=navigateToProfile(me) src="profile.png" alt="User photo" class="h-12 w-12 rounded-full object-cover">
                 <div class="ml-3">
-                  <p class="text-sm font-medium text-gray-800">{{me.firstname}} {{me.lastname}}</p>
+                  <p class="text-sm font-medium text-gray-800">{{me.firstName}} {{me.lastName}}</p>
                  
                 </div>
               </div>

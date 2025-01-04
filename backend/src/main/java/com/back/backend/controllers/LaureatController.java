@@ -23,29 +23,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.back.backend.Entities.DemandeMentorat;
 import com.back.backend.Entities.Laureat;
-import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.User;
-import com.back.backend.enums.TypePoste;
 import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
 import com.back.backend.services.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
-import jakarta.annotation.security.RolesAllowed;
+
+
 import jakarta.servlet.annotation.MultipartConfig;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+
 
 @RestController
 @AllArgsConstructor
 @MultipartConfig
 @RequestMapping(path = "/api/laureat/")
+@CrossOrigin(origins = "http://localhost:4200")
 
-
-
-@CrossOrigin(origins = "http://localhost:4200"
-) 
 public class LaureatController {
 
     
@@ -61,18 +55,29 @@ public class LaureatController {
     @PutMapping("reject/{id}")
     public String refuserDemande(@PathVariable int id) {
         return this.laureatService.refuserDemande(id) ; 
-    }  
-
-
+    }
+    // avoir la liste de toutes les laureats 
     @GetMapping("all")
     public List<Laureat> getAllLaureats() {
         return this.laureatService.getAllLaureat() ; 
     }
-    
-    @GetMapping("demandes/{id}")
-    public List<DemandeMentorat> getAllLaureatDemandes(@PathVariable int id) {
-        return this.laureatService.getAllLaureatDemandes(id) ;
+
+    @GetMapping("mentored-students/{id}")
+    public ResponseEntity<List<DemandeMentorat>> getMentoredStudents(@PathVariable int id) {
+    try {
+        List<DemandeMentorat> mentoredStudents = laureatService.getMentoredStudents(id);
+        return ResponseEntity.ok(mentoredStudents);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
+}
+    // status mentorat  :  pending (0)   , accepted (1) , rejected (2)
+    @GetMapping("status")
+    public int getStatusMentorat(@RequestBody DemandeMentorat demande) {
+        return this.laureatService.getStatusMentorat(demande) ; 
+    }
+
     
 }
+
 

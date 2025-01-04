@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,  
 import { CommunityService } from '../../services/community/community.service';
 import { UserService } from '../../services/authservice/user.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import { Router } from '@angular/router';
 
 
 interface User {
@@ -49,7 +50,7 @@ export class CommunitySpaceComponent implements OnInit{
   isAddCommunityDialogOpen: boolean=false;
   communityForm!: FormGroup;  // Le formulaire pour la communauté
   newCommunity = { name: '', description: '' };  // Structure de la communauté
-  
+  user:any
   communities = [
     {
       id: 1,
@@ -241,7 +242,9 @@ throw new Error('Method not implemented.');
   constructor(private communityService: CommunityService,
     @Inject(PLATFORM_ID) private platformId: Object,
         private userService: UserService ,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+            private router: Router,
+        
   ) {}
 
   
@@ -251,13 +254,15 @@ throw new Error('Method not implemented.');
 
       ngOnInit(){
         this.communityForm = this.fb.group({
-          name: ['', [Validators.required, Validators.maxLength(100)]],
+          titre: ['', [Validators.required, Validators.maxLength(100)]],
           description: ['', [Validators.required, Validators.maxLength(500)]]
         });
 
         if (isPlatformBrowser(this.platformId)) {
           console.log('hiiiiii')
           const user = JSON.parse(localStorage.getItem('user') || '{}');
+console.log(`Useeeeer`)
+console.log(user)
 
           this.isAdmin = user.role === 'ADMIN'; 
           this.userId=user.id
@@ -297,53 +302,6 @@ throw new Error('Method not implemented.');
     }
   }
   
-  // postMessage() {
-  //   if (!this.newMessageText.trim()) {
-  //     return; 
-  //   }
-  
-  //   // Création du nouveau poste
-  //   const newPost: Poste = {
-  //     id: Date.now(), // Utilisez un timestamp comme ID unique
-  //     textArea: this.newMessageText,
-  //     posteFiles: [], // Initialisez comme un tableau vide
-  //     user: {
-  //       id: this.userId,
-  //       firstName: 'User', // Remplacez par des données réelles si disponibles
-  //       lastName: 'Name',
-  //       photoProfile: 'safae.jpeg',
-  //     }
-  //   };
-  
-  //   // Si un fichier a été sélectionné, ajoutez-le directement au poste
-  //   if (this.selectedImage) {
-  //     const formattedFile: PosteFile = {
-  //       id: Date.now(), // Utilisez un timestamp comme ID unique pour le fichier
-  //       fileName: this.selectedImage.name,
-  //       fileType: this.selectedImage.type,
-  //       data: '', // Laissez vide pour indiquer que le fichier est local
-  //     };
-  
-  //     // Ajoutez le fichier au tableau des fichiers
-  //     newPost.posteFiles.push(formattedFile);
-  //   }
-  
-  //   // Ajoutez le nouveau poste à la communauté sélectionnée
-  //   if (this.selectedCommunityId !== null) {
-  //     const community = this.communities.find(c => c.id === this.selectedCommunityId);
-  //     if (community) {
-  //       community.postes.push(newPost);
-  //     }
-  //   }
-  
-  //   // Réinitialisez les champs après l'envoi
-  //   this.newMessageText = '';
-  //   this.selectedImage = null;
-  
-  //   console.log('Poste ajouté localement :', newPost);
-  // }
-  
-
   postMessage() {
     if (!this.newMessageText.trim()) {
       return; 
@@ -356,51 +314,98 @@ throw new Error('Method not implemented.');
       posteFiles: [], // Initialisez comme un tableau vide
       user: {
         id: this.userId,
-        firstName: 'User', // Remplacez par des données réelles si disponibles
-        lastName: 'Name',
+        firstName: `safae`, // Remplacez par des données réelles si disponibles
+        lastName: 'Labjakh',
         photoProfile: 'safae.jpeg',
       }
     };
   
-    // Si un fichier a été sélectionné, convertissez-le en base64 et ajoutez-le au poste
+    // Si un fichier a été sélectionné, ajoutez-le directement au poste
     if (this.selectedImage) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const formattedFile: PosteFile = {
-          id: Date.now(), // Utilisez un timestamp comme ID unique pour le fichier
-          fileName: this.selectedImage!.name,
-          fileType: this.selectedImage!.type,
-          data: reader.result as string, // Cette valeur est le contenu en base64 de l'image
-        };
-  
-        // Ajoutez le fichier au tableau des fichiers
-        newPost.posteFiles.push(formattedFile);
-  
-        // Ajoutez le nouveau poste à la communauté sélectionnée
-        if (this.selectedCommunityId !== null) {
-          const community = this.communities.find(c => c.id === this.selectedCommunityId);
-          if (community) {
-            community.postes.push(newPost);
-          }
-        }
-  
-        // Réinitialisez les champs après l'envoi
-        this.newMessageText = '';
-        this.selectedImage = null;
-  
-        console.log('Poste ajouté localement :', newPost);
+      const formattedFile: PosteFile = {
+        id: Date.now(), // Utilisez un timestamp comme ID unique pour le fichier
+        fileName: this.selectedImage.name,
+        fileType: this.selectedImage.type,
+        data: '', // Laissez vide pour indiquer que le fichier est local
       };
-      reader.readAsDataURL(this.selectedImage); // Convertir l'image en base64
-    } else {
-      // Si aucune image n'est sélectionnée, ajoutez juste le poste sans image
-      if (this.selectedCommunityId !== null) {
-        const community = this.communities.find(c => c.id === this.selectedCommunityId);
-        if (community) {
-          community.postes.push(newPost);
-        }
+  
+      // Ajoutez le fichier au tableau des fichiers
+      newPost.posteFiles.push(formattedFile);
+    }
+  
+    // Ajoutez le nouveau poste à la communauté sélectionnée
+    if (this.selectedCommunityId !== null) {
+      const community = this.communities.find(c => c.id === this.selectedCommunityId);
+      if (community) {
+        community.postes.push(newPost);
       }
     }
+  
+    // Réinitialisez les champs après l'envoi
+    this.newMessageText = '';
+    this.selectedImage = null;
+  
+    console.log('Poste ajouté localement :', newPost);
   }
+  
+
+  // postMessage() {
+  //   if (!this.newMessageText.trim()) {
+  //     return; 
+  //   }
+  
+  //   // Création du nouveau poste
+  //   const newPost: Poste = {
+  //     id: Date.now(), // Utilisez un timestamp comme ID unique
+  //     textArea: this.newMessageText,
+  //     posteFiles: [], // Initialisez comme un tableau vide
+  //     user: {
+  //       id: this.userId,
+  //       firstName: this.userId.firstName, // Remplacez par des données réelles si disponibles
+  //       lastName: this.userId.lastName,
+  //       photoProfile: 'safae.jpeg',
+  //     }
+  //   };
+  
+  //   // Si un fichier a été sélectionné, convertissez-le en base64 et ajoutez-le au poste
+  //   if (this.selectedImage) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       const formattedFile: PosteFile = {
+  //         id: Date.now(), // Utilisez un timestamp comme ID unique pour le fichier
+  //         fileName: this.selectedImage!.name,
+  //         fileType: this.selectedImage!.type,
+  //         data: reader.result as string, // Cette valeur est le contenu en base64 de l'image
+  //       };
+  
+  //       // Ajoutez le fichier au tableau des fichiers
+  //       newPost.posteFiles.push(formattedFile);
+  
+  //       // Ajoutez le nouveau poste à la communauté sélectionnée
+  //       if (this.selectedCommunityId !== null) {
+  //         const community = this.communities.find(c => c.id === this.selectedCommunityId);
+  //         if (community) {
+  //           community.postes.push(newPost);
+  //         }
+  //       }
+  
+  //       // Réinitialisez les champs après l'envoi
+  //       this.newMessageText = '';
+  //       this.selectedImage = null;
+
+  //       console.log('Poste ajouté localement :', newPost);
+  //     };
+  //     reader.readAsDataURL(this.selectedImage); // Convertir l'image en base64
+  //   } else {
+  //     // Si aucune image n'est sélectionnée, ajoutez juste le poste sans image
+  //     if (this.selectedCommunityId !== null) {
+  //       const community = this.communities.find(c => c.id === this.selectedCommunityId);
+  //       if (community) {
+  //         community.postes.push(newPost);
+  //       }
+  //     }
+  //   }
+  // }
   
 
 
@@ -452,10 +457,11 @@ saveCommunity(): void {
   if (this.communityForm.valid) {
     const communityData = this.communityForm.value;
 
-    this.communityService.saveCommunity(communityData).subscribe({
+    this.communityService.saveCommunity(communityData,this.userId).subscribe({
       next: (response) => {
         console.log('Communauté sauvegardée avec succès :', response);
         this.communityForm.reset();
+        this.closeAddCommunityDialog();
       },
       error: (error) => {
         console.error('Erreur lors de la sauvegarde de la communauté :', error);

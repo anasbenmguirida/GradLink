@@ -47,4 +47,5 @@ public class DemandeMentorat {
    
     private StatusMentorat statusMentorat;
     private LocalDate dateDemande;
+    private String reason ; 
 }

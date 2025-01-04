@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { delay, map, Observable, of } from 'rxjs';
 
 
+
 @Injectable({
   providedIn: 'root', // Accessible dans toute l'application
 })
@@ -13,20 +14,7 @@ private apiUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) {}
 
-  // login(email: string, password: string): Observable<any> {
-   
-  //   return this.http.get(this.mockDataUrl).pipe(
-  //     delay(500), 
-  //     map((data: any) => {
-  //       const user = data.users.find((u: any) => u.email === email && u.password === password);
-  //       if (user) {
-  //         return { token: data.token, user: user };
-  //       } else {
-  //         throw new Error('Identifiants invalides');
-  //       }
-  //     })
-  //   );
-  // }
+  
 
   login(email: string, password: string): Observable<any> {
     const loginData = { email, password }; 
@@ -60,7 +48,13 @@ console.log(loginData)
   // Dans votre UserService
 getUserRole(): string {
   console.log('TEEEEEEEEEST')
+  console.log('TEEEEEEEEEST')
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  console.log('TEEEEEEEEEST2')
+  console.log(user.role)
+
+
+  return user.role ||  'GUEST'; 
   console.log('TEEEEEEEEEST2')
   console.log(user.role)
 

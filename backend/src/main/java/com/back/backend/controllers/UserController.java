@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.dto.PosteWithUserDTO;
+import com.back.backend.Entities.Etudiant;
+import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
@@ -37,7 +40,7 @@ import lombok.AllArgsConstructor;
 public class UserController {
 private final UserService userService;
 private final PosteService posteService;
-@CrossOrigin(origins = "http://localhost:4200") 
+
 
   
 @PostMapping("/api/create-poste")
@@ -73,56 +76,99 @@ public ResponseEntity<Map<String, String>> createPoste(
         return this.posteService.deletePoste(id);
     }
 
-    @PutMapping("/api/like")
+    @PostMapping("/api/like")
     public ResponseEntity<String> likePoste(@RequestBody PosteLikes posteLikes){
         return this.userService.likePoste(posteLikes.getPosteId() ,posteLikes.getUserId());
     }
     @GetMapping("/api/poste/{id}") // for the profile page admins/laureats
-    public List<Poste> getPoste(@PathVariable int id){
+    public List<PosteWithUserDTO> getPoste(@PathVariable int id){
         return this.posteService.findPostesByUserId(id) ; 
     }
-    @PutMapping("/api/unlike/{posteId}") // id dial le poste
-    public ResponseEntity<String> unlikePoste(@PathVariable int posteId , @RequestBody int userId){
-        return this.userService.unlikePoste(posteId , userId);
+    @PutMapping("/api/unlike") // id dial le poste
+    public ResponseEntity<String> unlikePoste(@RequestBody PosteLikes posteLikes){
+        return this.userService.unlikePoste(posteLikes.getPosteId() , posteLikes.getUserId());
     }
+
+  
     @PutMapping("/api/save-picture")
     public ResponseEntity<String> savePicture(@RequestParam("id") int id , @RequestParam("file") MultipartFile file){
         return this.userService.SaveProfilePicture( file , id);
     }
 
     @GetMapping("/api/profile-picture/{id}")
-    public String getProfilePicture(@PathVariable int id){
-        return this.userService.getProfilePicture(id);
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable int id){
+        return this.userService.getProfileImage(id);
     } 
-
-
-
-
-
+    @GetMapping("/api/check-likes")
+    public boolean checkLikes(@RequestParam int postId, @RequestParam int userId) {
+        return this.userService.checklikes(userId, postId);
+    }
     
+  
+    @GetMapping("/api/isLiked")
+    public ResponseEntity<Boolean> isLikedPoste(@RequestBody PosteLikes posteLikes) {
+        boolean isLiked = posteService.checkLikedPoste(posteLikes);
+        return ResponseEntity.ok(isLiked);
+    }
 
+
+
+   
     
-    @GetMapping("/profile/{id}")
+    @GetMapping("/api/profile/{id}")
     public ResponseEntity<User> getUserProfile(@PathVariable int id) {
         User user = userService.getUserById(id);  
         return ResponseEntity.ok(user);  
     }
 
-    @PutMapping("/profile")
-    public ResponseEntity<ResponseEntity<User>> updateUserProfile(@RequestBody User updatedUser) {
-
-        try {
-            User currentUser = userService.getUserById(updatedUser.getId()); 
     
-            if (currentUser.getId() != updatedUser.getId()) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-            }
-    
-            ResponseEntity<User> updated = userService.updateUserProfile(currentUser.getId(), updatedUser);
-            return ResponseEntity.ok(updated);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    @GetMapping("/api/except-admins")
+    public List<User> getAllUsersExceptAdmins() {
+        return userService.getAllUsersExceptAdmins();
     }
+
+
+    
+@PutMapping("/profile")
+public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUser) {
+    try {
+        // Fetch the current user based on their ID
+        User currentUser = userService.getUserById(updatedUser.getId());
+
+        // Check if the current user ID matches the ID of the updatedUser
+        if (currentUser == null || currentUser.getId() != updatedUser.getId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not authorized to update this profile.");
+        }
+
+        // Update profile based on user type
+        if (currentUser instanceof Etudiant etudiant) {
+            if (updatedUser instanceof Etudiant updatedEtudiant) {
+                etudiant.setFiliere(updatedEtudiant.getFiliere());
+                etudiant.setPhotoProfile(updatedEtudiant.getPhotoProfile());
+            }
+        } else if (currentUser instanceof Laureat laureat) {
+            if (updatedUser instanceof Laureat updatedLaureat) {
+                laureat.setPromotion(updatedLaureat.getPromotion());
+                laureat.setSpecialite(updatedLaureat.getSpecialite());
+                laureat.setPhotoProfile(updatedLaureat.getPhotoProfile());
+            }
+        }
+
+        // Update common fields
+        currentUser.setFirstName(updatedUser.getFirstName());
+        currentUser.setLastName(updatedUser.getLastName());
+        currentUser.setPassword(updatedUser.getPassword());
+        currentUser.setEmail(updatedUser.getEmail());
+        currentUser.setPhotoProfile(updatedUser.getPhotoProfile());
+
+        // Save updated user
+        userService.updateUserProfile(currentUser.getId(), currentUser);
+
+        return ResponseEntity.ok("Profile updated successfully.");
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+    }
+}
+
 
 }

@@ -13,8 +13,8 @@ export class DemandeMentoratService {
   constructor(private http: HttpClient) { }
 
   // Méthode pour récupérer les demandes de mentorat
-  getDemandes(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getDemandes(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/demandes/${id}`);
   }
 
     // Méthode pour accepter une demande

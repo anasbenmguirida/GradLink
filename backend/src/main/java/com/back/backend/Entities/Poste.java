@@ -3,7 +3,9 @@ package com.back.backend.Entities;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,7 +49,7 @@ public class Poste {
     private LocalDateTime datePoste;
     private int nbrLikes ; 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, updatable = false, insertable = false)
     @JsonBackReference(value = "user-poste")
     private User user;
@@ -69,4 +72,5 @@ public class Poste {
     @JsonManagedReference("poste-files")
     private List<PosteFiles> posteFiles;
 
+    
 }

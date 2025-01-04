@@ -1,6 +1,6 @@
 // community.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -9,15 +9,17 @@ import { Observable } from 'rxjs';
 export class CommunityService {
   
   
-  private apiUrl = '/api'; 
+  private apiUrl = 'http://localhost:8080/api/admin'; 
 
   constructor(private http: HttpClient) {}
 
   getCommunities(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
-  saveCommunity(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+  saveCommunity(data: any,adminId: number): Observable<any> {
+    const params = new HttpParams().set('adminId', adminId.toString()); // Ajout du paramètre adminId
+
+    return this.http.post(`${this.apiUrl}/caummunaute`, data, { params });
   }
   // Récupérer les messages d'une catégorie
   getMessagesByCategory(categoryId: number): Observable<any[]> {
