@@ -43,11 +43,10 @@ public class LaureatService {
       return laureatRepository.findAllByRole(Role.LAUREAT) ;     
     }
 
-    //pour les demandes de mentorats par default on va les mettre les status a PENDING 
-    public String accepterDemande(int idDemande){
-        Optional<DemandeMentorat> demandeMentorat = demandeRepository.findById(idDemande) ; 
-        if(demandeMentorat.isPresent()){
-            DemandeMentorat demande = demandeMentorat.get();
+    //ACCEPTER DEMANDE
+    public String accepterDemande(DemandeMentorat demande){
+        DemandeMentorat demandeMentorat = demandeRepository.getDemandeMentorat(demande.getLaureatId(), demande.getEtudiantId()) ; 
+        if(demandeMentorat!= null){
             demande.setStatusMentorat(StatusMentorat.ACCEPTED);
             demandeRepository.save(demande) ; 
             return "demnade accepte" ; 
@@ -55,10 +54,11 @@ public class LaureatService {
         return "demande introuvable" ; 
     }
 
-    public String refuserDemande(int idDemande){
-        Optional<DemandeMentorat> demandeMentorat = demandeRepository.findById(idDemande) ; 
-        if(demandeMentorat.isPresent()){
-            demandeRepository.deleteById(idDemande) ;
+    // refuser dmande
+    public String refuserDemande(DemandeMentorat demande){
+        DemandeMentorat demandeMentorat = demandeRepository.getDemandeMentorat(demande.getLaureatId(), demande.getEtudiantId()) ; 
+        if(demande!=null){
+            demandeRepository.delete(demande) ;
             return "demnade rejetee et supprimer de la table" ; 
         }
         return "demande introuvable" ; 
@@ -77,6 +77,8 @@ public class LaureatService {
         }
     }
 
+
+
     
     public ResponseEntity<String> modifierPoste(int posteId , String textArea){
        Poste posteAmodifier= this.posteRepository.findById(posteId).orElse(null); 
@@ -90,10 +92,11 @@ public class LaureatService {
        }
     }
 
-
-    /*public List<DemandeMentorat> getMentoredStudents(int laureatId) {
+ /* 
+    public List<DemandeMentorat> getMentoredStudents(int laureatId) {
         return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
     }
         */
+        
     
 }

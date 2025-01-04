@@ -66,6 +66,9 @@ public class SecurityConfig {
             .requestMatchers(mvcMatcherBuilder.pattern("/api/profile/{id}")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/api/except-admins")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/profile")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/laureat/accept")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/laureat/reject")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/laureat/status")).permitAll()
         
                 .anyRequest().authenticated()
             )

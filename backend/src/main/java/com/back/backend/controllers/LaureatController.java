@@ -47,14 +47,14 @@ public class LaureatController {
     private final LaureatService laureatService ; 
     private final UserService userService ;
 
-    @PutMapping("accept/{id}")
-    public String acceptDemande(@PathVariable int id) {
-        return this.laureatService.accepterDemande(id) ; 
+    @PutMapping("accept")
+    public String acceptDemande(@RequestBody DemandeMentorat demande) {
+        return this.laureatService.accepterDemande(demande) ; 
     }
 
-    @PutMapping("reject/{id}")
-    public String refuserDemande(@PathVariable int id) {
-        return this.laureatService.refuserDemande(id) ; 
+    @PutMapping("reject")
+    public String refuserDemande(@RequestBody DemandeMentorat demande) {
+        return this.laureatService.refuserDemande(demande) ; 
     }
     // avoir la liste de toutes les laureats 
     @GetMapping("all")
@@ -62,7 +62,7 @@ public class LaureatController {
         return this.laureatService.getAllLaureat() ; 
     }
 
-    @GetMapping("mentored-students/{id}")
+   /*  @GetMapping("mentored-students/{id}")
     public ResponseEntity<List<DemandeMentorat>> getMentoredStudents(@PathVariable int id) {
     try {
         List<DemandeMentorat> mentoredStudents = laureatService.getMentoredStudents(id);
@@ -70,7 +70,7 @@ public class LaureatController {
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
-}
+}*/
     // status mentorat  :  pending (0)   , accepted (1) , rejected (2)
     @GetMapping("status")
     public int getStatusMentorat(@RequestBody DemandeMentorat demande) {

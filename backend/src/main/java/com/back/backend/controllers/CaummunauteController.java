@@ -1,7 +1,7 @@
 package com.back.backend.controllers;
 
 import com.back.backend.Entities.Caummunaute;
-import com.back.backend.dto.CaummunauteDTO;
+import com.back.backend.DTO.CaummunauteDTO;
 import com.back.backend.services.CaummunauteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
