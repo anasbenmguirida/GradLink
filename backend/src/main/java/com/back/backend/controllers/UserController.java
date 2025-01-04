@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.back.backend.dto.PosteWithUserDTO;
 import com.back.backend.Entities.Etudiant;
 import com.back.backend.Entities.Laureat;
+
+import com.back.backend.dto.PosteWithUserDTO;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
@@ -126,10 +127,7 @@ public ResponseEntity<Map<String, String>> createPoste(
     public List<User> getAllUsersExceptAdmins() {
         return userService.getAllUsersExceptAdmins();
     }
-
-
-    
-@PutMapping("/profile")
+    @PutMapping("/profile")
 public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUser) {
     try {
         // Fetch the current user based on their ID
@@ -140,20 +138,6 @@ public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUser) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not authorized to update this profile.");
         }
 
-        // Update profile based on user type
-        if (currentUser instanceof Etudiant etudiant) {
-            if (updatedUser instanceof Etudiant updatedEtudiant) {
-                etudiant.setFiliere(updatedEtudiant.getFiliere());
-                etudiant.setPhotoProfile(updatedEtudiant.getPhotoProfile());
-            }
-        } else if (currentUser instanceof Laureat laureat) {
-            if (updatedUser instanceof Laureat updatedLaureat) {
-                laureat.setPromotion(updatedLaureat.getPromotion());
-                laureat.setSpecialite(updatedLaureat.getSpecialite());
-                laureat.setPhotoProfile(updatedLaureat.getPhotoProfile());
-            }
-        }
-
         // Update common fields
         currentUser.setFirstName(updatedUser.getFirstName());
         currentUser.setLastName(updatedUser.getLastName());
@@ -161,15 +145,26 @@ public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUser) {
         currentUser.setEmail(updatedUser.getEmail());
         currentUser.setPhotoProfile(updatedUser.getPhotoProfile());
 
-        // Save updated user
-        userService.updateUserProfile(currentUser.getId(), currentUser);
+        // Check if the user is an instance of Etudiant or Laureat and update accordingly
+        if (currentUser instanceof Etudiant etudiant && updatedUser instanceof Etudiant updatedEtudiant) {
+            // Update specific fields for Etudiant
+            etudiant.setFiliere(updatedEtudiant.getFiliere());
+            etudiant.setPhotoProfile(updatedEtudiant.getPhotoProfile());
+            // Save as Etudiant
+            userService.updateEtudiantProfile((Etudiant) currentUser);
+        } else if (currentUser instanceof Laureat laureat && updatedUser instanceof Laureat updatedLaureat) {
+            // Update specific fields for Laureat
+            laureat.setPromotion(updatedLaureat.getPromotion());
+            laureat.setSpecialite(updatedLaureat.getSpecialite());
+            laureat.setPhotoProfile(updatedLaureat.getPhotoProfile());
+            // Save as Laureat
+            userService.updateLaureatProfile((Laureat) currentUser);
+        }
 
         return ResponseEntity.ok("Profile updated successfully.");
     } catch (RuntimeException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
     }
 }
-
-
 
 }

@@ -50,7 +50,7 @@ export class MessagerieService {
   sendMessage(message: { senderId: number; recipientId: number; contenue: string }): void {
     try {
       this.socket$.next(message);
-      console.log('Message envoyé via WebSocket:', message);
+      console.log('Message envoyé via WebSocket :', message);
     } catch (error) {
       console.error('Erreur lors de l’envoi du message via WebSocket:', error);
     }

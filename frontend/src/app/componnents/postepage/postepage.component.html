@@ -82,14 +82,14 @@
       <img class="profile-image w-12 h-12 rounded-full object-cover" [src]="post.profileImage" alt="Profile Image" />
       <div class="user-info">
         <h3  class="font-medium text-lg hover:underline">
-          {{ post.poste.firstName }} {{ post.poste.lastName }}
+          {{ post.firstName }} {{ post.lastName }}
         </h3>
                 <p class="text-sm text-gray-500">{{ post.daysAgo }}j</p>
       </div>
     </div>
 
     <div class="post-content">
-      <p>{{ post.textArea }}</p>
+      <p>{{ post.poste.textArea }}</p>
       <p>lenghtttt{{post.poste.posteFiles.length}}</p>
       <div *ngIf="post.poste.posteFiles && post.poste.posteFiles.length > 0" class="image-gallery grid gap-2">
         <ng-container [ngSwitch]="post.poste.posteFiles.length">

@@ -151,32 +151,13 @@ private final UserRepository userRepository;
         .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
     }
 
-public ResponseEntity<User> updateUserProfile(int id, User updatedUser) {
-    User existingUser = userRepository.findById(id).orElse(null);
-    if (existingUser == null) {
-        return ResponseEntity.notFound().build();
+    public void updateEtudiantProfile(Etudiant updatedEtudiant) {
+        userRepository.save(updatedEtudiant);
     }
-
-    // Handle type-specific updates
-    if (existingUser instanceof Etudiant etudiant && updatedUser instanceof Etudiant updatedEtudiant) {
-        etudiant.setFiliere(updatedEtudiant.getFiliere());
-        etudiant.setPhotoProfile(updatedEtudiant.getPhotoProfile());
-    } else if (existingUser instanceof Laureat laureat && updatedUser instanceof Laureat updatedLaureat) {
-        laureat.setPromotion(updatedLaureat.getPromotion());
-        laureat.setSpecialite(updatedLaureat.getSpecialite());
-        laureat.setPhotoProfile(updatedLaureat.getPhotoProfile());
+    
+    public void updateLaureatProfile(Laureat updatedLaureat) {
+        userRepository.save(updatedLaureat);
     }
-
-    // Update common fields
-    existingUser.setFirstName(updatedUser.getFirstName());
-    existingUser.setLastName(updatedUser.getLastName());
-    existingUser.setPassword(updatedUser.getPassword());
-    existingUser.setEmail(updatedUser.getEmail());
-    existingUser.setPhotoProfile(updatedUser.getPhotoProfile());
-
-    userRepository.save(existingUser);
-    return ResponseEntity.ok(existingUser);
-}
 
 
     
@@ -184,4 +165,5 @@ public ResponseEntity<User> updateUserProfile(int id, User updatedUser) {
         return userRepository.findByRoleNot(Role.ADMIN);
     }
 
+ 
 }

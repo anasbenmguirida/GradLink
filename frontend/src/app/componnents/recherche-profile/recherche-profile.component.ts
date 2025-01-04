@@ -114,7 +114,7 @@ fetchPosts(): void {
     this.ProfileService
       .getRelation(this.me.id, this.selectedId)
       .subscribe((response: any) => {
-        if (!response) {
+        if (response.statusMentorat === 2) {
           this.relationStatus = 'none';
         } else if (response.statusMentorat === 0) {
           this.relationStatus =

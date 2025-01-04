@@ -160,7 +160,6 @@
   
       <div class="post-content">
         <p>{{ post.poste.textArea }}</p>
-        <p>lenghtttt{{post.poste.posteFiles.length}}</p>
         <div *ngIf="post.poste.posteFiles && post.poste.posteFiles.length > 0" class="image-gallery grid gap-2">
           <ng-container [ngSwitch]="post.poste.posteFiles.length">
         

@@ -72,7 +72,7 @@ export class ProfileService {
   // }
   
   acceptInvitation(id_emitter: any, id_receiver: any) {
-    return this.http.put(`${this.apiUrl}/accept-invitation`, { id_emitter, id_receiver});
+    return this.http.put(`${this.apiUrl}/api/laureat/`, { id_emitter, id_receiver});
   }
 
 }
