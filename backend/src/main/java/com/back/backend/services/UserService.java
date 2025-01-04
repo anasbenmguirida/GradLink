@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.Entities.Etudiant;
+import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteFiles;
 import com.back.backend.Entities.PosteLikes;
@@ -149,21 +151,19 @@ private final UserRepository userRepository;
         .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
     }
 
-    public ResponseEntity<User> updateUserProfile(int id, User updatedUser) {
-        User existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser == null) {
-            return ResponseEntity.notFound().build();
-        }
-        existingUser.setFirstName(updatedUser.getFirstName());
-        existingUser.setLastName(updatedUser.getLastName());
-        existingUser.setPassword(updatedUser.getPassword());
-        userRepository.save(existingUser);
-        return ResponseEntity.ok(existingUser);
+    public void updateEtudiantProfile(Etudiant updatedEtudiant) {
+        userRepository.save(updatedEtudiant);
     }
+    
+    public void updateLaureatProfile(Laureat updatedLaureat) {
+        userRepository.save(updatedLaureat);
+    }
+
 
     
     public List<User> getAllUsersExceptAdmins() {
         return userRepository.findByRoleNot(Role.ADMIN);
     }
 
+ 
 }

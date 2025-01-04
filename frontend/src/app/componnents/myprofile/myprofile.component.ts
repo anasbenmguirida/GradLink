@@ -49,7 +49,7 @@ export class MyprofileComponent implements OnInit {
           console.log('hiiiiii123')
 
           this.me = JSON.parse(localStorage.getItem('user') || '{}');
-          console.log(this.me)
+          console.log("userayth",this.me)
   } else {
           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
         }
@@ -186,7 +186,8 @@ this.selectedFiles.forEach((file, index) => {
           this.postForm.reset();
           this.selectedFiles = [];
           this.selectedFileNames = [];
-          this.router.navigate(['/myProfile']);
+          location.reload();
+
         },
         (error) => {
           console.error('Erreur lors de l\'envoi du post :', error);
@@ -411,13 +412,17 @@ isModalOpen = false;
     this.postService.deletePost(post.id).subscribe(
       () => {
         console.log(`Post with ID ${post.id} deleted successfully.`);
-        this.posts = this.posts.filter((p:any) => p.id !== post.id); // Utilisation de "p" au lieu de "Post"
+        this.classifiedPosts = this.classifiedPosts.filter((p: any) => p.id !== post.id);
+        
+        // Rafraîchir la page après la suppression
+        location.reload();
       },
       (error) => {
         console.error('Error deleting post:', error);
       }
     );
   }
+  
   
 
 

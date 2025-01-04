@@ -62,6 +62,7 @@ public class LaureatController {
         return this.laureatService.getAllLaureat() ; 
     }
 
+<<<<<<< HEAD
    /*  @GetMapping("mentored-students/{id}")
     public ResponseEntity<List<DemandeMentorat>> getMentoredStudents(@PathVariable int id) {
     try {
@@ -71,6 +72,17 @@ public class LaureatController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 }*/
+=======
+//     @GetMapping("mentored-students/{id}")
+//     public ResponseEntity<List<DemandeMentorat>> getMentoredStudents(@PathVariable int id) {
+//     try {
+//         List<DemandeMentorat> mentoredStudents = laureatService.getMentoredStudents(id);
+//         return ResponseEntity.ok(mentoredStudents);
+//     } catch (Exception e) {
+//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//     }
+// }
+>>>>>>> f616f679983d999b22a9d7a32f1436b098d67646
     // status mentorat  :  pending (0)   , accepted (1) , rejected (2)
     @GetMapping("status")
     public int getStatusMentorat(@RequestBody DemandeMentorat demande) {

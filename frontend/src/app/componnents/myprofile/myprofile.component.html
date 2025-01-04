@@ -11,7 +11,7 @@
     <div class="user px-4 -mt-20 z-10">
     
       <div class="profile w-40 h-40">
-        <img  [src]="getFileUrl(photoUser)"  (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
+        <img  src="profile.png"  (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
       </div>
 
       <div
@@ -298,7 +298,7 @@
       <li (click)="editPost(post)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
         Modifier
       </li>
-      <li  (click)="deletePost(post.poste.id)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
+      <li  (click)="deletePost(post.poste)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
         Supprimer
       </li>
     </ul>
@@ -449,12 +449,7 @@
 </div>
 
 
-   
-    <div *ngIf="post.pdfs.length > 0" class="pdf-links mt-4">
-      <div *ngFor="let pdf of post.pdfs" class="pdf-link">
-        📄 <a [href]="pdf" target="_blank" class="text-blue-600 underline">Voir le fichier PDF</a>
-      </div>
-    </div>
+
   </div>
 
 

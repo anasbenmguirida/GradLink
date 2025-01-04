@@ -29,8 +29,8 @@ export class MessagerieService {
   }
 
   
-  saveMessage(message: { senderId: number; receiverId: number; content: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/messages`, message);
+  saveMessage(message: { senderId: number; recipientId: number; contenue: string }): Observable<any> {
+    return this.http.post<any>(`http://localhost:8080/send-message`, message);
   }
 
 
@@ -47,10 +47,10 @@ export class MessagerieService {
   }
 
   // Envoyer un message via WebSocket
-  sendMessage(message: { senderId: number; recipientId: number; content: string }): void {
+  sendMessage(message: { senderId: number; recipientId: number; contenue: string }): void {
     try {
       this.socket$.next(message);
-      console.log('Message envoyé via WebSocket:', message);
+      console.log('Message envoyé via WebSocket :', message);
     } catch (error) {
       console.error('Erreur lors de l’envoi du message via WebSocket:', error);
     }

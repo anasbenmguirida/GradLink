@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.Entities.Etudiant;
+import com.back.backend.Entities.Laureat;
+
 import com.back.backend.DTO.PosteWithUserDTO;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
@@ -125,20 +128,43 @@ public ResponseEntity<Map<String, String>> createPoste(
         return userService.getAllUsersExceptAdmins();
     }
     @PutMapping("/profile")
-    public ResponseEntity<ResponseEntity<User>> updateUserProfile(@RequestBody User updatedUser) {
+public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUser) {
+    try {
+        // Fetch the current user based on their ID
+        User currentUser = userService.getUserById(updatedUser.getId());
 
-        try {
-            User currentUser = userService.getUserById(updatedUser.getId()); 
-    
-            if (currentUser.getId() != updatedUser.getId()) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-            }
-    
-            ResponseEntity<User> updated = userService.updateUserProfile(currentUser.getId(), updatedUser);
-            return ResponseEntity.ok(updated);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        // Check if the current user ID matches the ID of the updatedUser
+        if (currentUser == null || currentUser.getId() != updatedUser.getId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not authorized to update this profile.");
         }
+
+        // Update common fields
+        currentUser.setFirstName(updatedUser.getFirstName());
+        currentUser.setLastName(updatedUser.getLastName());
+        currentUser.setPassword(updatedUser.getPassword());
+        currentUser.setEmail(updatedUser.getEmail());
+        currentUser.setPhotoProfile(updatedUser.getPhotoProfile());
+
+        // Check if the user is an instance of Etudiant or Laureat and update accordingly
+        if (currentUser instanceof Etudiant etudiant && updatedUser instanceof Etudiant updatedEtudiant) {
+            // Update specific fields for Etudiant
+            etudiant.setFiliere(updatedEtudiant.getFiliere());
+            etudiant.setPhotoProfile(updatedEtudiant.getPhotoProfile());
+            // Save as Etudiant
+            userService.updateEtudiantProfile((Etudiant) currentUser);
+        } else if (currentUser instanceof Laureat laureat && updatedUser instanceof Laureat updatedLaureat) {
+            // Update specific fields for Laureat
+            laureat.setPromotion(updatedLaureat.getPromotion());
+            laureat.setSpecialite(updatedLaureat.getSpecialite());
+            laureat.setPhotoProfile(updatedLaureat.getPhotoProfile());
+            // Save as Laureat
+            userService.updateLaureatProfile((Laureat) currentUser);
+        }
+
+        return ResponseEntity.ok("Profile updated successfully.");
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
     }
+}
 
 }

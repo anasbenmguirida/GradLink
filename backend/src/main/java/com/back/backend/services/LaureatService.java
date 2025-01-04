@@ -92,11 +92,18 @@ public class LaureatService {
        }
     }
 
+<<<<<<< HEAD
  /* 
     public List<DemandeMentorat> getMentoredStudents(int laureatId) {
         return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
     }
         */
+=======
+
+    public List<DemandeMentorat> getMentoredStudents(int laureatId) {
+        return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
+    }
+>>>>>>> f616f679983d999b22a9d7a32f1436b098d67646
         
     
 }

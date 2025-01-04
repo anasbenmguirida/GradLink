@@ -181,7 +181,7 @@ this.selectedFiles.forEach((file, index) => {
           this.postForm.reset();
           this.selectedFiles = [];
           this.selectedFileNames = [];
-          this.router.navigate(['/posts']);
+          location.reload();
         },
         (error) => {
           console.error('Erreur lors de l\'envoi du post :', error);

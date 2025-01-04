@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
 import { MessagerieService } from '../../services/messagerie/messagerie.service';
+import { Injectable } from '@angular/core';
+import { webSocket } from 'rxjs/webSocket';
+
 
 
 
@@ -13,6 +16,10 @@ import { MessagerieService } from '../../services/messagerie/messagerie.service'
   imports: [FormsModule, CommonModule,RouterLink],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css',
+})
+
+@Injectable ({
+  providedIn:'root',
 })
 export class NavBarComponent {
   query :string=''; 
@@ -43,6 +50,9 @@ private router =inject(Router);
  
 // /this.me={id:1,image:'profile.png',firstname:"soumaia",lastname:"Kerouan Salah",role:"laureat"};
    
+this.messagerieService.getMessages().subscribe((message) => {
+  this.selectedMessages.push(message); // Ajouter le message reçu à la liste
+});
 
 
 this.demandeService.getDemandes(this.me.id).subscribe((data) => {
@@ -153,7 +163,7 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     this.messagerieService.getMessages().subscribe(
       (newMessage: any) => {
         // Si le message est destiné à l'utilisateur sélectionné, l'ajouter à la liste des messages
-        if (newMessage.senderId === user.id || newMessage.receiverId === user.id) {
+        if (newMessage.senderId === user.id || newMessage. recipientId === user.id) {
           this.selectedMessages.push(newMessage);
           console.log('Nouveau message reçu:', newMessage);
         }
@@ -178,8 +188,8 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
   
     const message = {
       senderId: this.me.id,
-      receiverId: this.selectedUser.id,
-      content: this.newMessage.trim(),
+      recipientId: this.selectedUser.id,
+      contenue: this.newMessage.trim(),
     };
   
     try {
@@ -195,20 +205,20 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
       console.log('Message envoyé via WebSocket:', message);
   
       // Enregistrer le message dans la base de données
-      this.messagerieService.saveMessage(message).subscribe(
-        (response) => {
-          console.log('Message enregistré dans la base de données:', response);
-        },
-        (error) => {
-          console.error('Erreur lors de l\'enregistrement du message dans la base de données:', error);
-        }
-      );
+      // this.messagerieService.saveMessage(message).subscribe(
+      //   (response) => {
+      //     console.log('Message enregistré dans la base de données:', response);
+      //   },
+      //   (error) => {
+      //     console.error('Erreur lors de l\'enregistrement du message dans la base de données:', error);
+      //   }
+      // );
   
       // Ajouter le message localement pour mise à jour instantanée de l'interface
       const outgoingMessage = {
         senderId: message.senderId,
-        recipientId: message.receiverId,
-        content: message.content,
+        recipientId: message.recipientId,
+        contenue: message.contenue,
         time: new Date().toLocaleTimeString(),
       };
   
