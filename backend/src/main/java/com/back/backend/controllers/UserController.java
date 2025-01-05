@@ -52,6 +52,7 @@ public ResponseEntity<Map<String, String>> createPoste(
         @RequestParam("caummunauteId") int caummunauteId,
 
         @RequestPart(value = "files", required = false) MultipartFile[] files) {
+
     try {
         // Appel au service pour créer le poste
         userService.createPoste(textArea, typePost, files, userId,caummunauteId);

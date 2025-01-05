@@ -73,6 +73,4 @@ public class Poste {
     // A poste can have multiple files
     @JsonManagedReference("poste-files")
     private List<PosteFiles> posteFiles;
-
-    
 }

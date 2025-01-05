@@ -44,6 +44,7 @@ private final UserRepository userRepository;
 
  // creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
 // creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
+// creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
 public void createPoste(String textArea, TypePoste typePost, MultipartFile[] files, int userId , int caummunateId) {
     try {
         // Créer un nouvel objet Poste

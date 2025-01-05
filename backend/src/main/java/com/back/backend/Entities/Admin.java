@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -20,11 +21,13 @@ public class Admin extends User {
     // Admin can create multiple events
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference(value = "admin-event")
+    @JsonIgnore
     private List<Evenement> listeEvenements;
 
     // Admin can create multiple communities
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference(value = "admin-caum")
+    @JsonIgnore
     private List<Caummunaute> listCommunautes;
 
  

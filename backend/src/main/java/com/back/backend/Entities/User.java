@@ -57,16 +57,19 @@ private byte[] photoProfile ;
     
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 @JsonManagedReference(value = "user-poste")
+@JsonIgnore
 private List<Poste> postes  ;
 
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 // un utilisateur peut aimer plusieurs postes
 
 @JsonManagedReference(value = "user-likes")
+@JsonIgnore
 private List<PosteLikes> posteLikes;
 
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 @JsonManagedReference(value = "users-in-evenement")
+@JsonIgnore
 private List<EventParticipants> eventParticipants ; 
 
 
