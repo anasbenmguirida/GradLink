@@ -373,9 +373,11 @@ throw new Error('Method not implemented.');
     formData.append('typePost', 'CAUMMUNAUTE');
     formData.append('userId', this.userId);
     if (this.selectedCommunityId !== null && this.selectedCommunityId !== undefined) {
-      formData.append('caummunaute_id', this.selectedCommunityId.toString());
+      formData.append('caummunauteId', this.selectedCommunityId.toString());
     }
-  
+    console.log(`formData`)
+    console.log(formData)
+
     // Ajout du post localement avant d'envoyer la requête au backend
     console.log(`user`)
 

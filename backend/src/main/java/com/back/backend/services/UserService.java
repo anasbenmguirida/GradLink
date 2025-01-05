@@ -43,7 +43,8 @@ private final UserRepository userRepository;
 
 
  // creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
- public void createPoste(String textArea, TypePoste typePost, MultipartFile[] files, int userId, int caummunaute_id) {
+// creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
+public void createPoste(String textArea, TypePoste typePost, MultipartFile[] files, int userId , int caummunateId) {
     try {
         // Créer un nouvel objet Poste
         Poste poste = new Poste();
@@ -52,9 +53,7 @@ private final UserRepository userRepository;
         poste.setDatePoste(LocalDateTime.now());
         poste.setNbrLikes(0);
         poste.setUserId(userId);
-Caummunaute caummunaute = new Caummunaute();
-        caummunaute.setId(caummunaute_id); // Assurez-vous que 'Caummunaute' a une méthode 'setId'
-        poste.setCaummunaute(caummunaute);
+        poste.setCaummunauteId(caummunateId);
 
         // Sauvegarder le poste dans la base de données
         posteRepository.save(poste);
