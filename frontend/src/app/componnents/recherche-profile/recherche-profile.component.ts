@@ -111,12 +111,12 @@ fetchPosts(): void {
   
   
   loadRelation() {
-    const [id_emitter, id_receiver] = this.me.role === "ETUDIANT" 
+    const [laureatId, etudiantId] = this.me.role === "ETUDIANT" 
       ? [this.selectedId, this.me.id]
       :  [this.me.id, this.selectedId] ;
-     
+     console.log(laureatId,etudiantId)
     this.ProfileService
-      .getRelation(id_emitter, id_receiver)
+      .getRelation(laureatId, etudiantId)
       .subscribe(
         (response: any) => {
           console.log('Response from getRelation:', response);
@@ -126,7 +126,7 @@ fetchPosts(): void {
           } else if (response === 0) {
             this.relationStatus = 
               this.me && this.me.role === "ETUDIANT" ? 'pending-sent' : 'pending-received';
-          } else if (response === 1) {
+          } else if (response === 1){
             this.relationStatus = 'friends';
           }
   
@@ -323,7 +323,7 @@ console.log(isLiked)
       (response) => {
         if (response) {
           post.isLiked = true; // Met à jour l'état local
-          post.nbrLikes = (post.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
+          post.poste.nbrLikes = (post.poste.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
           console.log(`Post liké avec succès :`, post);
         } else {
           console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
@@ -340,7 +340,7 @@ console.log(isLiked)
       (response) => {
         if (response ) {
           post.isLiked = false; // Met à jour l'état local
-          post.nbrLikes = (post.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
+          post.poste.nbrLikes = (post.poste.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
           console.log(`Post unliké avec succès :`, post);
         } else {
           console.error('Erreur: la réponse du serveur n\'est pas attendue', response);

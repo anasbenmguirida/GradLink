@@ -47,12 +47,21 @@ export class PostService {
   
 
 
-  updatePost( postData: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}`, postData);
+  updatePost( post: any): Observable<any> {
+    const body = {
+      textArea: post.textArea,
+      id: post.id
+    };
+    const options = { responseType: 'text' as 'json' };
+console.log("holaaaaa body",body)
+    return this.http.put<any>(`${this.apiUrl}/update-poste`, body ,options);
   }
 
-  deletePost(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/delete-poste/{id}`);
+  deletePost(id: number): Observable<any> {
+    console.log(id)
+    const options = { responseType: 'text' as 'json' };
+
+    return this.http.delete<any>(`${this.apiUrl}/delete-poste/${id}`,options);
   }
 
 

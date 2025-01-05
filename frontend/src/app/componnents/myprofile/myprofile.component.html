@@ -295,7 +295,7 @@
   
   <div *ngIf="visibleLists[i]" class="max-w-sm bg-white rounded-lg shadow-lg overflow-hidden absolute z-10 top-12 right-0">
     <ul class="list-group list-group-light">
-      <li (click)="editPost(post)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
+      <li (click)="editPost(post.poste)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
         Modifier
       </li>
       <li  (click)="deletePost(post.poste)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
@@ -309,7 +309,6 @@
         &#x2715;
       </button>
       <h3 class="text-lg font-medium mb-4">Modifier le post</h3>
-      <form (ngSubmit)="updatePost()">
         <textarea 
           [(ngModel)]="editingPost.textArea" 
           name="textArea" 
@@ -321,11 +320,12 @@
   
        
         <button 
+        (click)=" updatePost()"
           type="submit" 
           class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">
           Enregistrer
         </button>
-      </form>
+     
     </div>
   </div>
   

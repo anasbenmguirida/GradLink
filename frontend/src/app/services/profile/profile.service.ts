@@ -34,10 +34,10 @@ export class ProfileService {
     return this.http.get<any>(`${this.apiUrl}/profile/${id}`);
   }
 
-  getRelation(id_emitter: any, id_receiver: any): Observable<any> {
+  getRelation(laureatId: any, etudiantId: any): Observable<any> {
     const body = {
-      etudiantId: id_receiver,
-      laureatId: id_emitter
+      etudiantId: etudiantId,
+      laureatId: laureatId
     };
   
     console.log('Body à envoyer au backend :', body); // Affiche le contenu du body dans la console
