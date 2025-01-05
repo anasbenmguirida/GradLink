@@ -19,17 +19,8 @@ List<DemandeMentorat> getAllDemandeLaureat(@Param("id") int id) ;
 // pending (0)   , accepted (1) , makaynach ou rejete(2)
 @Query(value = "select status_mentorat from demande_mentorat where laureat_id=:idLaureat and etudiant_id=:idEtudiant", nativeQuery = true)
 int getStatusMentorat(@Param("idLaureat") int idLaureat, @Param("idEtudiant") int idEtudiant);
-<<<<<<< HEAD
-=======
-
-
->>>>>>> f616f679983d999b22a9d7a32f1436b098d67646
 
 @Query(value = "select *FROM demande_mentorat WHERE laureat_id=:idlaureat and etudiant_id=:idEtudiant", nativeQuery = true)
 DemandeMentorat getDemandeMentorat(@Param("idlaureat") int idlaureat, @Param("idEtudiant") int idEtudiant) ; 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> f616f679983d999b22a9d7a32f1436b098d67646
 }

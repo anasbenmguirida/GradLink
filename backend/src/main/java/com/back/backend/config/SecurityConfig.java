@@ -69,6 +69,8 @@ public class SecurityConfig {
             .requestMatchers(mvcMatcherBuilder.pattern("/api/laureat/accept")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/api/laureat/reject")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/api/laureat/status")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/delete-poste/{id}")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/update-poste")).permitAll()
         
                 .anyRequest().authenticated()
             )

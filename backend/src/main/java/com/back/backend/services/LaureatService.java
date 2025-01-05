@@ -58,8 +58,9 @@ public class LaureatService {
     public String refuserDemande(DemandeMentorat demande){
         DemandeMentorat demandeMentorat = demandeRepository.getDemandeMentorat(demande.getLaureatId(), demande.getEtudiantId()) ; 
         if(demande!=null){
-            demandeRepository.delete(demande) ;
-            return "demnade rejetee et supprimer de la table" ; 
+           DemandeMentorat demandeMentorat2= demandeRepository.getDemandeMentorat(demande.getLaureatId() , demande.getEtudiantId()) ; 
+           demandeRepository.deleteById(demandeMentorat2.getId());
+           return "demnade rejetee et supprimer de la table" ; 
         }
         return "demande introuvable" ; 
     }
@@ -68,8 +69,8 @@ public class LaureatService {
     }
     // status mentorat 
     public int getStatusMentorat(DemandeMentorat demandeMentorat){
-        Optional<DemandeMentorat> demande = demandeRepository.findById(demandeMentorat.getId()) ; 
-        if(demande.isPresent()){
+        DemandeMentorat demande = demandeRepository.getDemandeMentorat(demandeMentorat.getLaureatId(), demandeMentorat.getEtudiantId() ) ; 
+        if(demande!=null){
         return demandeRepository.getStatusMentorat(demandeMentorat.getLaureatId() , demandeMentorat.getEtudiantId()) ;
         }
         else{
@@ -92,18 +93,11 @@ public class LaureatService {
        }
     }
 
-<<<<<<< HEAD
  /* 
     public List<DemandeMentorat> getMentoredStudents(int laureatId) {
         return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
     }
         */
-=======
-
-    public List<DemandeMentorat> getMentoredStudents(int laureatId) {
-        return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
-    }
->>>>>>> f616f679983d999b22a9d7a32f1436b098d67646
         
     
 }

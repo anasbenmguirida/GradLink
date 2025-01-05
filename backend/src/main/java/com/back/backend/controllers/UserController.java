@@ -26,6 +26,7 @@ import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
 import com.back.backend.enums.TypePoste;
+import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
 import com.back.backend.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,6 +42,7 @@ import lombok.AllArgsConstructor;
 public class UserController {
 private final UserService userService;
 private final PosteService posteService;
+private final LaureatService laureatService ;
 
 
   
@@ -68,6 +70,11 @@ public ResponseEntity<Map<String, String>> createPoste(
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
+    // modifier un poste 
+    @PutMapping("/api/update-poste")
+    public ResponseEntity<String> updatePoste(@RequestBody Poste poste){
+        return laureatService.modifierPoste(poste.getId(), poste.getTextArea()) ;  
+    }
 
 
     
