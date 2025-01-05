@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.Entities.Caummunaute;
 import com.back.backend.Entities.Etudiant;
 import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.Poste;
@@ -42,7 +43,7 @@ private final UserRepository userRepository;
 
 
  // creation de postes par un laureat => 2 type de possible NORMAL ET CAUMMUNAUTE
- public void createPoste(String textArea, TypePoste typePost, MultipartFile[] files, int userId) {
+ public void createPoste(String textArea, TypePoste typePost, MultipartFile[] files, int userId, int caummunaute_id) {
     try {
         // Créer un nouvel objet Poste
         Poste poste = new Poste();
@@ -51,6 +52,9 @@ private final UserRepository userRepository;
         poste.setDatePoste(LocalDateTime.now());
         poste.setNbrLikes(0);
         poste.setUserId(userId);
+Caummunaute caummunaute = new Caummunaute();
+        caummunaute.setId(caummunaute_id); // Assurez-vous que 'Caummunaute' a une méthode 'setId'
+        poste.setCaummunaute(caummunaute);
 
         // Sauvegarder le poste dans la base de données
         posteRepository.save(poste);

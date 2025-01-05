@@ -49,11 +49,13 @@ public ResponseEntity<Map<String, String>> createPoste(
         @RequestParam("textArea") String textArea,
         @RequestParam("typePost") TypePoste typePost,
         @RequestParam("userId") int userId,
+        @RequestParam("caummunaute_id") int caummunaute_id,
+
         @RequestPart(value = "files", required = false) MultipartFile[] files) {
 
     try {
         // Appel au service pour créer le poste
-        userService.createPoste(textArea, typePost, files, userId);
+        userService.createPoste(textArea, typePost, files, userId,caummunaute_id);
 
         // Construire une réponse JSON de succès
         Map<String, String> response = new HashMap<>();

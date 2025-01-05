@@ -10,11 +10,16 @@ export class CommunityService {
   
   
   private apiUrl = 'http://localhost:8080/api/admin'; 
+  private baseUrl = 'http://localhost:8080/api/communities'; 
 
   constructor(private http: HttpClient) {}
 
   getCommunities(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
+  }
+
+  getAllCommunities(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}`);
   }
   saveCommunity(data: any,adminId: number): Observable<any> {
     const params = new HttpParams().set('adminId', adminId.toString()); // Ajout du paramètre adminId

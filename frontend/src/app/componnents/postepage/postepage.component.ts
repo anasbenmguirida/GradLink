@@ -287,7 +287,7 @@ getMimeType(fileName: string): string {
     onFileChange(event: Event): void {
       const input = event.target as HTMLInputElement;
       
-    if (input.files && input.files.length > 0) {
+      if (input.files && input.files.length > 0) {
         Array.from(input.files).forEach((file) => {
           const mimeType = file.type;
             const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];

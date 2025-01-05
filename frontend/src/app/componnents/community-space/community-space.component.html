@@ -1,4 +1,4 @@
-<app-nav-bar></app-nav-bar>
+<!-- <app-nav-bar></app-nav-bar> -->
 
 
 <div class=" h-full flex flex-col lg:flex-row p-6 lg:gap-6 space-y-6 lg:space-y-0 mt-16">
@@ -63,14 +63,19 @@
   </div>
 
  <!-- Discussions de la communauté sélectionnée -->
+<!-- Discussions de la communauté sélectionnée -->
 <div *ngIf="selectedCommunityId" class="lg:w-2/3 max-h-screen p-4 bg-white h-full shadow-lg rounded-lg transition-all">
   <div *ngFor="let community of communities" [ngClass]="{'hidden': community.id !== selectedCommunityId}">
     <h3 class="text-2xl font-semibold text-gray-800 mb-6">Discussions dans {{ community.name }}</h3>
 
     <div class="msg max-h-96 overflow-y-auto space-y-4 mb-6">
       <div *ngFor="let poste of community.postes" class="flex items-start bg-gray-50 p-4 rounded-lg shadow-md mb-4 hover:shadow-lg transition-all">
-        <img [src]="poste.user.photoProfile" alt="Profil" class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-blue-500">
-        
+        <!-- Affichage de l'image de profil de l'utilisateur -->
+        <img   [src]="poste.user.photoProfile ? getFileUrl(poste.user.photoProfile) : 'safae.jpeg'"  
+        alt="Profil" class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-blue-500">
+
+
+
         <div class="flex-1">
           <div class="flex justify-between items-center mb-2">
             <div>
@@ -98,16 +103,20 @@
 
           <p class="text-gray-700 mb-3">{{ poste.textArea }}</p>
 
-          <div *ngIf="poste.posteFiles" class="mt-2">
-            <img *ngIf="poste.posteFiles.length > 0" 
-            [src]="poste.posteFiles[0].data" 
-            alt="Image du poste" 
-            class="w-full rounded-lg shadow-md object-cover max-h-60">
-           </div>
+          <!-- Affichage des fichiers joints -->
+          <div *ngIf="poste.posteFiles && poste.posteFiles.length > 0" class="mt-2">
+            <img 
+              *ngIf="poste.posteFiles[0]" 
+              [src]="poste.posteFiles[0].data" 
+              alt="Image du poste" 
+              class="w-full rounded-lg shadow-md object-cover max-h-60"
+            />
+          </div>
         </div>
       </div>
     </div>
   </div>
+
 
    <!--Ajouter poste -->
    <div class="bg-gray-50 p-2 h-50 rounded-lg shadow-md flex items-center space-x-4">
@@ -117,7 +126,7 @@
       <svg class="w-6 h-6 text-indigo-600 hover:text-indigo-800" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5zm14 2v14H5V5h14zm-6.5 3.5A1.5 1.5 0 1 1 12 10a1.5 1.5 0 0 1 .5-1.5zM6 17l3-4 2.25 3L14 11l4 6H6z" />
       </svg>
-      <input type="file" id="message-image" (change)="onImagesSelected($event)" class="hidden" />
+      <input type="file" id="message-image" (change)="onImagesSelected($event)" multiple class="hidden" />
     </label>
 
     <button (click)="postMessage()" class="p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition" aria-label="Poster">
@@ -126,7 +135,6 @@
       </svg>
     </button>
   </div>
-  
 </div>
 
 

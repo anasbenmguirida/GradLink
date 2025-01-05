@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { delay, map, Observable, of } from 'rxjs';
 
 
-
 @Injectable({
   providedIn: 'root', // Accessible dans toute l'application
 })
@@ -19,7 +18,9 @@ private apiUrl = 'http://localhost:8080';
   login(email: string, password: string): Observable<any> {
     const loginData = { email, password }; 
 console.log(loginData)
-    return this.http.post(`${this.apiUrl}/api/login`, loginData); 
+  const options = { responseType: 'text' as 'json' };
+
+    return this.http.post(`${this.apiUrl}/api/login`, loginData,{ responseType: 'json' }); 
   }
 
   registerUser(userData: any): Observable<any> {
@@ -48,13 +49,7 @@ console.log(loginData)
   // Dans votre UserService
 getUserRole(): string {
   console.log('TEEEEEEEEEST')
-  console.log('TEEEEEEEEEST')
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  console.log('TEEEEEEEEEST2')
-  console.log(user.role)
-
-
-  return user.role ||  'GUEST'; 
   console.log('TEEEEEEEEEST2')
   console.log(user.role)
 
@@ -74,13 +69,13 @@ getUserRole(): string {
 
 //   login(email: string, password: string): Observable<any> {
 //     const body = { email, password };
-//     return this.http.post(`${this.apiUrl}/login`, body); 
+//     return this.http.post(${this.apiUrl}/login, body); 
 //   }
 
 
 
 //   registerUser(userData: any): Observable<any> {
-//     return this.http.post(`${this.apiUrl}/register`, userData);  
+//     return this.http.post(${this.apiUrl}/register, userData);  
   
 //   }
 //   getToken(){
@@ -89,7 +84,7 @@ getUserRole(): string {
 // getUserProfile(token: string) {
 //   return this.http.get('http://localhost:8000/profile/', {
 //     headers: {
-//       Authorization: `Bearer ${token}`
+//       Authorization: Bearer ${token}
 //     }
 //   });
 // }
