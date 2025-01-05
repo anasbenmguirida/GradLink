@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.back.backend.Entities.Message;
 import com.back.backend.Entities.User;
-import com.back.backend.DTO.ContactMessagesDTO;
+import com.back.backend.dto.ContactMessagesDTO;
 import com.back.backend.repositories.MessageRepository;
 import com.back.backend.repositories.UserRepository;
 

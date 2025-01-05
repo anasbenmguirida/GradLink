@@ -1,4 +1,4 @@
-package com.back.backend.DTO;
+package com.back.backend.dto;
 
 public class MessageDTO {
     private int senderId;

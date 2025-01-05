@@ -34,19 +34,28 @@ export class ProfileService {
     return this.http.get<any>(`${this.apiUrl}/profile/${id}`);
   }
 
-  getRelation(id_emitter: any, id_receiver: any) {
-    const token = localStorage.getItem('authToken'); // Récupérez le token depuis le stockage local ou un autre emplacement
+  getRelation(id_emitter: any, id_receiver: any): Observable<any> {
+    const body = {
+      etudiantId: id_receiver,
+      laureatId: id_emitter
+    };
+  
+    console.log('Body à envoyer au backend :', body); // Affiche le contenu du body dans la console
+  
+    const token = localStorage.getItem('authToken'); // Récupérez le token depuis le stockage local
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}` // Ajoutez le token au format Bearer
     });
-    const params = new HttpParams()
-      .set('id_emitter', id_emitter)
-      .set('id_receiver', id_receiver);
   
-    return this.http.get(`${this.apiUrl}`, { params });
+    return this.http.post<any>(`${this.apiUrl}/laureat/status`, body);
   }
-  sendInvitation(id_emitter: any, id_receiver: any) {
-    return this.http.post(`${this.apiUrl}`, { id_emitter, id_receiver});
+  
+  
+  
+  sendInvitation(etudiantId: any, laureatId: any,reason:any) {
+    const options = { responseType: 'text' as 'json' };
+
+    return this.http.post(`${this.apiUrl}/etudiant/demander-mentorat`, { etudiantId, laureatId,reason},options);
   }
 
 
@@ -55,12 +64,10 @@ export class ProfileService {
 
 
 
-  cancelInvitation(id_emitter: any, id_receiver: any) {
-    // Construire l'URL avec des paramètres dans la query string
-    const url = `${this.apiUrl}/cancel-invitation?id_emitter=${id_emitter}&id_receiver=${id_receiver}`;
-    
-    // Appeler la méthode DELETE avec l'URL construite
-    return this.http.delete(url);
+  cancelInvitation(etudiantId: any, laureatId: any) {
+    const options = { responseType: 'text' as 'json' };
+
+    return this.http.put(`${this.apiUrl}/laureat/reject`, { etudiantId, laureatId},options);
   }
   
 
@@ -71,8 +78,10 @@ export class ProfileService {
   //   return this.http.delete(`${this.apiUrl}/cancel-invitation`, { body });
   // }
   
-  acceptInvitation(id_emitter: any, id_receiver: any) {
-    return this.http.put(`${this.apiUrl}/api/laureat/`, { id_emitter, id_receiver});
+  acceptInvitation( etudiantId: any, laureatId: any) {
+    const options = { responseType: 'text' as 'json' };
+
+    return this.http.put(`${this.apiUrl}/laureat/accept`, { etudiantId, laureatId},options);
   }
 
 }

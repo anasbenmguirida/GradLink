@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.back.backend.services.MessageService;
 import com.back.backend.Entities.Message;
-import com.back.backend.DTO.ContactMessagesDTO;
+import com.back.backend.dto.ContactMessagesDTO;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class MessageController {
     private MessageService messageService;
 
     // Endpoint to get messages with all contacts
-    @GetMapping("/api/messages/{userId}")
+    @GetMapping("/messages/{userId}")
     public List<ContactMessagesDTO> getMessagesWithAllContacts(@PathVariable int userId) {
         return messageService.getMessagesWithAllContacts(userId);
     }

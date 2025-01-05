@@ -3,7 +3,7 @@ package com.back.backend.Entities;
 import java.util.Collection;
 import java.util.List;
 
-import com.back.backend.DTO.CaummunauteDTO;
+import com.back.backend.dto.CaummunauteDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 

@@ -56,21 +56,21 @@ console.log(this.selectedId)
     this.ProfileService.getUserById(this.selectedId).subscribe(
       (data) => {
         this.searchUser = data;  
-        console.log("seaaaarch",this.searchUser);
       },
       (error) => {
         console.error('Erreur lors de la récupération de l\'utilisateur:', error);
       }
     );
   }
-  console.log("hooooooooola",this.searchUser)
+  console.log("seaaaarch",this.searchUser);
+  this.loadRelation();
   this.postService.getUserPosts(this.selectedId).subscribe((data) => {
     this.posts = data;
     console.log("lesPostRecherch",this.posts)
     this.fetchPosts();
 
   });
-this.loadRelation();
+
 
   }
   // platformId(platformId: any) {
@@ -111,19 +111,34 @@ fetchPosts(): void {
   
   
   loadRelation() {
+    const [id_emitter, id_receiver] = this.me.role === "ETUDIANT" 
+      ? [this.selectedId, this.me.id]
+      :  [this.me.id, this.selectedId] ;
+     
     this.ProfileService
-      .getRelation(this.me.id, this.selectedId)
-      .subscribe((response: any) => {
-        if (response.statusMentorat === 2) {
-          this.relationStatus = 'none';
-        } else if (response.statusMentorat === 0) {
-          this.relationStatus =
-            response.id_emitter === this.me.id ? 'pending-sent' : 'pending-received';
-        } else if (response.statusMentorat === 1) {
-          this.relationStatus = 'friends';
+      .getRelation(id_emitter, id_receiver)
+      .subscribe(
+        (response: any) => {
+          console.log('Response from getRelation:', response);
+  
+          if (response === 2) {
+            this.relationStatus = 'none';
+          } else if (response === 0) {
+            this.relationStatus = 
+              this.me && this.me.role === "ETUDIANT" ? 'pending-sent' : 'pending-received';
+          } else if (response === 1) {
+            this.relationStatus = 'friends';
+          }
+  
+          console.log('Relation status:', this.relationStatus);
+        },
+        (error) => {
+          console.error('Erreur lors de la récupération de la relation:', error);
         }
-      });
+      );
   }
+  
+  
 
 
   isImage(fileType: string | null | undefined, fileName: string): boolean {
@@ -176,11 +191,12 @@ fetchPosts(): void {
   }
   
   sendInvitation() {
+    console.log(this.reason);
     this.ProfileService
-      .sendInvitation(this.me.id, this.selectedId)
+      .sendInvitation(this.me.id, this.selectedId,this.reason)
       .subscribe(
-        () => {
-          // Mettez à jour l'état local
+        (response) => {
+          console.log(response);
           this.relationStatus = 'pending-sent';
         },
         (error) => {
@@ -191,10 +207,10 @@ fetchPosts(): void {
   
   cancelInvitation() {
     this.ProfileService
-      .cancelInvitation(this.me.id, this.selectedId)
+      .cancelInvitation( this.selectedId,this.me.id)
       .subscribe(
-        () => {
-          // Mettez à jour l'état local
+        (response) => {
+   console.log(response);
           this.relationStatus = 'none';
         },
         (error) => {
@@ -202,13 +218,42 @@ fetchPosts(): void {
         }
       );
   }
+
+
+
+  handleInvitation() {
+    if (this.me.role === 'ETUDIANT') {
+      this.annulerInvitation();
+    } else if (this.me.role === 'LAUREAT') {
+      this.cancelInvitation();
+    } else {
+      console.error('Role non pris en charge:', this.me.role);
+    }
+  }
+  
+
+  annulerInvitation() {
+    this.ProfileService
+      .cancelInvitation(this.me.id, this.selectedId)
+      .subscribe(
+        (response) => {
+          console.log(response);
+          this.relationStatus = 'none';
+        },
+        (error) => {
+          console.error('Erreur lors de l\'annulation de l\'invitation:', error);
+        }
+      );
+  }
+
+
   
   acceptInvitation() {
     this.ProfileService
-      .acceptInvitation(this.me.id, this.selectedId)
+      .acceptInvitation(this.selectedId,this.me.id)
       .subscribe(
-        () => {
-          // Mettez à jour l'état local
+        (response) => {
+          console.log(response);
           this.relationStatus = 'friends';
         },
         (error) => {

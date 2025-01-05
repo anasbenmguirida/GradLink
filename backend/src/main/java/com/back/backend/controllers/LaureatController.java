@@ -72,7 +72,7 @@ public class LaureatController {
     }
 }*/
     // status mentorat  :  pending (0)   , accepted (1) , rejected (2)
-    @GetMapping("status")
+    @PostMapping("status")
     public int getStatusMentorat(@RequestBody DemandeMentorat demande) {
         return this.laureatService.getStatusMentorat(demande) ; 
     }
