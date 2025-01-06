@@ -2,10 +2,10 @@ package com.back.backend.services;
 
 import com.back.backend.Entities.Admin;
 import com.back.backend.Entities.Caummunaute;
-import com.back.backend.DTO.CaummunauteDTO;
-import com.back.backend.DTO.PosteDTO;
-import com.back.backend.DTO.PosteFileDTO;
-import com.back.backend.DTO.UserDTO;
+import com.back.backend.dto.CaummunauteDTO;
+import com.back.backend.dto.PosteDTO;
+import com.back.backend.dto.PosteFileDTO;
+import com.back.backend.dto.UserDTO;
 import com.back.backend.repositories.AdminRepository;
 import com.back.backend.repositories.CaummunauteRepository;
 

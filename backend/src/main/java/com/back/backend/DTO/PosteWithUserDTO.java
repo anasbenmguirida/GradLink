@@ -1,4 +1,4 @@
-package com.back.backend.DTO;
+package com.back.backend.dto;
 
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.User;

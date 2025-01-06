@@ -1,7 +1,7 @@
 package com.back.backend.handler;
 
 import com.back.backend.Entities.Message;
-import com.back.backend.DTO.MessageDTO;
+import com.back.backend.dto.MessageDTO;
 import com.back.backend.repositories.MessageRepository;
 import com.back.backend.repositories.UserRepository;
 

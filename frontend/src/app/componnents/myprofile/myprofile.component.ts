@@ -259,7 +259,7 @@ console.log(isLiked)
       (response) => {
         if (response) {
           post.isLiked = true; // Met à jour l'état local
-          post.nbrLikes = (post.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
+          post.poste.nbrLikes = (post.poste.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
           console.log(`Post liké avec succès :`, post);
         } else {
           console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
@@ -276,7 +276,7 @@ console.log(isLiked)
       (response) => {
         if (response ) {
           post.isLiked = false; // Met à jour l'état local
-          post.nbrLikes = (post.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
+          post.poste.nbrLikes = (post.poste.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
           console.log(`Post unliké avec succès :`, post);
         } else {
           console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
@@ -390,24 +390,33 @@ isModalOpen = false;
   
   closeEdit(): void {
     this.isEditing = false;
-    this.editingPost = { textArea: '', fichiers: [], id: null }; // ou undefined si vous préférez
+this.editingPost = null;
   }
 
   updatePost() {
-    this.postService.updatePost(this.editingPost).subscribe({
-      next: (response) => {
+    if (!this.editingPost || !this.editingPost.id || !this.editingPost.textArea) {
+      console.error('Invalid post data. Please check the input fields.');
+      return;
+    }
+  
+    console.log('Updating post:', this.editingPost);
+  
+    this.postService.updatePost(this.editingPost).subscribe(
+      (response) => {
         console.log('Post updated successfully:', response);
-        // Rediriger ou afficher un message de succès
-        //this.closeEdit();
-        this.router.navigate(['/posts']); // Exemple de redirection après succès
+        // Fermer le formulaire d'édition
+        this.closeEdit();
+        // Recharger la page ou rafraîchir la liste des posts
+        location.reload();
       },
-      error: (error) => {
+      (error) => {
         console.error('Error updating post:', error);
-        // Afficher un message d'erreur si nécessaire
+        // Ajouter une gestion d'erreur utilisateur si nécessaire
+        alert('Failed to update the post. Please try again.');
       }
-    });
+    );
   }
-
+  
   deletePost(post: any): void {
     this.postService.deletePost(post.id).subscribe(
       () => {

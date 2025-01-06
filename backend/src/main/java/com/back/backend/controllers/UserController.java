@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.back.backend.Entities.Etudiant;
 import com.back.backend.Entities.Laureat;
 
-import com.back.backend.DTO.PosteWithUserDTO;
+import com.back.backend.dto.PosteWithUserDTO;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
