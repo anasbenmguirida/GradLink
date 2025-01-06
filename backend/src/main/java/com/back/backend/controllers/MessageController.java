@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.back.backend.services.MessageService;
 import com.back.backend.Entities.Message;
-import com.back.backend.dto.ContactMessagesDTO;
+import com.back.backend.DTO.ContactMessagesDTO;
 
 import java.util.List;
 

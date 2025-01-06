@@ -1,4 +1,4 @@
-package com.back.backend.dto;
+package com.back.backend.DTO;
 
 import com.back.backend.Entities.Message;
 import java.util.List;
