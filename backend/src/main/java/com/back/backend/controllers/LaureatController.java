@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.DTO.DemandeWithStudent;
 import com.back.backend.Entities.DemandeMentorat;
 import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.User;
@@ -56,6 +57,12 @@ public class LaureatController {
     public String refuserDemande(@RequestBody DemandeMentorat demande) {
         return this.laureatService.refuserDemande(demande) ; 
     }
+    @GetMapping("demandes-pending/{id}")
+    public List<DemandeWithStudent> getAllDemandes(@PathVariable int id) {
+        return this.laureatService.getAllDemandes(id) ; 
+    }
+
+
     // avoir la liste de toutes les laureats 
     @GetMapping("all")
     public List<Laureat> getAllLaureats() {

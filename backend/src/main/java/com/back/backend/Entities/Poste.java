@@ -64,8 +64,10 @@ public class Poste {
 
     // Multiple postes can belong to a single caummunaute
     @ManyToOne
-    @JoinColumn(name = "caummunaute_id", nullable = true)
+    @JoinColumn(name = "caummunaute_id", nullable = true , updatable = false, insertable = false)
     private Caummunaute caummunaute;
+    @Column(name = "caummunaute_id")
+    private int caummunauteId;
 
     @OneToMany(mappedBy = "poste", cascade = CascadeType.ALL)
     // A poste can have multiple files

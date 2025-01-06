@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.backend.DTO.DemandeWithStudent;
+import com.back.backend.DTO.PosteWithUserDTO;
 import com.back.backend.Entities.DemandeMentorat;
 import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.Poste;
@@ -47,8 +50,8 @@ public class LaureatService {
     public String accepterDemande(DemandeMentorat demande){
         DemandeMentorat demandeMentorat = demandeRepository.getDemandeMentorat(demande.getLaureatId(), demande.getEtudiantId()) ; 
         if(demandeMentorat!= null){
-            demande.setStatusMentorat(StatusMentorat.ACCEPTED);
-            demandeRepository.save(demande) ; 
+            demandeMentorat.setStatusMentorat(StatusMentorat.ACCEPTED);
+            demandeRepository.save(demandeMentorat) ; 
             return "demnade accepte" ; 
         }
         return "demande introuvable" ; 
@@ -77,6 +80,22 @@ public class LaureatService {
             return 2 ; 
         }
     }
+    // demande pas encore accepte status = 0 
+    public List<DemandeWithStudent> getAllDemandes(int idLanreat) {
+        List<DemandeMentorat> listeDemande = demandeRepository.getAllDemandes(idLanreat);
+        return listeDemande.stream()
+            .map(demande -> {
+                User user = this.userRepository.findById(demande.getEtudiantId())
+                               .orElse(null);
+                String firstName =  user.getFirstName() ;
+                String lastName =  user.getLastName() ;
+                byte[] photo=user.getPhotoProfile() ; 
+                return new DemandeWithStudent(demande, firstName, lastName , photo);
+            })
+            .collect(Collectors.toList());
+    }
+
+    
 
 
 
