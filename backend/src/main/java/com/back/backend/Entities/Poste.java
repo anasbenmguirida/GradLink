@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.back.backend.enums.TypePoste;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -63,6 +64,7 @@ public class Poste {
     private int userId;
  
     // Multiple postes can belong to a single caummunaute
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "caummunaute_id", nullable = true , updatable = false, insertable = false)
     private Caummunaute caummunaute;

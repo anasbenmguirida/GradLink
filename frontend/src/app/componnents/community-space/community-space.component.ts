@@ -336,6 +336,9 @@ throw new Error('Method not implemented.');
   }
   
   getFileUrl(file: any): string {
+      console.log('Fichier invalide ou données manquantes', file);
+ 
+    
     // Si fileType est incorrect, déduire le type à partir de l'extension
     const mimeType = this.getMimeType(file.fileName);
   
@@ -375,6 +378,9 @@ throw new Error('Method not implemented.');
     if (this.selectedCommunityId !== null && this.selectedCommunityId !== undefined) {
       formData.append('caummunauteId', this.selectedCommunityId.toString());
     }
+    this.selectedImages.forEach((file) => {
+      formData.append('files', file);
+    });
     console.log(`formData`)
     console.log(formData)
 
