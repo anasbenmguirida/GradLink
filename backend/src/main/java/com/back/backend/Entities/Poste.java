@@ -63,6 +63,7 @@ public class Poste {
     private int userId;
 
     // Multiple postes can belong to a single caummunaute
+    
     @ManyToOne
     @JoinColumn(name = "caummunaute_id", nullable = true)
     private Caummunaute caummunaute;

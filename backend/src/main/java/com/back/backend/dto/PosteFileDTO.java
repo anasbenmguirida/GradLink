@@ -11,5 +11,5 @@ public class PosteFileDTO {
     private int id;
     private String fileName;
     private String fileType;
-    private String data; 
+    private byte[] data; 
 }

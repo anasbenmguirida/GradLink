@@ -96,7 +96,7 @@ public class CaummunauteService {
 
                 // Mapping files for the post
                 List<PosteFileDTO> posteFileDTOs = poste.getPosteFiles().stream().map(posteFile -> 
-                    new PosteFileDTO(posteFile.getId(), posteFile.getFileName(), posteFile.getFileType(), "")
+                    new PosteFileDTO(posteFile.getId(), posteFile.getFileName(), posteFile.getFileType(), posteFile.getData())
                 ).collect(Collectors.toList());
 
                 posteDTO.setPosteFiles(posteFileDTOs);

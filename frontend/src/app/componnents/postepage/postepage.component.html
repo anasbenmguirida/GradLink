@@ -13,7 +13,7 @@
       <img 
         class="profile-image w-12 h-12 rounded-full object-cover" 
         src="profile.png" 
-        alt="Profile Image" 
+       
       />
       <div class="user-info">
         <h3 class="font-medium text-lg">{{this.me.firstName}}  {{this.me.lastName}}</h3>
@@ -79,18 +79,17 @@
 
   <div *ngFor="let post of classifiedPosts" class="post-container bg-white p-6 rounded-lg shadow-md mb-6">
     <div class="post-header flex items-center mb-4 space-x-3">
-      <img class="profile-image w-12 h-12 rounded-full object-cover" [src]="post.profileImage" alt="Profile Image" />
+      <img class="profile-image w-12 h-12 rounded-full object-cover"  src="profile.png" alt="Profile Image" />
       <div class="user-info">
         <h3  class="font-medium text-lg hover:underline">
           {{ post.firstName }} {{ post.lastName }}
         </h3>
-                <p class="text-sm text-gray-500">{{ post.daysAgo }}j</p>
+               
       </div>
     </div>
 
     <div class="post-content">
       <p>{{ post.poste.textArea }}</p>
-      <p>lenghtttt{{post.poste.posteFiles.length}}</p>
       <div *ngIf="post.poste.posteFiles && post.poste.posteFiles.length > 0" class="image-gallery grid gap-2">
         <ng-container [ngSwitch]="post.poste.posteFiles.length">
       
