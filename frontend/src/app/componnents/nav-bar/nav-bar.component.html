@@ -86,32 +86,52 @@
 
           <div *ngIf="isInvit" class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-0">
             <div class="p-4">
-              <h3 class="text-lg font-semibold text-gray-900">Notifications</h3>
+              <h3 class="text-lg font-semibold text-gray-900">Demandes de mentorattt</h3>
               <ul>
                 <li *ngFor="let demande of demandesMentorat" class="py-2 border-b space-y-3">
                            
-                  <div class="flex items-start space-x-3">
+                  <div (click)="onSelectDemande(demande.demande.id)" class="flex items-start space-x-3">
                
                     <img [src]="demande.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
                     
                 
                     <div>
                       <p class="text-sm font-medium text-gray-900">
-                        <strong>{{demande.firstName}} {{demande.lastName}}</strong> {{ demande.content }}
+                        
+                        <strong class="text-base">{{ demande.prenomEtudiant }} {{ demande.nomEtudiant }}</strong>
+
+                        <span class="font-normal"> a vous envoyé une demande de mentorat</span>
                       </p>
-                                  <p class="text-xs text-gray-500">{{ demande.time }}</p>
+                               
                     </div>
                   </div>
               
                 
                   <div class="flex justify-end space-x-2">
-                    <button class="px-4 py-2 bg-green-500 text-white text-sm rounded hover:bg-green-600">
+                    <!-- Afficher les boutons si la demande n'est pas encore traitée -->
+                    <ng-container *ngIf="!statusDemande[demande.demande.etudiantId]">
+                      <button 
+                      (click)="acceptInvitation(demande.demande.etudiantId)" 
+                      class="px-2 py-1 bg-blue-300 hover:bg-blue-400  text-xxs rounded hover:bg-green-600"
+                    >
                       Accepter
                     </button>
-                    <button class="px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600">
+                    
+                    <button 
+                      (click)="cancelInvitation(demande.demande.etudiantId)" 
+                      class="px-2 py-1  cursor-pointer bg-gray-200 hover:bg-gray-400   text-xxs rounded"
+                    >
                       Refuser
                     </button>
+                    
+                    </ng-container>
+                  
+                    <!-- Afficher le statut après acceptation ou refus -->
+                    <span *ngIf="statusDemande[demande.demande.etudiantId] === 'accepted'" class="text-green-600 font-semibold">Accepté</span>
+                    <span *ngIf="statusDemande[demande.demande.etudiantId] === 'refused'" class="text-red-600 font-semibold">Refusé</span>
                   </div>
+                  
+                  
                 </li>
               </ul>
               
@@ -203,49 +223,56 @@
             
   
             <div  *ngIf="me.role==='LAUREAT'" class="flex items-center space-x-6 ml-8 relative">
-              <button type="button" (click)="toggleNotif()" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
+              <button type="button" (click)="toggleInvit()" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
                 <span class="sr-only">View invitation</span>
               <img src="groupeIcon.jpg" class="h-7 w-7 rounded-full object-cover">
             </button>
-            <div *ngIf="isNotif " class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-0">
+            <div *ngIf="isNotif" class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-0">
               <div class="p-4">
-                <h3 class="text-lg font-semibold text-gray-900  mb-2">demandes de montorat</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Notifications</h3>
                 <ul class="scrollable-container">
                   <li 
-                  *ngFor="let demande of demandesMentorat"  
-                  (click)="onSelectDemande(demande.id)" 
-                  class="py-2 border-b space-y-3 hover:bg-gray-100 cursor-pointer">                 
-                    <div class="flex items-start space-x-3" >
-  
-                 
-                      <img [src]="demande.image"  class="h-8 w-8 rounded-full object-cover" alt="User Image">
-                      
-                  
+                    *ngFor="let demande of demandesMentorat"  
+                    class="py-2 border-b space-y-3 hover:bg-gray-100 cursor-pointer"
+                  >                 
+                    <div class="flex items-start space-x-3">
+                      <img [src]="demande.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
                       <div>
-                        <p  class="text-sm font-medium text-gray-900">
-                          {{demande.firstName}} {{demande.lastName}}
-                          <span class="font-normal">{{ demande.content }}</span>
-                        </p>
-                                            
+                        <p class="text-sm font-medium text-gray-900">
+                          <strong class="text-lg">{{ demande.prenomEtudiant }} {{ demande.nomEtudiant }}</strong>
+
+                          <span class="font-normal">a vous envoyé une demande de mentorat</span>
+                        </p>                                
                         <p class="text-xs text-gray-500">{{ demande.time }}</p>
                       </div>
                     </div>
-                
-                  
+            
                     <div class="flex justify-end space-x-2">
-                      <button class="px-2 py-1 bg-green-500 text-white text-xxs rounded hover:bg-green-600">
-                        Accepter
-                      </button>
-                      <button class="px-2 py-1 bg-red-500 text-white text-xxs rounded hover:bg-red-600">
-                        Refuser
-                      </button>
+                      <!-- Afficher les boutons si le statut est "pending" -->
+                      <ng-container *ngIf="!demande.status || demande.status === 'pending'">
+                        <button 
+                          (click)="acceptInvitation(demande.etudiantId)" 
+                          class="px-2 py-1 bg-green-500 text-white text-xxs rounded hover:bg-green-600"
+                        >
+                          Accepter
+                        </button>
+                        <button 
+                          (click)="cancelInvitation(demande.etudiantId)" 
+                          class="px-2 py-1 bg-red-500 text-white text-xxs rounded hover:bg-red-600"
+                        >
+                          Refuser
+                        </button>
+                      </ng-container>
+            
+                      <!-- Afficher le texte après acceptation ou refus -->
+                      <span *ngIf="demande.status === 'accepted'" class="text-green-600 font-semibold">Accepté</span>
+                      <span *ngIf="demande.status === 'refused'" class="text-red-600 font-semibold">Refusé</span>
                     </div>
                   </li>
                 </ul>
-                
               </div>
             </div>
-  
+            
   
           </div>
           

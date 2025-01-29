@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.back.backend.Entities.DemandeMentorat;
 import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.User;
+import com.back.backend.dto.DemandeWithStudent;
 import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
 import com.back.backend.services.UserService;
@@ -76,7 +77,11 @@ public class LaureatController {
     public int getStatusMentorat(@RequestBody DemandeMentorat demande) {
         return this.laureatService.getStatusMentorat(demande) ; 
     }
-
+ 
+    @GetMapping("demandes-pending/{id}")
+    public List<DemandeWithStudent> getAllDemandes(@PathVariable int id) {
+        return this.laureatService.getAllDemandes(id) ; 
+    }
     
 }
 

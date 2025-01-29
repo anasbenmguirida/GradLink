@@ -1,11 +1,12 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, inject, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
 import { MessagerieService } from '../../services/messagerie/messagerie.service';
 import { Injectable } from '@angular/core';
 import { webSocket } from 'rxjs/webSocket';
+import { ProfileService } from './../../services/profile/profile.service';
 
 
 
@@ -30,7 +31,7 @@ demandesMentorat: any[] = [];
 isFocused: boolean = false;
 
 me:any;
-constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService
+constructor(private demandeService: DemandeMentoratService,private ProfileService :ProfileService,   private messagerieService:MessagerieService,private cdr: ChangeDetectorRef
   ,@Inject(PLATFORM_ID) private platformId: Object
 ) { }
 private router =inject(Router);
@@ -77,7 +78,7 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     }
 
   onSelectDemande(id: number): void {
-    console.log(id);
+    console.log('id demande choisi',id);
     this.router.navigate(['/demandesMentorat'], { state: { id} });
   }
 
@@ -106,6 +107,10 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
 
   toggleInvit() {
     this.isInvit = !this.isInvit;
+    if (this.isInvit ) {
+      console.log("wsal n toggle demandes")
+      this.loadUsersDemandes();
+    }
   }
 
   acceptedemande(id: number): void {
@@ -119,7 +124,68 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
       console.log('Demande refusée:', response);
     });
   }
-   
+
+  
+  // cancelInvitation(etudiantId:any) {
+    
+  //   this.ProfileService
+  //     .cancelInvitation( etudiantId,this.me.id)
+  //     .subscribe(
+  //       (response) => {
+  //  console.log(response);
+        
+  //       },
+  //       (error) => {
+  //         console.error('Erreur lors de l\'annulation de l\'invitation:', error);
+  //       }
+  //     );
+  // }
+
+  // show: boolean = false;
+  // acceptInvitation(etudiantId:any) {
+  //   this.ProfileService
+  //     .acceptInvitation(etudiantId,this.me.id)
+  //     .subscribe(
+  //       (response) => {
+  //         console.log(response);
+  //         this.show=false;
+      
+  //       },
+  //       (error) => {
+  //         console.error('Erreur lors de l\'acceptation de l\'invitation:', error);
+  //       }
+  //     );
+  // }
+
+
+
+  statusDemande: { [key: number]: string } = {}; // Utilisation d'un objet simple pour stocker l'état
+
+  cancelInvitation(etudiantId: number): void {
+    console.log(etudiantId);
+    this.ProfileService.cancelInvitation(etudiantId, this.me.id).subscribe({
+      next: (response) => {
+        console.log('Invitation refusée:', response);
+        this.statusDemande[etudiantId] = 'refused'; // Mettre à jour l'affichage
+      },
+      error: (error) => {
+        console.error('Erreur lors du refus de l\'invitation:', error);
+      }
+    });
+  }
+  
+  acceptInvitation(etudiantId: number): void {
+    this.ProfileService.acceptInvitation(etudiantId, this.me.id).subscribe({
+      next: (response) => {
+        console.log('Invitation acceptée:', response);
+        this.statusDemande[etudiantId] = 'accepted'; // Mettre à jour l'affichage
+      },
+      error: (error) => {
+        console.error('Erreur lors de l\'acceptation de l\'invitation:', error);
+      }
+    });
+  }
+  
 
   isMenu = false;
   toggleMenu(){
@@ -257,6 +323,24 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
       }
     );
   }
+
+  
+
+  loadUsersDemandes() {
+
+   
+this.demandeService.getDemandes(this.me.id).subscribe((data) => {
+    
+        this.demandesMentorat = data;
+        console.log("listeDemandeMentorat",this.demandesMentorat)
+      },
+      error => {
+        console.error('Erreur lors du chargement des demandes:', error);
+    
+      }
+    );
+  }
+
 
 
 

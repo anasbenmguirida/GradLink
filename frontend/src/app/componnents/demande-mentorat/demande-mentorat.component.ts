@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import { ProfileService } from './../../services/profile/profile.service';
+
 @Component({
   selector: 'app-demande-mentorat',
   standalone: true,
@@ -17,7 +19,7 @@ export class DemandeMentoratComponent implements OnInit {
 
 
 
-constructor(private router: Router, private location: Location,private demandeService: DemandeMentoratService,@Inject(PLATFORM_ID) private platformId: Object) {}
+constructor(private router: Router, private ProfileService :ProfileService , private location: Location,private demandeService: DemandeMentoratService,@Inject(PLATFORM_ID) private platformId: Object) {}
 
 demandesMentorat: any[] = []; 
 me:any;
@@ -39,24 +41,58 @@ ngOnInit(): void {
   console.log("hii");
 
 
-        this.demandeService.getDemandes(this.me.id).subscribe((data) => {
-           this.demandesMentorat = data;
-         });
-      
+  this.demandeService.getDemandes(this.me.id).subscribe((data) => {
+    this.demandesMentorat = data;
+    console.log('hii soso',this.demandesMentorat);
+  });
 
-    if (selectedId !== null) {
-      const selectedDemande = this.demandesMentorat.find(d => d.id === selectedId);
-      console.log(selectedDemande);
-      if (selectedDemande) {
-        this.demandesFiltre = [
-          selectedDemande,
-          ...this.demandesMentorat.filter(d => d.id !== selectedId)
-        ];
-      }
-    } else {
-      this.demandesFiltre = this.demandesMentorat; 
+
+  if (selectedId !== null) {
+    const selectedDemande = this.demandesMentorat.find(d => d.demande.id === selectedId);
+    console.log(selectedDemande);
+  
+    if (selectedDemande) {
+      this.demandesFiltre = [
+        selectedDemande,
+        ...this.demandesMentorat.filter(d => d.demande.id !== selectedId)
+      ];
     }
+  } else {
+
+    this.demandesFiltre = [...this.demandesMentorat];
   }
+  
+  }
+
+  statusDemande: { [key: number]: string } = {}; // Utilisation d'un objet simple pour stocker l'état
+
+  cancelInvitation(etudiantId: number): void {
+    console.log(etudiantId);
+    this.ProfileService.cancelInvitation(etudiantId, this.me.id).subscribe({
+      next: (response) => {
+        console.log('Invitation refusée:', response);
+        this.statusDemande[etudiantId] = 'refused'; // Mettre à jour l'affichage
+      },
+      error: (error) => {
+        console.error('Erreur lors du refus de l\'invitation:', error);
+      }
+    });
+  }
+  
+  acceptInvitation(etudiantId: number): void {
+    this.ProfileService.acceptInvitation(etudiantId, this.me.id).subscribe({
+      next: (response) => {
+        console.log('Invitation acceptée:', response);
+        this.statusDemande[etudiantId] = 'accepted'; // Mettre à jour l'affichage
+      },
+      error: (error) => {
+        console.error('Erreur lors de l\'acceptation de l\'invitation:', error);
+      }
+    });
+  }
+  
+
+
 
   goToProfile(userId: number) {
     this.router.navigate(['/rechercheProfile', userId]);

@@ -71,7 +71,7 @@ public class SecurityConfig {
             .requestMatchers(mvcMatcherBuilder.pattern("/api/laureat/status")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/api/delete-poste/{id}")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/api/update-poste")).permitAll()
-        
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/laureat/demandes-pending/{id}")).permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

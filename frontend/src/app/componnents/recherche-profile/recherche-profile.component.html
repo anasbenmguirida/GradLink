@@ -125,9 +125,13 @@
 
             <ng-container *ngSwitchCase="'pending-received'">
               <div *ngIf="me.role === 'LAUREAT' && searchUser.role === 'ETUDIANT'">
-              <button   (click)="acceptInvitation() "  class="px-3 py-2 cursor-pointer mr-7 bg-gray-200 hover:bg-gray-400 " >Accepter</button>
-              <button  (click)="cancelInvitation()" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">Refuser</button>
-            </div>
+                <button (click)="acceptInvitation()" class="px-3 py-2 cursor-pointer mr-7 bg-blue-300 hover:bg-blue-400 rounded-lg">
+                  Accepter
+                </button>
+                
+                 <button  (click)="cancelInvitation()" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400 rounded-lg">Refuser</button>
+           
+                </div>
             </ng-container>
            
             <ng-container *ngSwitchCase="'friends'">
