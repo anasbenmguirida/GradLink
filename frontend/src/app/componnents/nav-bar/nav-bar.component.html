@@ -4,9 +4,9 @@
       <!-- Logo + Recherche -->
       <div class="flex items-center space-x-4">
         <!-- Logo -->
-        <div class="flex shrink-0 items-center">
+        <!-- <div class="flex shrink-0 items-center">
           <img class="h-8 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
-        </div>
+        </div> -->
 
         <!-- Barre de recherche (visible sur mobile et desktop) -->
         <div class="relative flex-1 sm:w-auto">
@@ -145,7 +145,7 @@
                     [class.selected]="user === selectedUser"
                     class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100"
                     (click)="onSelectUser(user)">
-                    <img src="profile.png" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                    <img src="prof.jpg" class="h-8 w-8 rounded-full object-cover" alt="User Image">
                     <div>
                       <p class="text-sm font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</p>
                       <p class="text-xs text-gray-500" *ngIf="user.messages.length > 0">
@@ -262,7 +262,7 @@
             >
           
               <div  (click)=navigateToProfile(me) class="flex items-center px-4 py-3 border-b border-gray-200">
-                <img (click)=navigateToProfile(me) src="profile.png" alt="User photo" class="h-12 w-12 rounded-full object-cover">
+                <img (click)=navigateToProfile(me) src="prof.jpg" alt="User photo" class="h-12 w-12 rounded-full object-cover">
                 <div class="ml-3">
                   <p class="text-sm font-medium text-gray-800">{{me.firstName}} {{me.lastName}}</p>
                  

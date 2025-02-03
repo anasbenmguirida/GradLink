@@ -12,7 +12,7 @@
     <div class="post-header">
       <img 
         class="profile-image w-12 h-12 rounded-full object-cover" 
-        src="profile.png" 
+        src="prof.jpg" 
         alt="Profile Image" 
       />
       <div class="user-info">
@@ -79,12 +79,12 @@
 
   <div *ngFor="let post of classifiedPosts" class="post-container bg-white p-6 rounded-lg shadow-md mb-6">
     <div class="post-header flex items-center mb-4 space-x-3">
-      <img class="profile-image w-12 h-12 rounded-full object-cover" [src]="post.profileImage" alt="Profile Image" />
+      <img class="profile-image w-12 h-12 rounded-full object-cover"alt="Profile Image" src="prof.jpg"/>
       <div class="user-info">
         <h3  class="font-medium text-lg hover:underline">
-          {{ post.firstName }} {{ post.lastName }}
+          Safae Labjakh
         </h3>
-                <p class="text-sm text-gray-500">{{ post.daysAgo }}j</p>
+                <p class="text-sm text-gray-500">20 days ago </p>
       </div>
     </div>
 
