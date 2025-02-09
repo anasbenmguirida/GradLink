@@ -83,6 +83,8 @@ public class CaummunauteService {
                 PosteDTO posteDTO = new PosteDTO();
                 posteDTO.setId(poste.getId());
                 posteDTO.setTextArea(poste.getTextArea());
+                posteDTO.setDatePoste(poste.getDatePoste());
+
 
                 // Mapping user to UserDTO with null check
                 UserDTO userDTO = null;

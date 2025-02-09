@@ -106,7 +106,6 @@ public class AdminController {
                     .body("Error updating community: " + e.getMessage());
         }
     }
-
     // Delete a community
     @DeleteMapping("/caummunaute/{id}")
     public ResponseEntity<?> deleteCaummunaute(@PathVariable int id) {

@@ -1,4 +1,4 @@
-import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, PLATFORM_ID, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,  } from '@angular/forms';
 import { CommunityService } from '../../services/community/community.service';
@@ -6,29 +6,6 @@ import { UserService } from '../../services/authservice/user.service';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { Router } from '@angular/router';
 import { PostService } from '../../services/post/post.service';
-
-
-// interface User {
-//   id: number;
-//   firstName: string;
-//   lastName: string;
-//   photoProfile: string;
-// }
-// interface PosteFile {
-//   id: number; // Identifiant du fichier
-//   fileName: string; // Nom du fichier
-//   fileType: string; // Type du fichier (par exemple, image/jpeg)
-//   data: string; // Représentation base64 des données du fichier
-// }
-
-// interface Poste {
-//  // id: number;
-//   textArea: string;
-//   files: PosteFile[]; 
-//   user: User;
-// }
-
-
 
 
 @Component({
@@ -40,7 +17,21 @@ import { PostService } from '../../services/post/post.service';
 })
 export class CommunitySpaceComponent implements OnInit{
 
+  @ViewChildren('messagesContainer') private messagesContainers!: QueryList<ElementRef>;
+  ngAfterViewChecked(): void {
+    // Vérifier et faire défiler vers le bas uniquement pour la communauté sélectionnée
+    if (this.selectedCommunityId !== null && this.messagesContainers) {
+      this.scrollToBottom();
+    }
+  }
 
+  private scrollToBottom(): void {
+    // Récupérer tous les conteneurs de messages et les faire défiler
+    this.messagesContainers.forEach(containerRef => {
+      const container = containerRef.nativeElement;
+      container.scrollTop = container.scrollHeight;
+    });
+  }
 
 
   menuOpen: boolean=false;
@@ -54,6 +45,9 @@ export class CommunitySpaceComponent implements OnInit{
   newCommunity = { name: '', description: '' };  // Structure de la communauté
   user:any
   classifiedPosts: any[] = []; // Tableau pour stocker les posts affichés
+  posteFiles: { fileName: string, data: string }[] = [];
+
+
 
   // communities = [
   //   {
@@ -153,6 +147,7 @@ export class CommunitySpaceComponent implements OnInit{
     }
   
     this.loadCommunities();
+
   }
 
   loadCommunities() {
@@ -160,6 +155,8 @@ export class CommunitySpaceComponent implements OnInit{
       (data) => {
         this.communities = data; // Mettez à jour l'interface utilisateur avec les données reçues
         console.log('Communautés chargées:', this.communities);
+        setTimeout(() => this.ngAfterViewChecked(), 100);
+
       },
       (error) => {
         console.error('Erreur lors du chargement des communautés:', error);
@@ -174,6 +171,8 @@ export class CommunitySpaceComponent implements OnInit{
       this.selectedMessage = message; // Sélectionner un nouveau message
       this.menuOpen = true; // Ouvrir le menu pour ce message
     }
+  
+
   }
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
@@ -239,22 +238,51 @@ export class CommunitySpaceComponent implements OnInit{
 
 
   // Méthode pour convertir une image en base64
-  convertFileToBase64(file: File): Promise<string | ArrayBuffer> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.result) {
-          resolve(reader.result); // Résoudre avec le résultat uniquement s'il n'est pas null
-        } else {
-          reject(new Error("Failed to read file")); // Rejeter si le résultat est null
-        }
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-      reader.readAsDataURL(file); // Lire le fichier en tant qu'URL de données
-    });
+  // Assurez-vous que l'importation des classes est correcte, notamment `FileReader` et `Promise` (si nécessaire).
+
+// Fonction pour convertir un fichier en Base64
+convertFileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+
+// Fonction pour ajouter les fichiers dans `posteFiles` avec Base64
+async addFiles() {
+  try {
+    const files = await Promise.all(
+      this.selectedImages.map(async (file) => ({
+        fileName: file.name,
+        data: await this.convertFileToBase64(file) // Convertir chaque fichier en Base64
+      }))
+    );
+    this.posteFiles = files; // Stocker les fichiers convertis
+    console.log('Images converties:', this.posteFiles); // Vérifier les fichiers convertis
+  } catch (error) {
+    console.error('Erreur lors de la conversion des fichiers:', error);
   }
+}
+
+  // convertFileToBase64(file: File): Promise<string | ArrayBuffer> {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       if (reader.result) {
+  //         resolve(reader.result); // Résoudre avec le résultat uniquement s'il n'est pas null
+  //       } else {
+  //         reject(new Error("Failed to read file")); // Rejeter si le résultat est null
+  //       }
+  //     };
+  //     reader.onerror = (error) => {
+  //       reject(error);
+  //     };
+  //     reader.readAsDataURL(file); // Lire le fichier en tant qu'URL de données
+  //   });
+  // }
   // Methode pour supprimer l'image
   removeImage(file: any) {
     if (this.editPost) {
@@ -310,6 +338,7 @@ throw new Error('Method not implemented.');
   //   }
   // }
   
+  selectedImageName: string | null = null;  // Variable pour stocker le nom du fichier image sélectionné
 
   onImagesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -324,8 +353,12 @@ throw new Error('Method not implemented.');
         ||  mimeType.startsWith('application') && validExtensions.includes(fileExtension || '')) {
             this.selectedImages.push(file);  // Ajoute le fichier valide à la liste
            // this.selectedFileNames.push(file.name); // Stocke le nom du fichier
+           this.selectedImageName = file.name; // Stocker le nom du fichier
+
           } else {
             console.error('Type de fichier non pris en charge :', file.name);
+            this.selectedImageName = null; // Réinitialiser si aucun fichier n'est sélectionné
+
           }
         });
     
@@ -335,16 +368,29 @@ throw new Error('Method not implemented.');
       }
   }
   
-  getFileUrl(file: any): string {
-      console.log('Fichier invalide ou données manquantes', file);
+  // getFileUrl(file: any): string {
+  //     console.log('Fichier invalide ou données manquantes', file);
  
     
-    // Si fileType est incorrect, déduire le type à partir de l'extension
-    const mimeType = this.getMimeType(file.fileName);
+  //   // Si fileType est incorrect, déduire le type à partir de l'extension
+  //   const mimeType = this.getMimeType(file.fileName);
   
-    return `data:${mimeType};base64,${file.data}`;
+  //   return `data:${mimeType};base64,${file.data}`;
+  // }
+  
+  getFileUrl(file: any): string {
+    // Vérifie si c'est une image en Base64
+    if (file.data) {
+      const mimeType = this.getMimeType(file.fileName);
+      return `data:${mimeType};base64,${file.data}`;
+    }
+    
+    // Si ce n'est pas une image en Base64, retourne l'URL du fichier local
+    const localFileUrl = URL.createObjectURL(file); 
+    return localFileUrl; // Utilise URL.createObjectURL pour le fichier local
   }
   
+
   getMimeType(fileName: string): string {
     const extension = fileName.split('.').pop()?.toLowerCase();
     switch (extension) {
@@ -366,76 +412,89 @@ throw new Error('Method not implemented.');
     }
   }
 
+  
   postMessage() {
     if (!this.newMessageText.trim()) {
-      return; 
+        return;
     }
-  
+
     const formData = new FormData();
     formData.append('textArea', this.newMessageText);
     formData.append('typePost', 'CAUMMUNAUTE');
     formData.append('userId', this.userId);
     if (this.selectedCommunityId !== null && this.selectedCommunityId !== undefined) {
-      formData.append('caummunauteId', this.selectedCommunityId.toString());
+        formData.append('caummunauteId', this.selectedCommunityId.toString());
     }
+
+    // Ajout des fichiers au FormData
     this.selectedImages.forEach((file) => {
-      formData.append('files', file);
+        formData.append('files', file);
     });
-    console.log(`formData`)
-    console.log(formData)
 
-    // Ajout du post localement avant d'envoyer la requête au backend
-    console.log(`user`)
+    console.log(`formData`, formData);
 
-    console.log(this.user)
-    const tempPostId = Date.now(); // ID temporaire pour éviter les conflits
+    // Génération d'un ID temporaire pour le post
+    const tempPostId = Date.now();
     const newPost = {
-      id: tempPostId,
-      textArea: this.newMessageText,
-      
-      user: {
-        id: this.userId,
-        firstName: this.user.firstName, // Remplacez par les données de l'utilisateur actuel
-        lastName: this.user.lastName,
-        photoProfile: null // Remplacez par la photo de profil si disponible
-      },
-      posteFiles: this.selectedImages.map(file => ({
-        fileName: file.name,
-        data: URL.createObjectURL(file) // Affichage local des fichiers
-      }))
+        id: tempPostId,
+        textArea: this.newMessageText,
+        user: {
+            id: this.userId,
+            firstName: this.user.firstName,
+            lastName: this.user.lastName,
+            photoProfile: null // Remplacer par la photo de profil si disponible
+        },
+        posteFiles: this.selectedImages.map(file => ({
+            fileName: file.name,
+            data: URL.createObjectURL(file) // Crée une URL temporaire pour l'image locale
+        }))
     };
 
-
-    // Mettre à jour localement le tableau des postes de la communauté
+    // Ajouter temporairement le post localement
     const community = this.communities.find(c => c.id === this.selectedCommunityId);
     if (community) {
-      community.postes = [...community.postes, newPost]; // Ajouter le nouveau post à la communauté
+        community.postes = [...community.postes, newPost];
     }
-  
+
     // Réinitialisation des champs après l'ajout
     this.newMessageText = "";
     this.selectedImages = [];
-  
-    // Envoi des données au backend
+          this.selectedImageName = null; // Réinitialiser si aucun fichier n'est sélectionné
+
+
+    // Envoi au backend
     this.postService.createPost(formData).subscribe(
-      (response: any) => {
-        // Mettre à jour le post local avec les données réelles renvoyées par le backend
-        // if (community) {
-        //   const index = community.postes.findIndex((post: { id: number }) => post.id === tempPostId);
-        //   if (index !== -1) {
-        //     community.postes[index] = response; // Remplacez par les données réelles du serveur
-        //   }
-        // }
-      },
-      (error) => {
-        console.error('Erreur lors de l\'envoi du post :', error);
-        // Si une erreur survient, supprimer le message temporaire
-        if (community) {
-          community.postes = community.postes.filter((post: { id: number }) => post.id !== tempPostId);
+        (response: any) => {
+            console.log("Post ajouté avec succès:", response);
+
+            // Mettre à jour le post temporaire avec les vraies données du backend
+            if (community) {
+              const index = community.postes.findIndex((post: { id: number }) => post.id === tempPostId);
+              if (index !== -1) {
+                    community.postes[index] = response; // Remplace le post temporaire par le post réel
+                }
+            }
+
+            // Maintenant, recharge la liste complète des posts
+
+            this.loadCommunities();
+
+
+        },
+        (error) => {
+            console.error('Erreur lors de l\'envoi du post :', error);
+
+            // Supprimer le post temporaire en cas d'échec
+            if (community) {
+              community.postes = community.postes.filter((post: { id: number }) => post.id !== tempPostId);
+            }
         }
-      }
     );
-  }
+    // setTimeout(() => this.ngAfterViewChecked(), 100);
+
+}
+
+  
   
   
 
@@ -548,12 +607,13 @@ closeAddCommunityDialog(): void {
 saveCommunity(): void {
   if (this.communityForm.valid) {
     const communityData = this.communityForm.value;
-
+console.log(communityData)
     this.communityService.saveCommunity(communityData,this.userId).subscribe({
       next: (response) => {
         console.log('Communauté sauvegardée avec succès :', response);
         this.communityForm.reset();
         this.closeAddCommunityDialog();
+        this.loadCommunities()
       },
       error: (error) => {
         console.error('Erreur lors de la sauvegarde de la communauté :', error);
@@ -566,6 +626,7 @@ saveCommunity(): void {
 
   selectCommunity(communityId: number) {
     this.selectedCommunityId = communityId;
+    this.loadCommunities();
   }
 
   toggleCommunityList() {
@@ -576,4 +637,8 @@ saveCommunity(): void {
     this.selectedCommunityId = null; 
     this.communityListVisible = true;  
   }
+  canPost(): boolean {
+    return this.user.role === 'ADMIN' || this.user.role === 'LAUREAT';
+  }
+ 
 }

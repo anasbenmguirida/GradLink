@@ -1,6 +1,60 @@
 <app-nav-bar></app-nav-bar>
 
 <div class=" h-full flex flex-col lg:flex-row p-6 lg:gap-6 space-y-6 lg:space-y-0 mt-16">
+
+<!-- 🟢 SECTION PROFIL (Positionnée à gauche) -->
+<div *ngIf="!selectedCommunityId" class="hidden lg:block fixed left-12 top-24 w-80 bg-white rounded-3xl shadow-lg p-4">
+  <!-- Image de couverture -->
+  <div class="relative">
+    <img src="banner.jpg" class="w-full h-20 object-cover rounded-t-3xl">
+    <img  [src]="user.photoProfile ? getFileUrl(user.photoProfile) : 'safae.jpeg'"   class="w-16 h-16 rounded-full border-4 border-white absolute -bottom-8 left-1/2 transform -translate-x-1/2">
+  </div>
+
+  <!-- Informations utilisateur -->
+  <div class="text-center mt-10">
+    <h3 class="text-lg font-bold text-gray-800">{{ user.firstName }} {{ user.lastName }}</h3>
+    <p class="text-sm text-gray-600">{{ user.role }}</p>
+    <p class="text-xs text-gray-500">{{ user.location }}</p>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="mt-4 border-t border-gray-200 pt-4">
+    <div class="flex justify-between text-sm text-gray-600">
+      <span>Vues du profil</span>
+      <span class="font-semibold text-blue-600">{{ user.profileViews }}</span>
+    </div>
+    <div class="flex justify-between text-sm text-gray-600 mt-2">
+      <span>Impressions des posts</span>
+      <span class="font-semibold text-blue-600">{{ user.postViews }}</span>
+    </div>
+  </div>
+
+  <!-- Liens utiles -->
+  <div class="mt-4 border-t border-gray-200 pt-4">
+    <p class="text-sm font-semibold text-gray-700 mb-2">Éléments enregistrés</p>
+    <ul class="text-sm text-gray-600 space-y-2">
+      <li class="flex items-center">
+        <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
+            d="M17 20l-5-5m0 0l-5 5m5-5V4"></path></svg>
+        Groupes
+      </li>
+      <li class="flex items-center">
+        <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        Newsletters
+      </li>
+      <li class="flex items-center">
+        <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 6v6m0 6h.01"></path></svg>
+        Événements
+      </li>
+    </ul>
+  </div>
+</div>
+
   <!-- Liste des communautés -->
   <div 
     class="w-full  lg:w-1/3 p-6 bg-gradient-to-r from-indigo-100 to-indigo-50 rounded-lg shadow-lg mx-auto transition-all"
@@ -64,18 +118,16 @@
  <!-- Discussions de la communauté sélectionnée -->
 <!-- Discussions de la communauté sélectionnée -->
 <div *ngIf="selectedCommunityId" class="lg:w-2/3 max-h-screen p-4 bg-white h-full shadow-lg rounded-lg transition-all">
-  <div *ngFor="let community of communities" [ngClass]="{'hidden': community.id !== selectedCommunityId}">
+  <div  *ngFor="let community of communities" [ngClass]="{'hidden': community.id !== selectedCommunityId}">
     <h3 class="text-2xl font-semibold text-gray-800 mb-6">Discussions dans {{ community.name }}</h3>
 
-    <div class="msg max-h-96 overflow-y-auto space-y-4 mb-6">
-      <div *ngFor="let poste of community.postes" class="flex items-start bg-gray-50 p-4 rounded-lg shadow-md mb-4 hover:shadow-lg transition-all">
+    <div #messagesContainer  class="msg max-h-96 overflow-y-auto space-y-4 mb-6">
+      <div   *ngFor="let poste of community.postes" class="flex items-start bg-gray-50 p-4 rounded-lg shadow-md mb-4 hover:shadow-lg transition-all">
         <!-- Affichage de l'image de profil de l'utilisateur -->
         <img   [src]="poste.user.photoProfile ? getFileUrl(poste.user.photoProfile) : 'safae.jpeg'"  
         alt="Profil" class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-blue-500">
 
-
-
-        <div class="flex-1">
+        <div  class="flex-1">
           <div class="flex justify-between items-center mb-2">
             <div>
               <h4 class="text-lg font-semibold text-gray-800">{{ poste.user.firstName }} {{ poste.user.lastName }}</h4>
@@ -102,11 +154,10 @@
 
           <p class="text-gray-700 mb-3">{{ poste.textArea }}</p>
           
-          <img 
-          class="post-image cursor-pointer" 
+          <img *ngIf="poste.posteFiles[0]"
+          class="post-image cursor-pointer  max-h-96 min-w-128  rounded-lg shadow-md" 
           [src]="getFileUrl(poste.posteFiles[0])"  
-          alt="Post Image" 
-        />
+          alt="Post Image" />
           <!-- Affichage des fichiers joints -->
           <!-- <div *ngIf="poste.posteFiles && poste.posteFiles.length > 0" class="mt-2">
             <img 
@@ -123,7 +174,9 @@
 
 
    <!--Ajouter poste -->
-   <div class="bg-gray-50 p-2 h-50 rounded-lg shadow-md flex items-center space-x-4">
+   <ng-container *ngIf="canPost(); else noAccess">
+
+   <div  class="bg-gray-50 p-2 h-50 rounded-lg shadow-md flex items-center space-x-4">
     <textarea [(ngModel)]="newMessageText" (keyup.enter)="postMessage()" placeholder="Écrivez un message..." class="flex-1 p-2 bg-white rounded-lg shadow-sm border border-gray-300" rows="2"></textarea>
 
     <label for="message-image" class="cursor-pointer">
@@ -132,13 +185,23 @@
       </svg>
       <input type="file" id="message-image" (change)="onImagesSelected($event)" multiple class="hidden" />
     </label>
-
+    <div *ngIf="selectedImageName" class="text-gray-600 mt-2">
+      <p>{{ selectedImageName }}</p>
+    </div>
     <button (click)="postMessage()" class="p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition" aria-label="Poster">
       <svg class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
       </svg>
     </button>
   </div>
+  </ng-container>
+  <!-- Si l'utilisateur est un étudiant -->
+<ng-template #noAccess>
+  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md" role="alert">
+    <p class="font-bold">Accès restreint</p>
+    <p>Seuls les admins et les lauréats peuvent poster un message.</p>
+  </div>
+</ng-template>
 </div>
 
 

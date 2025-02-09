@@ -219,7 +219,6 @@ export class EventDetailsComponent implements OnInit {
           console.log('Événement mis à jour :', response);
           this.event = { ...this.event, ...updatedEvent }; 
           this.closeEditDialog(); 
-          alert('Événement mis à jour avec succès !');
         },
         (error) => {
           console.error('Erreur lors de la mise à jour de l\'événement', error);

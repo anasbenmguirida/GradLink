@@ -37,7 +37,7 @@ export class CommunityService {
   }
 
   deleteCommunity(communityId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${communityId}`);
+    return this.http.delete<void>(`${this.apiUrl}/caummunaute/${communityId}`);
   }
   updatePost(communityId: number, postId: number, updatedPost: any): Observable<any> {
     const url = `${this.apiUrl}/${communityId}/posts/${postId}`;

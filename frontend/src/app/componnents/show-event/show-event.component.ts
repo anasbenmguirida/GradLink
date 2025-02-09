@@ -28,15 +28,27 @@ export class ShowEventComponent {
   };
   isAddEventDialogOpen = false;
 
+
+
+  
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
     private eventService: EventService
   ) {}
-
+user:any
   ngOnInit() {
     this.loadEvents();
+    if (isPlatformBrowser(this.platformId)) {
+      console.log('hiiiiii123')
+
+      this.user = JSON.parse(localStorage.getItem('user') || '{}');
+      console.log(this.user)
+} else {
+      console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+        }
   }
+  
 
   loadEvents(): void {
     this.eventService.getEvents().subscribe(
@@ -64,7 +76,37 @@ export class ShowEventComponent {
       }
     );
   }
-
+  getFileUrl(file: any): string {
+    // Vérifie si c'est une image en Base64
+    if (file.data) {
+      const mimeType = this.getMimeType(file.fileName);
+      return `data:${mimeType};base64,${file.data}`;
+    }
+    
+    // Si ce n'est pas une image en Base64, retourne l'URL du fichier local
+    const localFileUrl = URL.createObjectURL(file); 
+    return localFileUrl; // Utilise URL.createObjectURL pour le fichier local
+  } getMimeType(fileName: string): string {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+        case 'jfif':
+          return 'image/jfif';
+          case 'jpe':
+            return 'image/jpe';
+      case 'pdf':
+        return 'application/pdf';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+     
   onEventClick(info: any): void {
     const event = info.event;
 

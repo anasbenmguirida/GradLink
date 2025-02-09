@@ -5,3 +5,9 @@
 .msg{
     max-height: 480px;
 }
+#messages-container {
+    max-height: 480px; /* Ajustez en fonction de la taille de la zone d'affichage */
+    overflow-y: auto; /* Permet de faire défiler l'élément */
+    background-color: brown;
+  }
+ 

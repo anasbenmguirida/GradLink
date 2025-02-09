@@ -1,41 +1,91 @@
-<app-nav-bar></app-nav-bar>
+<div class="mb-8">
+  <app-nav-bar></app-nav-bar>
+</div>
 
-<div class="titre flex justify-center items-center min-h-screen bg-gray-50 p-2 mt-10">
+<div class="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+  <!-- 🟢 SECTION PROFIL (Positionnée à gauche) -->
+  <div class="hidden lg:block fixed left-12 top-24 w-80 bg-white rounded-3xl shadow-lg p-4">
+    <!-- Image de couverture -->
+    <div class="relative">
+      <img src="banner.jpg" class="w-full h-20 object-cover rounded-t-3xl">
+      <img  [src]="user.photoProfile ? getFileUrl(user.photoProfile) : 'safae.jpeg'"   class="w-16 h-16 rounded-full border-4 border-white absolute -bottom-8 left-1/2 transform -translate-x-1/2">
+    </div>
+
+    <!-- Informations utilisateur -->
+    <div class="text-center mt-10">
+      <h3 class="text-lg font-bold text-gray-800">{{ user.firstName }} {{ user.lastName }}</h3>
+      <p class="text-sm text-gray-600">{{ user.role }}</p>
+      <p class="text-xs text-gray-500">{{ user.location }}</p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="mt-4 border-t border-gray-200 pt-4">
+      <div class="flex justify-between text-sm text-gray-600">
+        <span>Vues du profil</span>
+        <span class="font-semibold text-blue-600">{{ user.profileViews }}</span>
+      </div>
+      <div class="flex justify-between text-sm text-gray-600 mt-2">
+        <span>Impressions des posts</span>
+        <span class="font-semibold text-blue-600">{{ user.postViews }}</span>
+      </div>
+    </div>
+
+    <!-- Liens utiles -->
+    <div class="mt-4 border-t border-gray-200 pt-4">
+      <p class="text-sm font-semibold text-gray-700 mb-2">Éléments enregistrés</p>
+      <ul class="text-sm text-gray-600 space-y-2">
+        <li class="flex items-center">
+          <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
+              d="M17 20l-5-5m0 0l-5 5m5-5V4"></path></svg>
+          Groupes
+        </li>
+        <li class="flex items-center">
+          <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+          Newsletters
+        </li>
+        <li class="flex items-center">
+          <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 6v6m0 6h.01"></path></svg>
+          Événements
+        </li>
+      </ul>
+    </div>
+  </div>
+
   <div class="w-full max-w-2xl bg-white rounded-3xl shadow-2xl p-8 relative">
-    <h2 class="text-2xl font-extrabold text-blue-700 mb-8 text-center uppercase tracking-wide">
-      Calendrier des Événements
+
+    <!-- 🟢 Titre du calendrier -->
+    <h2 class="text-3xl font-extrabold text-blue-700 mb-6 text-center uppercase tracking-wide animate-pulse">
+      📅 Calendrier des Événements
     </h2>
 
-    <div class="rounded-3xl overflow-hidden shadow-lg border border-gray-300">
-      <full-calendar
-        *ngIf="calendarOptions"
-        [options]="calendarOptions"
+    <!-- 🟢 Bloc du calendrier avec animation -->
+    <div class="rounded-3xl overflow-hidden shadow-lg border border-gray-300 transition-all duration-300 ease-in-out transform hover:scale-[1.02] hover:shadow-xl">
+      <full-calendar 
+        *ngIf="calendarOptions" 
+        [options]="calendarOptions" 
         class="w-full bg-gray-50 p-4"
       ></full-calendar>
     </div>
 
-      <button 
+    <!-- 🟢 Bouton d'ajout d'événement flottant avec effet de rebond -->
+    <button 
       (click)="openDialog()"
-      class="fixed bottom-8 right-8 bg-gradient-to-r from-blue-500 to-blue-700 text-white p-4 rounded-full shadow-lg hover:scale-110 hover:shadow-xl transition-transform duration-300 ease-in-out flex items-center justify-center"
+      class="fixed bottom-8 right-8 bg-gradient-to-r from-blue-500 to-blue-700 text-white p-4 rounded-full shadow-lg hover:scale-110 hover:shadow-2xl transition-transform duration-300 ease-in-out flex items-center justify-center transform-gpu hover:animate-bounce"
       aria-label="Ajouter un événement"
-      >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-6 h-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
       </svg>
-      
-      </button>
-      
-      
-      <app-add-event-dialog *ngIf="isAddEventDialogOpen" (onClose)="closeAddEventDialog()" (onSave)="reloadEvents($event)"></app-add-event-dialog>
+    </button>
 
-
+    <!-- 🟢 Modale d'ajout d'événement -->
+    <app-add-event-dialog *ngIf="isAddEventDialogOpen" (onClose)="closeAddEventDialog()" (onSave)="reloadEvents($event)">
+    </app-add-event-dialog>
 
   </div>
 </div>

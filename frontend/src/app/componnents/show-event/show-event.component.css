@@ -2,7 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
-.titre{
-  color: rgb(43, 43, 104);
-  background-color: rgb(29, 78, 216);
+/* Animation douce pour la transition */
+.animate-pulse {
+  animation: pulseText 1.5s infinite;
+}
+
+@keyframes pulseText {
+  0%, 100% {
+    opacity: 1;
+    color: #1d4ed8; /* Bleu Tailwind 700 */
+    text-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+  }
+  50% {
+    opacity: 0.7;
+    color: #0462f9; /* Bleu plus clair */
+    text-shadow: 0 0 10px rgba(0, 0, 255, 0.7);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Cible spécifiquement les événements dans le calendrier */
+::ng-deep .fc-event {
+  cursor: pointer;
+}
+
+
+/* Bouton d'ajout d'événement flottant avec animation de rebond */
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  25% { transform: translateY(-6px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+.hover\:animate-bounce:hover {
+  animation: bounce 0.6s ease-in-out infinite;
 }
