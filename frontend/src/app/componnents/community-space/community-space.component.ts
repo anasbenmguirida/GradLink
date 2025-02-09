@@ -379,20 +379,28 @@ throw new Error('Method not implemented.');
   // }
   
   getFileUrl(file: any): string {
-    // Vérifie si c'est une image en Base64
-    if (file.data) {
-      const mimeType = this.getMimeType(file.fileName);
-      return `data:${mimeType};base64,${file.data}`;
-    }
-    
-    // Si ce n'est pas une image en Base64, retourne l'URL du fichier local
-    const localFileUrl = URL.createObjectURL(file); 
-    return localFileUrl; // Utilise URL.createObjectURL pour le fichier local
+    // Si fileType est incorrect, déduire le type à partir de l'extension
+    const mimeType = this.getMimeType(file.fileName);
+  
+    return `data:${mimeType};base64,${file.data}`;
   }
   
 
   getMimeType(fileName: string): string {
+    // Vérifier si le nom du fichier est valide et contient un point
+    if (!fileName || !fileName.includes('.')) {
+      console.error('Nom de fichier invalide:', fileName);
+      return 'application/octet-stream';  // Type générique si fichier invalide
+    }
+  
+    // Extraire l'extension et la convertir en minuscule
     const extension = fileName.split('.').pop()?.toLowerCase();
+    if (!extension) {
+      console.error('Impossible de récupérer l\'extension de fichier:', fileName);
+      return 'application/octet-stream';  // Type générique si extension invalide
+    }
+  
+    // Retourner le type MIME basé sur l'extension
     switch (extension) {
       case 'jpg':
       case 'jpeg':
@@ -401,16 +409,18 @@ throw new Error('Method not implemented.');
         return 'image/png';
       case 'gif':
         return 'image/gif';
-        case 'jfif':
-          return 'image/jfif';
-          case 'jpe':
-            return 'image/jpe';
+      case 'jfif':
+        return 'image/jfif';
+      case 'jpe':
+        return 'image/jpe';
       case 'pdf':
         return 'application/pdf';
       default:
-        return 'application/octet-stream';
+        console.warn('Extension inconnue:', extension);
+        return 'application/octet-stream';  // Type générique pour extension non reconnue
     }
   }
+  
 
   
   postMessage() {
