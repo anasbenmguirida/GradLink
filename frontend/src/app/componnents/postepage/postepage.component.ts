@@ -42,16 +42,32 @@ export class PostePageComponent implements OnInit  {
   ngOnInit(): void {
 
 
+    if (isPlatformBrowser(this.platformId)) {
+      console.log('Code exécuté côté client');
+  
+      // Vérification et récupération des données utilisateur depuis localStorage
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        this.me = JSON.parse(userData);
+        console.log('Utilisateur chargé:', this.me);
+      } else {
+        console.log('Aucun utilisateur trouvé dans le localStorage.');
+      }
+  
+    } else {
+      console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+    }
+  
+    // Vérification si l'utilisateur est chargé et que son ID est disponible
+    if (this.me && this.me.id) {
+      console.log('Utilisateur authentifié:', this.me.id);
+    } else {
+      console.log(this.me)
+      console.log('Utilisateur non authentifié ou ID manquant.');
+    }
     
-if (isPlatformBrowser(this.platformId)) {
-          console.log('hiiiiii123')
-
-          this.me = JSON.parse(localStorage.getItem('user') || '{}');
-  } else {
-          console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
-       }
-this.photoUser=this.postService. getUserImage(this.me.id);
-console.log("photo",this.photoUser)
+// this.photoUser=this.postService. getUserImage(this.me.id);
+// console.log("photo",this.photoUser)
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data;
    console.log(this.posts)
@@ -87,11 +103,9 @@ console.log("photo",this.photoUser)
       isLiked: false,
     }));
     
-    const userId = this.me?.id;
-    if (!userId) {
-      console.error("Utilisateur non authentifié.");
-      return;
-    }
+    const userId = this.me.id;
+    console.log('soumaiaaaaa',this.me.firstName)
+   
     
     forkJoin(
       this.classifiedPosts.map((post) => 
@@ -114,15 +128,15 @@ console.log("photo",this.photoUser)
 
 
   
-navigateToProfile(user: any): void {
-  console.log("userID",user.id)
+navigateToProfile(id: any): void {
+  console.log("userID",id)
   console.log("meID",this.me.id)
-  if (user.id === this.me.id) {
-    console.log(user.id)
+  if (id === this.me.id) {
+    console.log(id)
     console.log(this.me.id)
     this.router.navigate(['/myProfile']);
   } else {
-    this.router.navigate([`/rechercheProfile/${user.id}`]);
+    this.router.navigate([`/rechercheProfile/${id}`]);
   }
 }
 
@@ -321,7 +335,7 @@ closeGallery(): void {
 
 selectedImage: string | null = null;
 isModalOpen:boolean=false;
-openModalimage(image: string) {
+openModalimage(image: any) {
   this.selectedImage = image;
   this.isModalOpen=true;
 }

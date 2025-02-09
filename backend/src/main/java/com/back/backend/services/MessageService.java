@@ -38,7 +38,7 @@ public class MessageService {
             String firstName = contact != null ? contact.getFirstName() : "Unknown";
             String lastName = contact != null ? contact.getLastName() : "Unknown";
     
-            byte[] profilePhoto = contact != null ? contact.getPhotoProfile() : null;
+            String profilePhoto = contact != null ? contact.getPhotoProfile() : null;
     
             // Return a new ContactMessagesDTO
             return new ContactMessagesDTO(contactId, firstName, lastName, profilePhoto, messages);

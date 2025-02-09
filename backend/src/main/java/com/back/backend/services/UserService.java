@@ -1,9 +1,14 @@
 package com.back.backend.services;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -114,29 +119,55 @@ private final UserRepository userRepository;
     }
 
 
-    public ResponseEntity<String> SaveProfilePicture(MultipartFile file , int idUser){
-        try{
-           User user = this.userRepository.findById(idUser).orElse(null);
-           System.out.println("heeeeere ");
-           if(user !=null){
-               user.setPhotoProfile(file.getBytes());
-               this.userRepository.save(user);
-               System.out.println("heeeeere its saved ");
-           }
-        }catch(IOException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'upload de l'image");
+    public ResponseEntity<String> SaveProfilePicture(MultipartFile file, int idUser) {
+    try {
+        User user = this.userRepository.findById(idUser).orElse(null);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
         }
-        return ResponseEntity.ok("Image de profil sauvegardée avec succes");
+
+        // Define the path to the static/images directory relative to the current working directory
+        String uploadDir = System.getProperty("user.dir") + "/backend/src/main/resources/static/images";
+    
+        // Ensure the directory exists
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Generate a unique file name
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+        // Save the file
+        Path filePath = Paths.get(uploadDir, fileName);
+        Files.write(filePath, file.getBytes());
+
+        // Verify if the file was written
+        if (!Files.exists(filePath)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save file to the directory");
+        }
+
+        // Return the URL to access the image
+        String imageUrl = "http://localhost:8080/images/" + fileName;
+        user.setPhotoProfile(imageUrl);
+
+        // Save the user entity
+        userRepository.save(user);
+
+        return ResponseEntity.ok(imageUrl);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save profile picture: " + e.getMessage());
     }
-    // retrieving the profile picture of a user
+}
    
-    public ResponseEntity<byte[]> getProfileImage(int id) {
-        byte[] image = this.userRepository.getImageById(id);
-       return ResponseEntity.ok()
-            .contentType(MediaType.IMAGE_PNG) // Adjust this depending on your image type
-            .body(image);
    
-    }
+  // retrieving the profile picture of a user
+  public ResponseEntity<String> getProfileImage(int userId) {
+    User user = this.userRepository.findById(userId).orElse(null);
+    String imageUrl = user.getPhotoProfile() ; 
+    return ResponseEntity.ok(imageUrl);
+
+}
 
 
     public ResponseEntity<String> deleteUser(int id) {

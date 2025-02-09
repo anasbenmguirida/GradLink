@@ -53,7 +53,6 @@ export class MyprofileComponent implements OnInit {
   } else {
           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
         }
-this.photoUser=this.postService. getUserImage(this.me.id);
 
   // this.me = {
   //   role: 'LAUREAT',
@@ -64,6 +63,9 @@ this.photoUser=this.postService. getUserImage(this.me.id);
   //   promotion:"2025",
   // };
   
+  this.photoUser=this.me.photoProfile;
+console.log("photoprofile");
+console.log(this.photoUser);
     this.postService.getUserPosts(this.me.id).subscribe((data) => {
       this.posts = data;
       console.log("mesPost",this.posts)
@@ -361,14 +363,57 @@ selectFile(): void {
 }
 
 onImageSelected(event: any): void {
-  const file = event.target.files[0]; // Récupère le fichier sélectionné
-  if (file) {
-    this.form.patchValue({image:file}) // Stocke l'image dans la variable imageFile
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    this.newImage = input.files[0];  // Récupère le fichier sélectionné
   }
+}
+newImage: File | null = null;
+
+updatePhoto() {
+  if (!this.newImage) {
+    alert('Veuillez sélectionner une image avant de soumettre.');
+    return;
+  }
+
+  // Création de FormData pour envoyer l'image et l'ID de l'utilisateur
+  const formData = new FormData();
+  formData.append('file', this.newImage);
+  formData.append('id', this.me.id);  // Ajout de l'ID utilisateur dans FormData
+  console.log("profiledataaa", this.newImage);
+  console.log("profiledata", formData);
+  console.log('ID:', formData.get('id'));
+  console.log('File:', formData.get('file'));
+
+  this.ProfileService.updatePhoto(formData).subscribe(
+    (response) => {
+      console.log('Photo Profil mise à jour avec succès:', response);
+      alert('Votre photo de profil a été mise à jour avec succès !');
+      
+      // Affecter directement la réponse (qui contient l'URL de la nouvelle photo) à `photoProfile`
+         
+     this.me.photoProfile = `${response}`;
+      localStorage.setItem('user', JSON.stringify(this.me)); // Mettre à jour localStorage
+ 
+      location.reload();
+ 
+
+  
+      // Si vous ne souhaitez pas rafraîchir la page, pas besoin d'utiliser `location.reload()`
+    },
+    (error) => {
+      console.error('Erreur lors de la mise à jour du profil:', error);
+      alert('Échec de la mise à jour de la photo de profil. Veuillez réessayer.');
+    }
+  );
+  
+  
 }
 
 
+
 isModalOpen = false; 
+isModalOpenn = false; 
   openModal(): void {
     this.isModalOpen = true;
   }

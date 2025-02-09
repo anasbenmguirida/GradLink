@@ -31,15 +31,16 @@
             <li *ngFor="let user of filteredUsers" 
                 (click)="navigateToProfile(user)" 
                 class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100">
-              <img [src]="user.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+              <img [src]="user.photoProfile" class="h-8 w-8 rounded-full object-cover" alt="User Image">
               <div>
                 <p 
-                class="text-sm font-medium text-gray-900"
+                class="text-sm font-semibold text-gray-1000" 
                 [ngClass]="{'underline font-bold': isFocused}" 
                 (focus)="isFocused = true" 
                 (blur)="isFocused = false">
                 {{ user.firstName }} {{ user.lastName }}
               </p>
+              
               
              
               
@@ -92,7 +93,7 @@
                            
                   <div (click)="onSelectDemande(demande.demande.id)" class="flex items-start space-x-3">
                
-                    <img [src]="demande.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                    <img [src]="demande.photoProfile" class="h-10 w-10 rounded-full object-cover" alt="User Image">
                     
                 
                     <div>
@@ -162,7 +163,7 @@
                     [class.selected]="user === selectedUser"
                     class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100"
                     (click)="onSelectUser(user)">
-                    <img src="profile.png" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                    <img [src]="user.profilePhoto" class="h-10 w-10 rounded-full object-cover" alt="User Image">
                     <div>
                       <p class="text-sm font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</p>
                       <p class="text-xs text-gray-500" *ngIf="user.messages.length > 0">
@@ -179,7 +180,7 @@
             
             <div *ngIf="selectedUser" class="fixed bottom-0 right-0 w-full sm:w-96 bg-white shadow-xl rounded-t-xl border border-gray-200">
              <div class="flex items-center p-4 bg-gray-100 rounded-t-xl">
-                <img [src]="selectedUser.image" alt="profile" class="w-10 h-10 rounded-full object-cover mr-4">
+                <img [src]="selectedUser.profilePhoto" alt="profile" class="w-10 h-10 rounded-full object-cover mr-4">
                 <h3 class="text-lg font-semibold">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h3>
             
   
@@ -200,7 +201,6 @@
                     
                     <p class="text-sm">{{ message.contenue }}</p>
                     
-                    <span class="text-xs text-gray-500 ml-2 relative top-0.5">{{ message.time }}</span>
                   </div>
                 </div>
               </div>
@@ -278,7 +278,7 @@
           
           <div class="relative">
             <button type="button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none" (click)="toggleMenu()">
-              <img src="profile.png" class="h-10 w-10 rounded-full object-cover" alt="Profil">
+              <img [src]="me.photoProfile" class="h-10 w-10 rounded-full object-cover" alt="Profil">
             </button>
             <div
               class="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
@@ -286,10 +286,12 @@
             >
           
               <div  (click)=navigateToProfile(me) class="flex items-center px-4 py-3 border-b border-gray-200">
-                <img (click)=navigateToProfile(me) src="profile.png" alt="User photo" class="h-12 w-12 rounded-full object-cover">
+                <img (click)=navigateToProfile(me) [src]="me.photoProfile" alt="User photo" class="h-12 w-12 rounded-full object-cover">
                 <div class="ml-3">
-                  <p class="text-sm font-medium text-gray-800">{{me.firstName}} {{me.lastName}}</p>
-                 
+                  <p class="text-base font-semibold text-gray-900">
+                    {{ me.firstName }} {{ me.lastName }}
+                  </p>
+                                   
                 </div>
               </div>
           

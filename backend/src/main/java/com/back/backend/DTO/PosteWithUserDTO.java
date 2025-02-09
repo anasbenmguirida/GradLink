@@ -13,5 +13,5 @@ public class PosteWithUserDTO {
  private Poste poste;
     private  String firstName;
     private  String lastName;
-    private byte[] photoProfile;
+    private String photoProfile;
 }

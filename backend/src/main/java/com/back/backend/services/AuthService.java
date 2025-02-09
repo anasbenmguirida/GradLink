@@ -1,8 +1,13 @@
 package com.back.backend.services;
 
 
+
+
 import java.util.List;
 import java.util.Optional;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +29,7 @@ import com.back.backend.repositories.EtudiantRepository;
 import com.back.backend.repositories.LaureatRepository;
 import com.back.backend.repositories.UserRepository;
 
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -37,41 +43,50 @@ public class AuthService {
 
 
         public AuthenticationResponse register(RegisterRequest request) {
-                //on cree une instance de user => par defaut 
-                User user = User.builder()
+                try {
+                    // Define the URL of the default profile image
+                    String defaultImageUrl = "http://localhost:8080/images/profdef.jpg";
+            
+                    User user = User.builder()
                         .firstName(request.getFirstName())
                         .lastName(request.getLastName())
                         .email(request.getEmail())
                         .password(passwordEncoder.encode(request.getPassword()))
                         .role(Role.valueOf(request.getRole()))
+                        .photoProfile(defaultImageUrl) 
                         .build();
-               
-                
-                var jwtToken = jwtService.generateToken(user);
             
-                // on verifie le role 
-                if (user.getRole() == Role.ETUDIANT) {
-                    Etudiant etudiant = new Etudiant();
-                    copyUserFieldsToSubclass(user, etudiant);
-                    etudiant.setFiliere(request.getFiliere()); 
-                    userRepository.save(etudiant); 
-                } else if (user.getRole() == Role.ADMIN) {
-                    Admin admin = new Admin();
-                    copyUserFieldsToSubclass(user, admin); 
-                    admin.setAnneeExperience(request.getAnneeExperience()); 
-                    userRepository.save(admin); 
-                } else if (user.getRole() == Role.LAUREAT) {
-                    Laureat laureat = new Laureat();
-                    copyUserFieldsToSubclass(user, laureat); 
-                    laureat.setPromotion(request.getPromotion());
-                    laureat.setSpecialite(request.getSpecialite()); 
-                    userRepository.save(laureat);
-                }
-        
-                return AuthenticationResponse.builder()
+                    // Verify the role and save the user
+                    if (user.getRole() == Role.ETUDIANT) {
+                        Etudiant etudiant = new Etudiant();
+                        copyUserFieldsToSubclass(user, etudiant);
+                        etudiant.setFiliere(request.getFiliere());
+                        userRepository.save(etudiant);
+                    } else if (user.getRole() == Role.ADMIN) {
+                        Admin admin = new Admin();
+                        copyUserFieldsToSubclass(user, admin);
+                        admin.setAnneeExperience(request.getAnneeExperience());
+                        userRepository.save(admin);
+                    } else if (user.getRole() == Role.LAUREAT) {
+                        Laureat laureat = new Laureat();
+                        copyUserFieldsToSubclass(user, laureat);
+                        laureat.setPromotion(request.getPromotion());
+                        laureat.setSpecialite(request.getSpecialite());
+                        userRepository.save(laureat);
+                    } else {
+                        userRepository.save(user);
+                    }
+            
+                    var jwtToken = jwtService.generateToken(user);
+            
+                    return AuthenticationResponse.builder()
                         .accessToken(jwtToken)
                         .user(user)
                         .build();
+                } catch (Exception e) {
+                    System.out.println(e);
+                    return null;
+                }
             }
             
             // method pour copier les champs du user vers n'importe quel subclass (admin , laureat , etudiant)
@@ -81,6 +96,7 @@ public class AuthService {
                 subclass.setEmail(user.getEmail());
                 subclass.setPassword(user.getPassword());
                 subclass.setRole(user.getRole());
+                subclass.setPhotoProfile(user.getPhotoProfile());
             }
             
 

@@ -108,7 +108,8 @@ return this.http.post(`${this.apiUrl}/like`, payload, options);
 
 
   isLiked(postId: number, userId: number): Observable<boolean> {
-    const params = { postId: postId.toString(), userId: userId.toString() }; // Conversion en chaîne de caractères
+    const params = { postId: postId.toString(), userId: userId.toString() };
+    console.log("wsal nchek") // Conversion en chaîne de caractères
     return this.http.get<boolean>(`${this.apiUrl}/check-likes`, { params });
 }
 

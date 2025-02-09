@@ -121,7 +121,7 @@ public class LaureatService {
                                .orElse(null);
                 String firstName =  user.getFirstName() ;
                 String lastName =  user.getLastName() ;
-                byte[] photo=user.getPhotoProfile() ; 
+                String photo=user.getPhotoProfile() ; 
                 return new DemandeWithStudent(demande, firstName, lastName , photo);
             })
             .collect(Collectors.toList());

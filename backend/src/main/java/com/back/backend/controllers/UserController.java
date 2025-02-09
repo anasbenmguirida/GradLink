@@ -104,7 +104,7 @@ public ResponseEntity<Map<String, String>> createPoste(
     }
 
     @GetMapping("/api/profile-picture/{id}")
-    public ResponseEntity<byte[]> getProfilePicture(@PathVariable int id){
+    public ResponseEntity<String> getProfilePicture(@PathVariable int id){
         return this.userService.getProfileImage(id);
     } 
     @GetMapping("/api/check-likes")

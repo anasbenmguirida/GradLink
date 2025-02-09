@@ -22,7 +22,7 @@ public class RegisterRequest {
     private long anneeExperience ; 
     private long promotion ; 
     private String specialite ; 
-    
+    private byte[] photoProfile;
    
     
 }

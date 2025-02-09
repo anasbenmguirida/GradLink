@@ -61,9 +61,7 @@ export class RegistreComponent implements OnInit {
   onSubmit(): void {
     if (this.formGroup.valid) {
       const userData = {
-        ...this.formGroup.value,
-        photoProfile: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png' 
-      };
+        ...this.formGroup.value      };
   console.log(userData)
       this.userService.registerUser(userData).subscribe(
         (response:any) => {

@@ -51,8 +51,7 @@ public class User implements UserDetails {
  private Role role ; // its an enum
  private String password ; 
 
-@Column(columnDefinition = "BYTEA")
-private byte[] photoProfile ; 
+private String  photoProfile ; 
 
     
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

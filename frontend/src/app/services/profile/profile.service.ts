@@ -21,8 +21,18 @@ export class ProfileService {
     });
   
   
+
     return this.http.put<any>(`${this.apiUrl}/profile`, data,{ headers });
   }
+
+  updatePhoto(data: any): Observable<any> {
+    const options = { responseType: 'text' as 'json' };
+    console.log('prof data',data.file)
+    console.log('ID dans service:', data.get('id'));
+console.log('File dans service :', data.get('file'));
+    return this.http.put<any>(`${this.apiUrl}/save-picture`, data,options);
+  }
+  
 
 
   getUserById(id: number): Observable<any> {

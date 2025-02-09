@@ -12,11 +12,12 @@
     <div class="post-header">
       <img 
         class="profile-image w-12 h-12 rounded-full object-cover" 
-        src="profile.png" 
+         [src]="me.photoProfile"
        
       />
       <div class="user-info">
-        <h3 class="font-medium text-lg">{{this.me.firstName}}  {{this.me.lastName}}</h3>
+    <h3 class="font-medium text-lg" *ngIf="me">{{ me.firstName }} {{ me.lastName }}</h3>
+
       </div>
     </div>
   </div>
@@ -76,13 +77,15 @@
 
 
 
+<div *ngIf="classifiedPosts && classifiedPosts.length > 0">
 
   <div *ngFor="let post of classifiedPosts" class="post-container bg-white p-6 rounded-lg shadow-md mb-6">
     <div class="post-header flex items-center mb-4 space-x-3">
-      <img class="profile-image w-12 h-12 rounded-full object-cover"  src="profile.png" alt="Profile Image" />
+      <img class="profile-image w-12 h-12 rounded-full object-cover"  [src]="post.photoProfile" alt="Profile Image" />
       <div class="user-info">
-        <h3  class="font-medium text-lg hover:underline">
-          {{ post.firstName }} {{ post.lastName }}
+        <h3 (click)="navigateToProfile(post.poste.userId)" class="font-medium text-lg hover:underline">
+          {{ post.firstName }} {{ post.lastName }} 
+
         </h3>
                
       </div>
@@ -98,7 +101,7 @@
               class="post-image cursor-pointer" 
               [src]="getFileUrl(post.poste.posteFiles[0])"  
               alt="Post Image" 
-              (click)="openModalimage(post.poste.posteFiles[0])"
+              (click)="openModalimage(getFileUrl(post.poste.posteFiles[0]))"
             />
            
           </div>
@@ -128,7 +131,7 @@
               class="post-image cursor-pointer" 
               [src]="getFileUrl(image)" 
               alt="Post Image" 
-              (click)="openModalimage(image)"
+              (click)="openModalimage(getFileUrl(image))"
             />
           </div>
       
@@ -140,7 +143,7 @@
               [src]="getFileUrl(image)" 
               alt="Post Image" 
               [class.hidden]="i >= 4"
-              (click)="openModalimage(image)"
+              (click)="openModalimage(getFileUrl(image))"
             />
             <div *ngIf="post.poste.posteFiles.length > 4" class="relative flex items-center justify-center bg-gray-200 rounded-lg">
               <span 
@@ -231,4 +234,5 @@
   
     </div>
     
+  </div>
   </div>

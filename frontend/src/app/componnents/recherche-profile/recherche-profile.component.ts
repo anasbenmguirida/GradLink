@@ -357,7 +357,7 @@ console.log(isLiked)
 
 isModalOpen = false;
 modalImage: string | null = null;
-
+isModalOpenn = false;
 openModal(imageSrc: string): void {
   this.modalImage = imageSrc;
   this.isModalOpen = true;

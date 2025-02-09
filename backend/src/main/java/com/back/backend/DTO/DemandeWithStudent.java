@@ -12,5 +12,5 @@ public class DemandeWithStudent {
 private DemandeMentorat demande ;
 private String prenomEtudiant;
 private String nomEtudiant; 
-private byte[] photoProfile ; 
+private String photoProfile ; 
 }
