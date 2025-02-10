@@ -18,6 +18,7 @@ export class EventDetailsComponent implements OnInit {
   isAdmin: boolean = false; 
   menuOpen: boolean = false; // État du menu contextuel
   isReserved: boolean=false;
+  user: any;
 
   constructor(
     private router: Router,
@@ -42,7 +43,6 @@ export class EventDetailsComponent implements OnInit {
   
 
   ngOnInit() {
-    this.checkReservationStatus();
     if (isPlatformBrowser(this.platformId)) {
       const navigation = history.state;
       this.event = navigation ? navigation.event : null;
@@ -59,6 +59,8 @@ export class EventDetailsComponent implements OnInit {
     } else {
       console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
     }
+    this.checkReservationStatus();
+
     //this.loadEventDetails();
   }
   
@@ -74,17 +76,17 @@ export class EventDetailsComponent implements OnInit {
 
 
   checkReservationStatus(): void {
-    const userToken = localStorage.getItem('authToken');
-    if (userToken) {
-      this.eventService.getReservationStatus(this.eventId!).subscribe(
+    this.user = JSON.parse(localStorage.getItem('user') || '{}');
+console.log('ha anaaaaaaaaaaa',this.event.id)
+      this.eventService.getReservationStatus(this.event.id, this.user.id).subscribe(
         (response) => {
-          this.isReserved = response.isReserved; 
+          this.isReserved = response; 
         },
         (error) => {
           console.error('Erreur lors de la vérification de la réservation', error);
         }
       );
-    }
+    
   }
 
 
@@ -180,7 +182,6 @@ export class EventDetailsComponent implements OnInit {
   this.eventService.reserverEvent(this.eventId!).subscribe(
   (response) => {
     this.isReserved = true; // Mettre à jour l'état de la réservation
-    alert('Votre réservation a été prise en compte!');
   },
   (error) => {
     alert('Une erreur est survenue, veuillez réessayer.');
@@ -192,7 +193,6 @@ export class EventDetailsComponent implements OnInit {
   this.eventService.cancelReservation(this.eventId!).subscribe(
   (response) => {
     this.isReserved = false;
-    alert('Votre réservation a été annulée!');
   },
   (error) => {
     alert('Une erreur est survenue, veuillez réessayer.');
