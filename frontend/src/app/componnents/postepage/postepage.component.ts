@@ -35,22 +35,39 @@ export class PostePageComponent implements OnInit  {
     this.postForm = this.fb.group({
      textArea: [''],
      PosteFiles: [[]],
+      
     });
   }
   
   ngOnInit(): void {
 
 
+    if (isPlatformBrowser(this.platformId)) {
+      console.log('Code exécuté côté client');
+  
+      // Vérification et récupération des données utilisateur depuis localStorage
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        this.me = JSON.parse(userData);
+        console.log('Utilisateur chargé:', this.me);
+      } else {
+        console.log('Aucun utilisateur trouvé dans le localStorage.');
+      }
+  
+    } else {
+      console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
+    }
+  
+    // Vérification si l'utilisateur est chargé et que son ID est disponible
+    if (this.me && this.me.id) {
+      console.log('Utilisateur authentifié:', this.me.id);
+    } else {
+      console.log(this.me)
+      console.log('Utilisateur non authentifié ou ID manquant.');
+    }
     
-if (isPlatformBrowser(this.platformId)) {
-          console.log('hiiiiii123')
-
-          this.me = JSON.parse(localStorage.getItem('user') || '{}');
-  } else {
-          console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
-}
-this.photoUser=this.postService. getUserImage(this.me.id);
-console.log("photo",this.photoUser)
+// this.photoUser=this.postService. getUserImage(this.me.id);
+// console.log("photo",this.photoUser)
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data;
    console.log(this.posts)
@@ -86,11 +103,9 @@ console.log("photo",this.photoUser)
       isLiked: false,
     }));
     
-    const userId = this.me?.id;
-    if (!userId) {
-      console.error("Utilisateur non authentifié.");
-      return;
-    }
+    const userId = this.me.id;
+    console.log('soumaiaaaaa',this.me.firstName)
+   
     
     forkJoin(
       this.classifiedPosts.map((post) => 
@@ -113,15 +128,15 @@ console.log("photo",this.photoUser)
 
 
   
-navigateToProfile(user: any): void {
-  console.log("userID",user.id)
+navigateToProfile(id: any): void {
+  console.log("userID",id)
   console.log("meID",this.me.id)
-  if (user.id === this.me.id) {
-    console.log(user.id)
+  if (id === this.me.id) {
+    console.log(id)
     console.log(this.me.id)
     this.router.navigate(['/myProfile']);
   } else {
-    this.router.navigate([`/rechercheProfile/${user.id}`]);
+    this.router.navigate([`/rechercheProfile/${id}`]);
   }
 }
 
@@ -132,31 +147,28 @@ navigateToProfile(user: any): void {
       return false;
     }
   
-    // Liste des extensions d'image supportées
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.jfif'];
   
-    // Vérifier si le nom du fichier se termine par une extension d'image
     return imageExtensions.some(extension => fileName.toLowerCase().endsWith(extension));
   }
   
   
   isPdf(fileType: string): boolean {
-    return fileType === 'application/pdf';  // Vérifie si le type de fichier est un PDF
+    return fileType === 'application/pdf';  
   }
 
   submitPost(): void {
     if (this.postForm.valid) {
       const postData = this.postForm.value;
   
-      // Créez un objet FormData pour la requête multipart/form-data
       const formData = new FormData();
   
-      // Ajoutez la description au FormData
       formData.append('textArea', postData.textArea);
       formData.append('typePost', 'NORMAL');
       formData.append('userId', this.me.id);
+      formData.append('caummunauteId', '');
       this.selectedFiles.forEach((file) => {
-        formData.append('files', file); // "files[]" correspond à l'attente du backend
+        formData.append('files', file); 
       });
 
       console.log("Fichiers dans 'files[]' :");
@@ -170,17 +182,15 @@ this.selectedFiles.forEach((file, index) => {
 });
   
 
-      // Envoi des données au backend via le service
       this.postService.createPost(formData).subscribe(
         (response) => {
-          // Ajoutez le nouveau post localement (par exemple, dans une liste)
           // this.classifiedPosts.unshift(formData);
           console.log("le poste est ajoute");
           // Réinitialisez le formulaire et les fichiers sélectionnés
           this.postForm.reset();
           this.selectedFiles = [];
           this.selectedFileNames = [];
-          this.router.navigate(['/posts']);
+          location.reload();
         },
         (error) => {
           console.error('Erreur lors de l\'envoi du post :', error);
@@ -287,7 +297,7 @@ getMimeType(fileName: string): string {
     onFileChange(event: Event): void {
       const input = event.target as HTMLInputElement;
       
-      if (input.files && input.files.length > 0) {
+    if (input.files && input.files.length > 0) {
         Array.from(input.files).forEach((file) => {
           const mimeType = file.type;
             const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
@@ -295,14 +305,13 @@ getMimeType(fileName: string): string {
 
           if (mimeType.startsWith('image/') || mimeType === 'application/pdf'
         ||  mimeType.startsWith('application') && validExtensions.includes(fileExtension || '')) {
-            this.selectedFiles.push(file);  // Ajoute le fichier valide à la liste
-            this.selectedFileNames.push(file.name); // Stocke le nom du fichier
+            this.selectedFiles.push(file);  
+            this.selectedFileNames.push(file.name); 
           } else {
             console.error('Type de fichier non pris en charge :', file.name);
           }
         });
     
-        // Log des fichiers sélectionnés (utile pour le débogage)
         console.log('Fichiers sélectionnés :', this.selectedFiles);
         console.log('Noms des fichiers :', this.selectedFileNames);
       }
@@ -311,13 +320,12 @@ getMimeType(fileName: string): string {
     
 
   
-  selectedImages: string[] = []; // Images sélectionnées pour la galerie
-isGalleryOpen: boolean = false; // Initialement fermé
+  selectedImages: string[] = []; 
+isGalleryOpen: boolean = false; 
 openGallery(images: string[]): void {
-  this.selectedImages = images; // Stocke les images restantes
+  this.selectedImages = images; 
   console.log('Opening gallery with images:', images);
-  // Ajoutez ici la logique pour ouvrir un modal ou une galerie
-  this.isGalleryOpen = true; // Exemple : activer un état pour afficher un modal
+  this.isGalleryOpen = true; 
 }
 
 closeGallery(): void {
@@ -328,7 +336,7 @@ closeGallery(): void {
 
 selectedImage: string | null = null;
 isModalOpen:boolean=false;
-openModalimage(image: string) {
+openModalimage(image: any) {
   this.selectedImage = image;
   this.isModalOpen=true;
 }
@@ -340,34 +348,30 @@ closeModalimage() {
   
 
 toggleLike(post: any): void {
-  const userId = this.me.id; // Utilise l'identifiant de l'utilisateur connecté
+  const userId = this.me.id; 
   console.log(post)
-  const isLiked = !post.isLiked; // L'inverse de l'état actuel du like
+  const isLiked = !post.isLiked; 
 console.log(isLiked)
   if (isLiked) {
-    // Utiliser le service pour "liker"
     this.postService.likePost(post.poste.id, userId).subscribe(
       (response) => {
         if (response) {
-          post.isLiked = true; // Met à jour l'état local
-          post.nbrLikes = (post.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
-          console.log(`Post liké avec succès :`, post);
+          post.isLiked = true; 
+          post.poste.nbrLikes = (post.poste.nbrLikes || 0) + 1; 
         } else {
           console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
         }
       },
       (error) => {
         console.error('Erreur lors du like du post :', error);
-        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   } else {
-    // Utiliser le service pour "unliker"
     this.postService.unlikePost(post.poste.id, userId).subscribe(
       (response) => {
         if (response ) {
-          post.isLiked = false; // Met à jour l'état local
-          post.nbrLikes = (post.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
+          post.isLiked = false;
+          post.poste.nbrLikes = (post.poste.nbrLikes || 0) - 1; 
           console.log(`Post unliké avec succès :`, post);
         } else {
           console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
@@ -375,7 +379,6 @@ console.log(isLiked)
       },
       (error) => {
         console.error('Erreur lors du unlike du post :', error);
-        // Optionnel: Afficher une notification ou message d'erreur
       }
     );
   }

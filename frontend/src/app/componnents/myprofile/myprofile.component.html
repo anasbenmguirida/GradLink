@@ -11,7 +11,7 @@
     <div class="user px-4 -mt-20 z-10">
     
       <div class="profile w-40 h-40">
-        <img  src="profile.png"  (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
+        <img       [src]="me.photoProfile"   (click)="openImage()"  class="rounded-full border-4 border-white shadow-md w-40 h-40">
       </div>
 
       <div
@@ -30,33 +30,41 @@
       <h2 class="text-xl font-bold mb-4">Photo de profil</h2>
       <div class="flex flex-col items-center">
         <img
-        src="getFileUrl(photoUser)"
-          alt="Photo de profil"
-          class="w-50 h-50 rounded-full mb-4"
-        />
+        [src]="me.photoProfile"
+        alt="Photo de profil"
+        class="w-80 h-80 object-cover mb-4"
+      />
+      
    
-       <div class="flex justify-end w-full">
-          <button (click)="selectFile()" class="bg-gray-500 text-white rounded mb-2 w-12 h-12">
-            <img src="Iconmoodify.jpeg" class="w-full h-full object-cover" />
-          </button>
+      <div class="flex w-full items-center justify-end">
+        <span *ngIf="newImage" class="mr-2">{{ newImage.name }}</span>
+      
+        <button (click)="fileInput.click()" class="bg-gray-500 text-white rounded mb-2 w-12 h-12">
+          <img src="Iconmoodify.jpeg" class="w-full h-full object-cover" />
+        </button>
       </div>
-        <form [formGroup]="form" (Submit)="updateProfile($event)">
-    
+      
+      
+      <form (ngSubmit)="updatePhoto()">
         <input  
           #fileInput
           type="file"
-          formControlName="image"
+         
+          name="image"
           accept="image/*"
           class="hidden"
           (change)="onImageSelected($event)"
         />
-      </form>
-      
-      
+     
+       
+        
         <button type="submit" class="bg-gray-500 text-white rounded mb-2 w-12 h-12">
           Save
         </button>
-        
+      
+     
+      </form>
+      
         
       </div>
 
@@ -109,7 +117,7 @@
       >
         ✖
       </button>
-      <h2 class="text-xl font-bold mb-4">Modifier le résumé</h2>
+      <h2 class="text-xl font-bold mb-4">Modifier le profile </h2>
       
      
       <form [formGroup]="form" (Submit)="updateProfile($event)">
@@ -207,7 +215,7 @@
       <div class="post-header">
         <img 
           class="profile-image w-12 h-12 rounded-full object-cover" 
-         src="profile.png"
+        [src]="me.photoProfile"
 
           alt="Profile Image" 
         />
@@ -277,10 +285,10 @@
   
   <div class="post-header flex items-center justify-between mb-4">
     <div class="flex items-center space-x-3">
-      <img class="profile-image w-12 h-12 rounded-full object-cover" [src]="post.profileImage" alt="Profile Image" />
+      <img class="profile-image w-12 h-12 rounded-full object-cover" [src]="me.photoProfile" alt="Profile Image" />
       <div class="user-info">
         <h3 class="font-medium text-lg">{{ post.firstName }}{{ post.lastName }}</h3>
-        <p class="text-sm text-gray-500">{{ post.daysAgo }}j</p>
+       
       </div>
     </div>
     
@@ -295,10 +303,10 @@
   
   <div *ngIf="visibleLists[i]" class="max-w-sm bg-white rounded-lg shadow-lg overflow-hidden absolute z-10 top-12 right-0">
     <ul class="list-group list-group-light">
-      <li (click)="editPost(post)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
+      <li (click)="editPost(post.poste)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
         Modifier
       </li>
-      <li  (click)="deletePost(post.poste.id)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
+      <li  (click)="deletePost(post.poste)" class="px-3 py-2 cursor-pointer bg-gray-200 hover:bg-gray-400">
         Supprimer
       </li>
     </ul>
@@ -309,7 +317,6 @@
         &#x2715;
       </button>
       <h3 class="text-lg font-medium mb-4">Modifier le post</h3>
-      <form (ngSubmit)="updatePost()">
         <textarea 
           [(ngModel)]="editingPost.textArea" 
           name="textArea" 
@@ -321,11 +328,12 @@
   
        
         <button 
+        (click)=" updatePost()"
           type="submit" 
           class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">
           Enregistrer
         </button>
-      </form>
+     
     </div>
   </div>
   
@@ -414,7 +422,7 @@
         
       </ng-container>
 
-      <div *ngIf="isModalOpen" class="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div *ngIf="isModalOpenn" class="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white p-4 rounded-lg shadow-lg max-w-md w-full">
           <img [src]="selectedImage" alt="Selected Image" class="w-full h-auto rounded-lg" />
           <button 
@@ -449,12 +457,7 @@
 </div>
 
 
-   
-    <div *ngIf="post.pdfs.length > 0" class="pdf-links mt-4">
-      <div *ngFor="let pdf of post.pdfs" class="pdf-link">
-        📄 <a [href]="pdf" target="_blank" class="text-blue-600 underline">Voir le fichier PDF</a>
-      </div>
-    </div>
+
   </div>
 
 

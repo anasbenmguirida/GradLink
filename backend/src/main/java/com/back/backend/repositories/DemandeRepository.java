@@ -20,10 +20,9 @@ List<DemandeMentorat> getAllDemandeLaureat(@Param("id") int id) ;
 @Query(value = "select status_mentorat from demande_mentorat where laureat_id=:idLaureat and etudiant_id=:idEtudiant", nativeQuery = true)
 int getStatusMentorat(@Param("idLaureat") int idLaureat, @Param("idEtudiant") int idEtudiant);
 
+@Query(value = "select *FROM demande_mentorat WHERE laureat_id=:idlaureat and etudiant_id=:idEtudiant", nativeQuery = true)
+DemandeMentorat getDemandeMentorat(@Param("idlaureat") int idlaureat, @Param("idEtudiant") int idEtudiant) ; 
 
-
-@Query("SELECT d FROM DemandeMentorat d WHERE d.laureatId = :laureatId AND d.statusMentorat = :statusMentorat")
-List<DemandeMentorat> findMentoredStudentsByLaureatIdAndStatusMentorat(@Param("laureatId") int laureatId, @Param("statusMentorat") StatusMentorat statusMentorat);
-
-
+@Query(value = "select * FROM demande_mentorat WHERE laureat_id=:id and status_mentorat=0" , nativeQuery = true)
+List<DemandeMentorat> getAllDemandes(@Param("id") int id) ;
 }

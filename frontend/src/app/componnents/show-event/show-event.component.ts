@@ -135,6 +135,7 @@ user:any
 
   reloadEvents(newEvent: any): void {
     console.log('Événement ajouté :', newEvent);
+   location.reload()
     this.loadEvents();
   }
 }

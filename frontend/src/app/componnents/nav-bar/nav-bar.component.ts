@@ -1,9 +1,14 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, inject, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
 import { MessagerieService } from '../../services/messagerie/messagerie.service';
+import { Injectable } from '@angular/core';
+import { webSocket } from 'rxjs/webSocket';
+import { ProfileService } from './../../services/profile/profile.service';
+import { Subscription } from 'rxjs';
+
 
 
 
@@ -14,16 +19,20 @@ import { MessagerieService } from '../../services/messagerie/messagerie.service'
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css',
 })
-export class NavBarComponent {
+
+@Injectable ({
+  providedIn:'root',
+})
+export class NavBarComponent implements OnInit , OnDestroy {
   query :string=''; 
   invitations:any=[];
   usersMessage :any=[];
   filteredUsers: any[] = []; 
 demandesMentorat: any[] = []; 
 isFocused: boolean = false;
-
+private refreshInterval: any;
 me:any;
-constructor(private demandeService: DemandeMentoratService, private messagerieService:MessagerieService
+constructor(private demandeService: DemandeMentoratService,private ProfileService :ProfileService,   private messagerieService:MessagerieService,private cdr: ChangeDetectorRef
   ,@Inject(PLATFORM_ID) private platformId: Object
 ) { }
 private router =inject(Router);
@@ -32,25 +41,200 @@ private router =inject(Router);
 
 
     ngOnInit(): void {
+
+ 
+
  if (isPlatformBrowser(this.platformId)) {
            console.log('hiiiiii123')
  
            this.me = JSON.parse(localStorage.getItem('user') || '{}');
+           console.log("aaaaaaaaa")
+
            console.log(this.me)
    } else {
            console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
          }
+
+
  
 // /this.me={id:1,image:'profile.png',firstname:"soumaia",lastname:"Kerouan Salah",role:"laureat"};
    
+this.setupWebSocketListener();  // Vérifiez que cette fonction est bien appelée
+console.log("setupWebSocketListener appelé");
 
-
+//this.startRefreshingMessages();
 this.demandeService.getDemandes(this.me.id).subscribe((data) => {
   this.demandesMentorat = data;
 });
-
       this.loadAllUsers();
+ }
+
+
+
+//  startRefreshingMessages(): void {
+//   // Rafraîchissement des messages toutes les 30 secondes
+//   this.refreshInterval = setInterval(() => {
+//     this.refreshMessages();
+//   }, 30000); // Rafraîchissement toutes les 30 secondes
+
+//   // En plus, on écoute en temps réel via WebSocket
+//   this.listenForNewMessages();
+// }
+
+// // Rafraîchit les messages à partir du service Messagerie
+// refreshMessages(): void {
+//   if (this.selectedUser) {
+//     this.messagerieService.getMessagesByUser(this.selectedUser.id, this.selectedUser.id)
+//       .subscribe(messages => {
+//         this.selectedMessages = messages;
+//       });
+//   }
+// }
+
+
+listenForNewMessages(): void {
+  this.messagerieService.getMessages().subscribe((newMessage: any) => {
+    console.log("Message reçu via WebSocket:", newMessage);
+    // Si le message appartient à l'utilisateur sélectionné, on l'ajoute
+    if (
+      this.selectedUser &&
+      (newMessage.senderId === this.selectedUser.id || newMessage.recipientId === this.selectedUser.id)
+    ) {
+      this.selectedMessages.push(newMessage);
     }
+  });
+}
+ messageSubscription: Subscription | null = null;
+
+ setupWebSocketListener() {
+  console.log("WebSocket ouvert:", this.messagerieService.isSocketOpen()); // Vérifiez si le WebSocket est bien ouvert
+  this.messageSubscription = this.messagerieService.getMessages().subscribe(
+    (newMessage: any) => {
+      console.log("Message reçu via WebSocket:", newMessage);
+      if (
+        this.selectedUser &&
+        (newMessage.senderId === this.selectedUser.id || newMessage.recipientId === this.selectedUser.id)
+      ) {
+        this.selectedMessages.push(newMessage);
+        this.cdr.detectChanges();
+      }
+    },
+    (error: any) => {
+      console.error("Erreur lors de la réception des messages:", error);
+    }
+  );
+}
+
+
+
+ ngOnDestroy() {
+  // Se désabonner lors de la destruction du composant
+  if (this.messageSubscription) {
+    this.messageSubscription.unsubscribe();
+  }
+  this.messagerieService.closeConnection();  // Fermer la connexion WebSocket
+} 
+    selectedUser: any = null; 
+    selectedMessages:any[] = [];
+    newMessage = '';
+  
+    onSelectUser(user: any) {
+      this.isMessagerie = false;
+      this.selectedUser = user;
+      this.selectedMessages = []; // Nettoyer les anciens messages
+    
+      console.log("Chargement des messages...");
+     
+      // Récupérer l'historique des messages
+      this.messagerieService.getMessagesByUser(this.me.id, user.id).subscribe(
+        (messages: any[]) => {
+          this.selectedMessages = messages;
+          console.log("Messages récupérés:", messages);
+        },
+        (error: any) => {
+          console.error("Erreur lors de la récupération des messages:", error);
+        }
+      );
+    }
+    
+  
+    closeChat() {
+      this.selectedUser = null;
+      this.selectedMessages = [];
+    }
+  
+    sendMessage() {
+      if (!this.newMessage.trim() || !this.selectedUser) {
+        console.warn('Le message est vide ou aucun utilisateur n’est sélectionné.');
+        return;
+      }
+    
+      const message = {
+        senderId: this.me.id,
+        recipientId: this.selectedUser.id,
+        contenue: this.newMessage.trim(),
+      };
+    
+      try {
+        // Vérifier si le WebSocket est encore ouvert
+        if (!this.messagerieService.isSocketOpen()) {
+          console.error('La connexion WebSocket est fermée.');
+          return;
+        }
+    
+        // Envoyer le message via WebSocket
+        this.messagerieService.sendMessage(message);
+    
+        console.log('Message envoyé via WebSocket:', message);
+    
+        
+        const outgoingMessage = {
+          senderId: message.senderId,
+          recipientId: message.recipientId,
+          contenue: message.contenue,
+          time: new Date().toLocaleTimeString(),
+        };
+    
+        // Ajouter le message envoyé à la liste des messages de la conversation
+        this.selectedMessages.push(outgoingMessage);
+    
+        // Réinitialiser le champ de saisie
+        this.newMessage = '';
+      } catch (error) {
+        console.error('Erreur lors de l’envoi du message via WebSocket:', error);
+      }
+    }
+    
+  
+    toggleMessagerie() {
+      this.isMessagerie = !this.isMessagerie;
+  
+      // Charger les messages si la boîte est ouverte et les données sont vides
+      if (this.isMessagerie ) {
+        console.log("wsal n toggle msj")
+        this.loadUsersMessages();
+      }
+    }
+  
+  
+      loadUsersMessages() {
+  
+      this.messagerieService.getUsersMessages(this.me.id).subscribe(
+        data => {
+          this.usersMessage = data;
+          console.log("listeUserMessage",this.usersMessage)
+        },
+        error => {
+          console.error('Erreur lors du chargement des messages:', error);
+      
+        }
+      );
+    }
+  
+
+
+
+
 
 
 
@@ -67,7 +251,7 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     }
 
   onSelectDemande(id: number): void {
-    console.log(id);
+    console.log('id demande choisi',id);
     this.router.navigate(['/demandesMentorat'], { state: { id} });
   }
 
@@ -96,6 +280,10 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
 
   toggleInvit() {
     this.isInvit = !this.isInvit;
+    if (this.isInvit ) {
+      console.log("wsal n toggle demandes")
+      this.loadUsersDemandes();
+    }
   }
 
   acceptedemande(id: number): void {
@@ -109,9 +297,70 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
       console.log('Demande refusée:', response);
     });
   }
-   
 
-  isMenu = true;
+  
+  // cancelInvitation(etudiantId:any) {
+    
+  //   this.ProfileService
+  //     .cancelInvitation( etudiantId,this.me.id)
+  //     .subscribe(
+  //       (response) => {
+  //  console.log(response);
+        
+  //       },
+  //       (error) => {
+  //         console.error('Erreur lors de l\'annulation de l\'invitation:', error);
+  //       }
+  //     );
+  // }
+
+  // show: boolean = false;
+  // acceptInvitation(etudiantId:any) {
+  //   this.ProfileService
+  //     .acceptInvitation(etudiantId,this.me.id)
+  //     .subscribe(
+  //       (response) => {
+  //         console.log(response);
+  //         this.show=false;
+      
+  //       },
+  //       (error) => {
+  //         console.error('Erreur lors de l\'acceptation de l\'invitation:', error);
+  //       }
+  //     );
+  // }
+
+
+
+  statusDemande: { [key: number]: string } = {}; // Utilisation d'un objet simple pour stocker l'état
+
+  cancelInvitation(etudiantId: number): void {
+    console.log(etudiantId);
+    this.ProfileService.cancelInvitation(etudiantId, this.me.id).subscribe({
+      next: (response) => {
+        console.log('Invitation refusée:', response);
+        this.statusDemande[etudiantId] = 'refused'; // Mettre à jour l'affichage
+      },
+      error: (error) => {
+        console.error('Erreur lors du refus de l\'invitation:', error);
+      }
+    });
+  }
+  
+  acceptInvitation(etudiantId: number): void {
+    this.ProfileService.acceptInvitation(etudiantId, this.me.id).subscribe({
+      next: (response) => {
+        console.log('Invitation acceptée:', response);
+        this.statusDemande[etudiantId] = 'accepted'; // Mettre à jour l'affichage
+      },
+      error: (error) => {
+        console.error('Erreur lors de l\'acceptation de l\'invitation:', error);
+      }
+    });
+  }
+  
+
+  isMenu = false;
   toggleMenu(){
     this.isMenu=! this.isMenu;
   }
@@ -128,125 +377,24 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
     }
   }
 
-  selectedUser: any = null; 
-  selectedMessages:any[] = [];
-  newMessage = '';
 
-  onSelectUser(user: any) {
-    this.isMessagerie = false;
-    this.selectedUser = user;
-    console.log("ba9i maconsoma");
-  
-    // Récupérer les messages existants entre l'utilisateur actuel et l'utilisateur sélectionné
-    this.messagerieService.getMessagesByUser(this.me.id, user.id).subscribe(
-      (messages: any[]) => {
-        console.log("wsal n onSelectUser");
-        this.selectedMessages = messages;
-        console.log('Messages récupérés:', messages);
-      },
-      (error: any) => {
-        console.error('Erreur lors de la récupération des messages:', error);
-      }
-    );
-  
-    // Écouter les nouveaux messages via WebSocket
-    this.messagerieService.getMessages().subscribe(
-      (newMessage: any) => {
-        // Si le message est destiné à l'utilisateur sélectionné, l'ajouter à la liste des messages
-        if (newMessage.senderId === user.id || newMessage. recipientId === user.id) {
-          this.selectedMessages.push(newMessage);
-          console.log('Nouveau message reçu:', newMessage);
-        }
-      },
-      (error: any) => {
-        console.error('Erreur lors de la réception des messages:', error);
-      }
-    );
-  }
   
 
-  closeChat() {
-    this.selectedUser = null;
-    this.selectedMessages = [];
-  }
+  loadUsersDemandes() {
 
-  sendMessage() {
-    if (!this.newMessage.trim() || !this.selectedUser) {
-      console.warn('Le message est vide ou aucun utilisateur n’est sélectionné.');
-      return;
-    }
-  
-    const message = {
-      senderId: this.me.id,
-      recipientId: this.selectedUser.id,
-      contenue: this.newMessage.trim(),
-    };
-  
-    try {
-      // Vérifier si le WebSocket est encore ouvert
-      if (!this.messagerieService.isSocketOpen()) {
-        console.error('La connexion WebSocket est fermée.');
-        return;
-      }
-  
-      // Envoyer le message via WebSocket
-      this.messagerieService.sendMessage(message);
-  
-      console.log('Message envoyé via WebSocket:', message);
-  
-      // Enregistrer le message dans la base de données
-      this.messagerieService.saveMessage(message).subscribe(
-        (response) => {
-          console.log('Message enregistré dans la base de données:', response);
-        },
-        (error) => {
-          console.error('Erreur lors de l\'enregistrement du message dans la base de données:', error);
-        }
-      );
-  
-      // Ajouter le message localement pour mise à jour instantanée de l'interface
-      const outgoingMessage = {
-        senderId: message.senderId,
-        recipientId: message.recipientId,
-        content: message.contenue,
-        time: new Date().toLocaleTimeString(),
-      };
-  
-      // Ajouter le message envoyé à la liste des messages de la conversation
-      this.selectedMessages.push(outgoingMessage);
-  
-      // Réinitialiser le champ de saisie
-      this.newMessage = '';
-    } catch (error) {
-      console.error('Erreur lors de l’envoi du message via WebSocket:', error);
-    }
-  }
-  
-
-  toggleMessagerie() {
-    this.isMessagerie = !this.isMessagerie;
-
-    // Charger les messages si la boîte est ouverte et les données sont vides
-    if (this.isMessagerie ) {
-      console.log("wsal n toggle msj")
-      this.loadUsersMessages();
-    }
-  }
-
-
-    loadUsersMessages() {
-
-    this.messagerieService.getUsersMessages(this.me.id).subscribe(
-      data => {
-        this.usersMessage = data;
-        console.log("listeUserMessage",this.usersMessage)
+   
+this.demandeService.getDemandes(this.me.id).subscribe((data) => {
+    
+        this.demandesMentorat = data;
+        console.log("listeDemandeMentorat",this.demandesMentorat)
       },
       error => {
-        console.error('Erreur lors du chargement des messages:', error);
+        console.error('Erreur lors du chargement des demandes:', error);
     
       }
     );
   }
+
 
 
 
@@ -306,163 +454,5 @@ this.demandeService.getDemandes(this.me.id).subscribe((data) => {
 
 
 
-//  this.userAuth={id:1,image:'profile.png',firstname:"soumaia",lastname:"Kerouan Salah",role:"laureat"}
-   
-
-//  this.usersMessage = [
-//   { firstname: 'Soumaia ', lastname: 'Kerouan salah', image:'profile.png',messages: [
-//     { content: 'Salut, comment ça va ?', isOutgoing: false, time: '10:00' },
-//     { content: 'Ça va bien et toi ?', isOutgoing: true, time: '10:02' }
-//   ]},
-//   { firstname: 'Soumaia ', lastname: 'Kerouan salah', image:'profile.png',messages: [
-//     { content: 'Salut, comment ça va ?', isOutgoing: false, time: '10:00' },
-//     { content: 'Ça va bien et toi ?', isOutgoing: true, time: '10:02' },
-//     { content: 'Salut, comment ça va ?', isOutgoing: false, time: '10:00' },
-//     { content: 'Salut, comment ça va ?', isOutgoing: false, time: '10:00' },
-//     { content: 'Ça va bien et toi ?', isOutgoing: true, time: '10:02' },
-//     { content: 'Ça va bien et toi ?', isOutgoing: true, time: '10:02' },
-
-//   ] },
-//   { firstname: 'Soumaia ', lastname: 'Kerouan salah', image:'profile.png',messages: [
-//     { content: 'Salut, comment ça va ?', isOutgoing: false, time: '10:00' },
-//     { content: 'Ça va bien et toi ?', isOutgoing: true, time: '10:02' }
-//   ]},
-//   { firstname: 'Soumaia ', lastname: 'Kerouan salah', image:'profile.png',messages: [
-//     { content: 'Salut, comment ça va ?', isOutgoing: false, time: '10:00' },
-//     { content: 'Ça va bien et toi ?', isOutgoing: true, time: '10:02' }
-//   ]},
-//   { firstname: 'Soumaia ', lastname: 'Kerouan salah', image:'profile.png',messages: [
-//     { content: 'Salut, comment ça va ?', isOutgoing: false, time: '10:00' },
-//     { content: 'Ça va bien et toi ?', isOutgoing: true, time: '10:02' }
-//   ]},
-// ];
-
-// this.demandesMentor= [
-//   { id: 1, image: 'profile.png', content: 'a vous envoyé une demande de mentorat', time: '6j', firstname: 'Aya', lastname: 'Sal' },
-//   { id: 2, image: 'profile.png', content: 'a vous envoyé une demande de mentorat', time: '6j', firstname: 'Ali', lastname: 'Khan' },
-//   { id: 3, image: 'profile.png', content: 'a vous envoyé une demande de mentorat', time: '6j', firstname: 'Sara', lastname: 'Ahmed' }
-// ];
-//   }
-//   usersAll: any[] = [
-//     {id:1, firstname: 'Soumaia ', lastname: 'Kerouan salah', image: 'profile.png',messages:['hi','ana maja'],specialite:'develop' },
-//     { id:2,firstname: 'safae ', lastname: 'Kerouan salah', image: 'profile.png',messages:['hi','ana maja'] ,specialite:'full stac'},
-//     {id:3, firstname: 'malak ', lastname: 'Kerouan salah', image: 'groupeIcon.png',messages:['hi','ana maja'] ,filiere:'ginf'},
-//   ];
- 
-//   search(): void {
-//     console.log('Valeur de query :', this.query);
-  
-//     const queryLower = this.query.toLowerCase().trim();
-  
-//     console.log('Recherche pour :', queryLower);
-  
-//     this.filteredUsers = this.usersAll.filter((user) =>
-//       user.firstname.toLowerCase().startsWith(queryLower) || 
-//     user.lastname.toLowerArCase().startsWith(queryLower)||
-//       user.specialisation?.toLowerCase().startsWith(queryLower) 
-//     );
-  
-//     console.log('Utilisateurs filtrés:', this.filteredUsers);
-//   }
-  
-
-//   isMobileMenuOpen = false;
-
-//   toggleMobileMenu() {
-//     this.isMobileMenuOpen = !this.isMobileMenuOpen;
-//   }
-
-//   isMessagerie = false;
-
-//   toggleMessagerie() {
-//     this.isMessagerie = !this.isMessagerie;
-//   }
-  
-
-//   isNotif = false;
-
-//   toggleNotif() {
-//     this.isNotif = !this.isNotif;
-//   }
-   
-
-  
-//   isInvit= false;
-
-//   toggleInvit() {
-//     this.isInvit = !this.isInvit;
-//   }
-   
-//   private router =inject(Router);
-
-
-
-
-
-
-//   isMenu = true;
-//   toggleMenu(){
-//     this.isMenu=! this.isMenu;
-//   }
-  
-  
-//  // selectedUser: any = null;
-//   //selectedMessages: any[] = [];
-
-
- 
-
-//   selectedUser: any = null; 
-//   selectedMessages:any[] = [];
-//   newMessage = '';
-
-//   onSelectUser(user: any) {
-//     this.isMessagerie=false;
-//     this.selectedUser = user;
-//     this.selectedMessages = user.messages;
-//   }
-
-//   closeChat() {
-//     this.selectedUser = null;
-//     this.selectedMessages = [];
-//   }
-
-  
-
-//   sendMessage() {
-//     if (this.newMessage.trim()) {
-//       this.selectedMessages.push({
-//         content: this.newMessage,
-//         isOutgoing: true,
-//         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-//       });
-//       this.newMessage = '';
-//     }
-//   }
-
-
-
-//   //demande 
-
-//   onSelectDemande(id: number): void {
-//     console.log(id);
-//     this.router.navigate(['/demandesMentorat'], { state: { id} });
-//   }
-
-
-//   NavigateToMyprofile(){
-//     this.router.navigate(['/myProfile'])
-//   } 
-
-
-//   navigateToProfile(user: any): void {
-//     if (user.id === this.userAuth.id) {
-      
-//       this.router.navigate(['/myProfile']);
-//     } else {
-
-//       this.router.navigate(['/rechercheProfile', user.id]);
-//     }
-//   }
 
 }

@@ -1,9 +1,30 @@
-/* Conteneur global pour la page */
-
+@import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+      
+
+.image-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Espacement entre les images */
+.image-gallery {
+  gap: 8px;
+}
+
+/* Styles pour trois images */
+.grid-cols-3 img {
+  height: 150px; /* Ajustez la hauteur selon vos besoins */
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
 
 .page-container {
   display: flex;
@@ -26,10 +47,18 @@
   max-width: 600px; /* Limiter la largeur maximale du post */
 }
 
-/* Image du post */
+
+/* Assure que l'image garde ses proportions sans zoom */
 .post-image {
-  width: 100%; /* Prendre toute la largeur disponible */
-  height: auto; /* Garder les proportions */
+  width: 100%; /* L'image prend toute la largeur disponible du conteneur */
+  height: auto; /* La hauteur s'adapte pour garder les proportions */
+}
+
+/* Classe pour gérer la hauteur de l'image */
+.single-image {
+  max-height: 300px; /* Définit une hauteur maximale pour l'image */
+  object-fit: contain; /* L'image sera affichée en entier sans découpe */
+  width: 100%; /* L'image prend toute la largeur disponible sans déformation */
 }
 
 /* Image de profil */
@@ -82,6 +111,7 @@
   background-color: #fff;
 }
 
+
 .post-header {
   display: flex;
   align-items: center;
@@ -94,6 +124,7 @@
   border-radius: 50%;
   margin-right: 12px;
 }
+
 
 .user-info h3 {
   margin: 0;
@@ -133,7 +164,7 @@
   height: 1px;  /* Hauteur de la ligne */
   background-color: #ddd;  /* Couleur de la ligne */
   margin: 10px 0;  /* Espacement au-dessus et en-dessous de la ligne */
-  border-top: 1px solid #ddd;  /* Ligne solide, vous pouvez aussi utiliser `dotted` pour une ligne pointillée */
+  border-top: 1px solid #ddd;  /* Ligne solide, vous pouvez aussi utiliser dotted pour une ligne pointillée */
 }
 
 .post-image {
@@ -150,4 +181,14 @@ button.liked {
   color: blue;  /* Si l'élément est liké, la couleur devient bleue */
 }
 
-
+.options-list {
+  position: absolute;
+  top: 80%; /* Positionner juste en dessous du bouton */
+  right: 200px; /* Décaler de 40px vers la droite */
+  margin-top: 8px; /* Décalage de 8px sous le bouton */
+  max-width: 200px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  border-radius: 8px;
+}

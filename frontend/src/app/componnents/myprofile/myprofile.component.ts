@@ -53,7 +53,6 @@ export class MyprofileComponent implements OnInit {
   } else {
           console.log('Code exécuté côté serveur, pas d\'accès à l\'historique.');
         }
-this.photoUser=this.postService. getUserImage(this.me.id);
 
   // this.me = {
   //   role: 'LAUREAT',
@@ -64,6 +63,9 @@ this.photoUser=this.postService. getUserImage(this.me.id);
   //   promotion:"2025",
   // };
   
+  this.photoUser=this.me.photoProfile;
+console.log("photoprofile");
+console.log(this.photoUser);
     this.postService.getUserPosts(this.me.id).subscribe((data) => {
       this.posts = data;
       console.log("mesPost",this.posts)
@@ -186,7 +188,8 @@ this.selectedFiles.forEach((file, index) => {
           this.postForm.reset();
           this.selectedFiles = [];
           this.selectedFileNames = [];
-          this.router.navigate(['/myProfile']);
+          location.reload();
+
         },
         (error) => {
           console.error('Erreur lors de l\'envoi du post :', error);
@@ -258,7 +261,7 @@ console.log(isLiked)
       (response) => {
         if (response) {
           post.isLiked = true; // Met à jour l'état local
-          post.nbrLikes = (post.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
+          post.poste.nbrLikes = (post.poste.nbrLikes || 0) + 1; // Optionnel: augmenter le nombre de likes
           console.log(`Post liké avec succès :`, post);
         } else {
           console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
@@ -275,7 +278,7 @@ console.log(isLiked)
       (response) => {
         if (response ) {
           post.isLiked = false; // Met à jour l'état local
-          post.nbrLikes = (post.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
+          post.poste.nbrLikes = (post.poste.nbrLikes || 0) - 1; // Optionnel: diminuer le nombre de likes
           console.log(`Post unliké avec succès :`, post);
         } else {
           console.error('Erreur: la réponse du serveur n\'est pas attendue', response);
@@ -360,14 +363,57 @@ selectFile(): void {
 }
 
 onImageSelected(event: any): void {
-  const file = event.target.files[0]; // Récupère le fichier sélectionné
-  if (file) {
-    this.form.patchValue({image:file}) // Stocke l'image dans la variable imageFile
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    this.newImage = input.files[0];  // Récupère le fichier sélectionné
   }
+}
+newImage: File | null = null;
+
+updatePhoto() {
+  if (!this.newImage) {
+    alert('Veuillez sélectionner une image avant de soumettre.');
+    return;
+  }
+
+  // Création de FormData pour envoyer l'image et l'ID de l'utilisateur
+  const formData = new FormData();
+  formData.append('file', this.newImage);
+  formData.append('id', this.me.id);  // Ajout de l'ID utilisateur dans FormData
+  console.log("profiledataaa", this.newImage);
+  console.log("profiledata", formData);
+  console.log('ID:', formData.get('id'));
+  console.log('File:', formData.get('file'));
+
+  this.ProfileService.updatePhoto(formData).subscribe(
+    (response) => {
+      console.log('Photo Profil mise à jour avec succès:', response);
+      alert('Votre photo de profil a été mise à jour avec succès !');
+      
+      // Affecter directement la réponse (qui contient l'URL de la nouvelle photo) à `photoProfile`
+         
+     this.me.photoProfile = `${response}`;
+      localStorage.setItem('user', JSON.stringify(this.me)); // Mettre à jour localStorage
+ 
+      location.reload();
+ 
+
+  
+      // Si vous ne souhaitez pas rafraîchir la page, pas besoin d'utiliser `location.reload()`
+    },
+    (error) => {
+      console.error('Erreur lors de la mise à jour du profil:', error);
+      alert('Échec de la mise à jour de la photo de profil. Veuillez réessayer.');
+    }
+  );
+  
+  
 }
 
 
+
 isModalOpen = false; 
+isModalOpenn = false; 
   openModal(): void {
     this.isModalOpen = true;
   }
@@ -389,35 +435,48 @@ isModalOpen = false;
   
   closeEdit(): void {
     this.isEditing = false;
-    this.editingPost = { textArea: '', fichiers: [], id: null }; // ou undefined si vous préférez
+this.editingPost = null;
   }
 
   updatePost() {
-    this.postService.updatePost(this.editingPost).subscribe({
-      next: (response) => {
+    if (!this.editingPost || !this.editingPost.id || !this.editingPost.textArea) {
+      console.error('Invalid post data. Please check the input fields.');
+      return;
+    }
+  
+    console.log('Updating post:', this.editingPost);
+  
+    this.postService.updatePost(this.editingPost).subscribe(
+      (response) => {
         console.log('Post updated successfully:', response);
-        // Rediriger ou afficher un message de succès
-        //this.closeEdit();
-        this.router.navigate(['/posts']); // Exemple de redirection après succès
+        // Fermer le formulaire d'édition
+        this.closeEdit();
+        // Recharger la page ou rafraîchir la liste des posts
+        location.reload();
       },
-      error: (error) => {
+      (error) => {
         console.error('Error updating post:', error);
-        // Afficher un message d'erreur si nécessaire
+        // Ajouter une gestion d'erreur utilisateur si nécessaire
+        alert('Failed to update the post. Please try again.');
       }
-    });
+    );
   }
-
+  
   deletePost(post: any): void {
     this.postService.deletePost(post.id).subscribe(
       () => {
         console.log(`Post with ID ${post.id} deleted successfully.`);
-        this.posts = this.posts.filter((p:any) => p.id !== post.id); // Utilisation de "p" au lieu de "Post"
+        this.classifiedPosts = this.classifiedPosts.filter((p: any) => p.id !== post.id);
+        
+        // Rafraîchir la page après la suppression
+        location.reload();
       },
       (error) => {
         console.error('Error deleting post:', error);
       }
     );
   }
+  
   
 
 

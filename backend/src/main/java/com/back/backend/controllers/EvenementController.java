@@ -49,5 +49,22 @@ public class EvenementController {
         }
     }
     
+    @DeleteMapping("/{eventId}/cancel")
+  public ResponseEntity<String> cancelReservation(@PathVariable int eventId, @RequestBody Map<String, Integer> requestBody) {
+    int userId = requestBody.get("userId");
+    String result = evenementService.cancelReservation(eventId, userId);
+
+    if (result.equals("Reservation successfully canceled.")) {
+        return ResponseEntity.ok(result);
+    } else {
+        return ResponseEntity.status(404).body(result);
+    }
+}
+
+@GetMapping("/{eventId}/check-reservation")
+public ResponseEntity<Boolean> checkReservationStatus(@PathVariable int eventId, @RequestParam int userId) {
+    boolean reservationExists = evenementService.checkReservationStatus(eventId, userId);
+    return ResponseEntity.ok(reservationExists);
+}
     
 }

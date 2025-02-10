@@ -14,7 +14,7 @@ export class DemandeMentoratService {
 
   // Méthode pour récupérer les demandes de mentorat
   getDemandes(id: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/demandes/${id}`);
+    return this.http.get<any[]>(`${this.apiUrl}/laureat/demandes-pending/${id}`);
   }
 
     // Méthode pour accepter une demande

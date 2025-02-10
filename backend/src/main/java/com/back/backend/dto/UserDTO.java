@@ -13,5 +13,5 @@ public class UserDTO {
     private int id;
     private String firstName;
     private String lastName;
-    private byte[] photoProfile;
+    private String photoProfile;
 }

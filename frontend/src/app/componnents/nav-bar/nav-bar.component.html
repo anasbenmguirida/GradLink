@@ -4,9 +4,9 @@
       <!-- Logo + Recherche -->
       <div class="flex items-center space-x-4">
         <!-- Logo -->
-        <!-- <div class="flex shrink-0 items-center">
-          <img class="h-8 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
-        </div> -->
+        <div class="flex shrink-0 items-center">
+          <img class="h-8 w-auto" src="gradlink.jpeg" alt="Your Company">
+        </div>
 
         <!-- Barre de recherche (visible sur mobile et desktop) -->
         <div class="relative flex-1 sm:w-auto">
@@ -31,15 +31,16 @@
             <li *ngFor="let user of filteredUsers" 
                 (click)="navigateToProfile(user)" 
                 class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100">
-              <img [src]="user.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+              <img [src]="user.photoProfile" class="h-8 w-8 rounded-full object-cover" alt="User Image">
               <div>
                 <p 
-                class="text-sm font-medium text-gray-900"
+                class="text-sm font-semibold text-gray-1000" 
                 [ngClass]="{'underline font-bold': isFocused}" 
                 (focus)="isFocused = true" 
                 (blur)="isFocused = false">
                 {{ user.firstName }} {{ user.lastName }}
               </p>
+              
               
              
               
@@ -62,9 +63,7 @@
         </div>
       </div>
 
-      <!-- Navigation -->
       <div class="flex items-center justify-between flex-1">
-        <!-- Hamburger Icon for Mobile -->
         <div class="sm:hidden">
           <button (click)="toggleMobileMenu()" class="text-gray-400 hover:text-white">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -73,7 +72,6 @@
           </button>
         </div>
 
-        <!-- Links de navigation visible sur desktop -->
         <div class="hidden sm:flex space-x-4 ml-4">
           <a href="#" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white">Dashboard</a>
           <a routerLink="/posts" routerLinkActive="Active" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Home</a>
@@ -81,7 +79,7 @@
         </div>
 
         <!-- Messagerie, Notifications, Profil -->
-        <div class="flex items-center space-x-6 ml-8">
+        <div class="flex items-center space-x-6 ml-8 mr-2">
           <!-- Notifications -->
           <button type="button" (click)="toggleNotif()" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
             <img src="notif.jpeg" class="h-7 w-7 rounded-full object-cover" alt="Notifications">
@@ -89,32 +87,52 @@
 
           <div *ngIf="isInvit" class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-0">
             <div class="p-4">
-              <h3 class="text-lg font-semibold text-gray-900">Notifications</h3>
+              <h3 class="text-lg font-semibold text-gray-900">Demandes de mentorattt</h3>
               <ul>
                 <li *ngFor="let demande of demandesMentorat" class="py-2 border-b space-y-3">
                            
-                  <div class="flex items-start space-x-3">
+                  <div (click)="onSelectDemande(demande.demande.id)" class="flex items-start space-x-3">
                
-                    <img [src]="demande.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                    <img [src]="demande.photoProfile" class="h-10 w-10 rounded-full object-cover" alt="User Image">
                     
                 
                     <div>
                       <p class="text-sm font-medium text-gray-900">
-                        <strong>{{demande.firstName}} {{demande.lastName}}</strong> {{ demande.content }}
+                        
+                        <strong class="text-base">{{ demande.prenomEtudiant }} {{ demande.nomEtudiant }}</strong>
+
+                        <span class="font-normal"> a vous envoyé une demande de mentorat</span>
                       </p>
-                                  <p class="text-xs text-gray-500">{{ demande.time }}</p>
+                               
                     </div>
                   </div>
               
                 
                   <div class="flex justify-end space-x-2">
-                    <button class="px-4 py-2 bg-green-500 text-white text-sm rounded hover:bg-green-600">
+                    <!-- Afficher les boutons si la demande n'est pas encore traitée -->
+                    <ng-container *ngIf="!statusDemande[demande.demande.etudiantId]">
+                      <button 
+                      (click)="acceptInvitation(demande.demande.etudiantId)" 
+                      class="px-2 py-1 bg-blue-300 hover:bg-blue-400  text-xxs rounded hover:bg-green-600"
+                    >
                       Accepter
                     </button>
-                    <button class="px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600">
+                    
+                    <button 
+                      (click)="cancelInvitation(demande.demande.etudiantId)" 
+                      class="px-2 py-1  cursor-pointer bg-gray-200 hover:bg-gray-400   text-xxs rounded"
+                    >
                       Refuser
                     </button>
+                    
+                    </ng-container>
+                  
+                    <!-- Afficher le statut après acceptation ou refus -->
+                    <span *ngIf="statusDemande[demande.demande.etudiantId] === 'accepted'" class="text-green-600 font-semibold">Accepté</span>
+                    <span *ngIf="statusDemande[demande.demande.etudiantId] === 'refused'" class="text-red-600 font-semibold">Refusé</span>
                   </div>
+                  
+                  
                 </li>
               </ul>
               
@@ -145,7 +163,7 @@
                     [class.selected]="user === selectedUser"
                     class="flex items-center space-x-3 py-2 border-b cursor-pointer hover:bg-gray-100"
                     (click)="onSelectUser(user)">
-                    <img src="prof.jpg" class="h-8 w-8 rounded-full object-cover" alt="User Image">
+                    <img [src]="user.profilePhoto" class="h-10 w-10 rounded-full object-cover" alt="User Image">
                     <div>
                       <p class="text-sm font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</p>
                       <p class="text-xs text-gray-500" *ngIf="user.messages.length > 0">
@@ -162,7 +180,7 @@
             
             <div *ngIf="selectedUser" class="fixed bottom-0 right-0 w-full sm:w-96 bg-white shadow-xl rounded-t-xl border border-gray-200">
              <div class="flex items-center p-4 bg-gray-100 rounded-t-xl">
-                <img [src]="selectedUser.image" alt="profile" class="w-10 h-10 rounded-full object-cover mr-4">
+                <img [src]="selectedUser.profilePhoto" alt="profile" class="w-10 h-10 rounded-full object-cover mr-4">
                 <h3 class="text-lg font-semibold">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h3>
             
   
@@ -183,7 +201,6 @@
                     
                     <p class="text-sm">{{ message.contenue }}</p>
                     
-                    <span class="text-xs text-gray-500 ml-2 relative top-0.5">{{ message.time }}</span>
                   </div>
                 </div>
               </div>
@@ -206,55 +223,62 @@
             
   
             <div  *ngIf="me.role==='LAUREAT'" class="flex items-center space-x-6 ml-8 relative">
-              <button type="button" (click)="toggleNotif()" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
+              <button type="button" (click)="toggleInvit()" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
                 <span class="sr-only">View invitation</span>
               <img src="groupeIcon.jpg" class="h-7 w-7 rounded-full object-cover">
             </button>
-            <div *ngIf="isNotif " class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-0">
+            <div *ngIf="isNotif" class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-0">
               <div class="p-4">
-                <h3 class="text-lg font-semibold text-gray-900  mb-2">demandes de montorat</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Notifications</h3>
                 <ul class="scrollable-container">
                   <li 
-                  *ngFor="let demande of demandesMentorat"  
-                  (click)="onSelectDemande(demande.id)" 
-                  class="py-2 border-b space-y-3 hover:bg-gray-100 cursor-pointer">                 
-                    <div class="flex items-start space-x-3" >
-  
-                 
-                      <img [src]="demande.image"  class="h-8 w-8 rounded-full object-cover" alt="User Image">
-                      
-                  
+                    *ngFor="let demande of demandesMentorat"  
+                    class="py-2 border-b space-y-3 hover:bg-gray-100 cursor-pointer"
+                  >                 
+                    <div class="flex items-start space-x-3">
+                      <img [src]="demande.image" class="h-8 w-8 rounded-full object-cover" alt="User Image">
                       <div>
-                        <p  class="text-sm font-medium text-gray-900">
-                          {{demande.firstName}} {{demande.lastName}}
-                          <span class="font-normal">{{ demande.content }}</span>
-                        </p>
-                                            
+                        <p class="text-sm font-medium text-gray-900">
+                          <strong class="text-lg">{{ demande.prenomEtudiant }} {{ demande.nomEtudiant }}</strong>
+
+                          <span class="font-normal">a vous envoyé une demande de mentorat</span>
+                        </p>                                
                         <p class="text-xs text-gray-500">{{ demande.time }}</p>
                       </div>
                     </div>
-                
-                  
+            
                     <div class="flex justify-end space-x-2">
-                      <button class="px-2 py-1 bg-green-500 text-white text-xxs rounded hover:bg-green-600">
-                        Accepter
-                      </button>
-                      <button class="px-2 py-1 bg-red-500 text-white text-xxs rounded hover:bg-red-600">
-                        Refuser
-                      </button>
+                      <!-- Afficher les boutons si le statut est "pending" -->
+                      <ng-container *ngIf="!demande.status || demande.status === 'pending'">
+                        <button 
+                          (click)="acceptInvitation(demande.etudiantId)" 
+                          class="px-2 py-1 bg-green-500 text-white text-xxs rounded hover:bg-green-600"
+                        >
+                          Accepter
+                        </button>
+                        <button 
+                          (click)="cancelInvitation(demande.etudiantId)" 
+                          class="px-2 py-1 bg-red-500 text-white text-xxs rounded hover:bg-red-600"
+                        >
+                          Refuser
+                        </button>
+                      </ng-container>
+            
+                      <!-- Afficher le texte après acceptation ou refus -->
+                      <span *ngIf="demande.status === 'accepted'" class="text-green-600 font-semibold">Accepté</span>
+                      <span *ngIf="demande.status === 'refused'" class="text-red-600 font-semibold">Refusé</span>
                     </div>
                   </li>
                 </ul>
-                
               </div>
             </div>
-  
+            
   
           </div>
           
           <div class="relative">
             <button type="button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none" (click)="toggleMenu()">
-              <img [src]="me.image" class="h-10 w-10 rounded-full object-cover" alt="Profil">
+              <img [src]="me.photoProfile" class="h-10 w-10 rounded-full object-cover" alt="Profil">
             </button>
             <div
               class="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
@@ -262,10 +286,12 @@
             >
           
               <div  (click)=navigateToProfile(me) class="flex items-center px-4 py-3 border-b border-gray-200">
-                <img (click)=navigateToProfile(me) src="prof.jpg" alt="User photo" class="h-12 w-12 rounded-full object-cover">
+                <img (click)=navigateToProfile(me) [src]="me.photoProfile" alt="User photo" class="h-12 w-12 rounded-full object-cover">
                 <div class="ml-3">
-                  <p class="text-sm font-medium text-gray-800">{{me.firstName}} {{me.lastName}}</p>
-                 
+                  <p class="text-base font-semibold text-gray-900">
+                    {{ me.firstName }} {{ me.lastName }}
+                  </p>
+                                   
                 </div>
               </div>
           

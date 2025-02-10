@@ -48,7 +48,7 @@ public class PosteService {
                            .orElse(null);
             String firstName = user.getFirstName();
             String lastName = user.getLastName();
-            byte[] photoProfile = user.getPhotoProfile();
+            String photoProfile = user.getPhotoProfile();
             return new PosteWithUserDTO(poste, firstName, lastName , photoProfile);
         })
         .collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class PosteService {
                            .orElse(null);
             String firstName = user.getFirstName();
             String lastName = user.getLastName();
-            byte[] photoProfile = user.getPhotoProfile();
+            String photoProfile = user.getPhotoProfile();
             return new PosteWithUserDTO(poste, firstName, lastName , photoProfile);
         })
         .collect(Collectors.toList());

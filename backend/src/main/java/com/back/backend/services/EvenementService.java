@@ -144,4 +144,28 @@ public class EvenementService {
 
         return "Reservation successful.";
     }
+
+    public String cancelReservation(int eventId, int userId) {
+        Optional<EventParticipants> reservationOptional = eventParticipantsRepository
+                .findByEvenementIdAndUserId(eventId, userId);
+    
+        if (reservationOptional.isEmpty()) {
+            return "Reservation not found for the given event and user.";
+        }
+    
+        EventParticipants reservation = reservationOptional.get();
+    
+        // Update the remaining places in the event
+        Evenement event = reservation.getEvenement();
+        event.setPlaceRestant(event.getPlaceRestant() + 1);
+        
+        // Remove the reservation
+        eventParticipantsRepository.delete(reservation);
+        evenementRepository.save(event);
+    
+        return "Reservation successfully canceled.";
+    }
+    public boolean checkReservationStatus(int eventId, int userId) {
+        return eventParticipantsRepository.existsByEvenementIdAndUserId(eventId, userId);
+    }
 }

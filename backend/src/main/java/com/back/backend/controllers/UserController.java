@@ -18,13 +18,15 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.back.backend.dto.PosteWithUserDTO;
 import com.back.backend.Entities.Etudiant;
 import com.back.backend.Entities.Laureat;
+
+import com.back.backend.dto.PosteWithUserDTO;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteLikes;
 import com.back.backend.Entities.User;
 import com.back.backend.enums.TypePoste;
+import com.back.backend.services.LaureatService;
 import com.back.backend.services.PosteService;
 import com.back.backend.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,22 +42,21 @@ import lombok.AllArgsConstructor;
 public class UserController {
 private final UserService userService;
 private final PosteService posteService;
+private final LaureatService laureatService ;
 
 
   
 @PostMapping("/api/create-poste")
-
 public ResponseEntity<Map<String, String>> createPoste(
         @RequestParam("textArea") String textArea,
         @RequestParam("typePost") TypePoste typePost,
         @RequestParam("userId") int userId,
-        @RequestParam("caummunauteId") int caummunauteId,
-
+        @RequestParam(value = "caummunauteId", required = false) Integer caummunauteId, // Optionnel
         @RequestPart(value = "files", required = false) MultipartFile[] files) {
 
     try {
         // Appel au service pour créer le poste
-        userService.createPoste(textArea, typePost, files, userId,caummunauteId);
+        userService.createPoste(textArea, typePost, files, userId, caummunauteId);
 
         // Construire une réponse JSON de succès
         Map<String, String> response = new HashMap<>();
@@ -69,6 +70,12 @@ public ResponseEntity<Map<String, String>> createPoste(
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
+
+    // modifier un poste 
+    @PutMapping("/api/update-poste")
+    public ResponseEntity<String> updatePoste(@RequestBody Poste poste){
+        return laureatService.modifierPoste(poste.getId(), poste.getTextArea()) ;  
+    }
 
 
     
@@ -98,7 +105,7 @@ public ResponseEntity<Map<String, String>> createPoste(
     }
 
     @GetMapping("/api/profile-picture/{id}")
-    public ResponseEntity<byte[]> getProfilePicture(@PathVariable int id){
+    public ResponseEntity<String> getProfilePicture(@PathVariable int id){
         return this.userService.getProfileImage(id);
     } 
     @GetMapping("/api/check-likes")
@@ -128,10 +135,7 @@ public ResponseEntity<Map<String, String>> createPoste(
     public List<User> getAllUsersExceptAdmins() {
         return userService.getAllUsersExceptAdmins();
     }
-
-
-    
-@PutMapping("/profile")
+    @PutMapping("/profile")
 public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUser) {
     try {
         // Fetch the current user based on their ID
@@ -142,20 +146,6 @@ public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUser) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not authorized to update this profile.");
         }
 
-        // Update profile based on user type
-        if (currentUser instanceof Etudiant etudiant) {
-            if (updatedUser instanceof Etudiant updatedEtudiant) {
-                etudiant.setFiliere(updatedEtudiant.getFiliere());
-                etudiant.setPhotoProfile(updatedEtudiant.getPhotoProfile());
-            }
-        } else if (currentUser instanceof Laureat laureat) {
-            if (updatedUser instanceof Laureat updatedLaureat) {
-                laureat.setPromotion(updatedLaureat.getPromotion());
-                laureat.setSpecialite(updatedLaureat.getSpecialite());
-                laureat.setPhotoProfile(updatedLaureat.getPhotoProfile());
-            }
-        }
-
         // Update common fields
         currentUser.setFirstName(updatedUser.getFirstName());
         currentUser.setLastName(updatedUser.getLastName());
@@ -163,14 +153,26 @@ public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUser) {
         currentUser.setEmail(updatedUser.getEmail());
         currentUser.setPhotoProfile(updatedUser.getPhotoProfile());
 
-        // Save updated user
-        userService.updateUserProfile(currentUser.getId(), currentUser);
+        // Check if the user is an instance of Etudiant or Laureat and update accordingly
+        if (currentUser instanceof Etudiant etudiant && updatedUser instanceof Etudiant updatedEtudiant) {
+            // Update specific fields for Etudiant
+            etudiant.setFiliere(updatedEtudiant.getFiliere());
+            etudiant.setPhotoProfile(updatedEtudiant.getPhotoProfile());
+            // Save as Etudiant
+            userService.updateEtudiantProfile((Etudiant) currentUser);
+        } else if (currentUser instanceof Laureat laureat && updatedUser instanceof Laureat updatedLaureat) {
+            // Update specific fields for Laureat
+            laureat.setPromotion(updatedLaureat.getPromotion());
+            laureat.setSpecialite(updatedLaureat.getSpecialite());
+            laureat.setPhotoProfile(updatedLaureat.getPhotoProfile());
+            // Save as Laureat
+            userService.updateLaureatProfile((Laureat) currentUser);
+        }
 
         return ResponseEntity.ok("Profile updated successfully.");
     } catch (RuntimeException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
     }
 }
-
 
 }

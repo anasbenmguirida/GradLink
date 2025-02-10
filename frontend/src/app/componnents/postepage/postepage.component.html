@@ -1,60 +1,6 @@
 <app-nav-bar></app-nav-bar>
 <div class="main-content mt-10">
 
-  <!-- 🟢 SECTION PROFIL (Positionnée à gauche) -->
-  <div class="hidden lg:block fixed left-12 top-24 w-80 bg-white rounded-3xl shadow-lg p-4">
-    <!-- Image de couverture -->
-    <div class="relative">
-      <img src="banner.jpg" class="w-full h-20 object-cover rounded-t-3xl">
-      <img  [src]="me.photoProfile ? getFileUrl(me.photoProfile) : 'safae.jpeg'"   class="w-16 h-16 rounded-full border-4 border-white absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-    </div>
-
-    <!-- Informations utilisateur -->
-    <div class="text-center mt-10">
-      <h3 class="text-lg font-bold text-gray-800">{{ me.firstName }} {{ me.lastName }}</h3>
-      <p class="text-sm text-gray-600">{{ me.role }}</p>
-      <p class="text-xs text-gray-500">{{ me.location }}</p>
-    </div>
-
-    <!-- Statistiques -->
-    <div class="mt-4 border-t border-gray-200 pt-4">
-      <div class="flex justify-between text-sm text-gray-600">
-        <span>Vues du profil</span>
-        <span class="font-semibold text-blue-600">{{ me.profileViews }}</span>
-      </div>
-      <div class="flex justify-between text-sm text-gray-600 mt-2">
-        <span>Impressions des posts</span>
-        <span class="font-semibold text-blue-600">{{ me.postViews }}</span>
-      </div>
-    </div>
-
-    <!-- Liens utiles -->
-    <div class="mt-4 border-t border-gray-200 pt-4">
-      <p class="text-sm font-semibold text-gray-700 mb-2">Éléments enregistrés</p>
-      <ul class="text-sm text-gray-600 space-y-2">
-        <li class="flex items-center">
-          <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
-              d="M17 20l-5-5m0 0l-5 5m5-5V4"></path></svg>
-          Groupes
-        </li>
-        <li class="flex items-center">
-          <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-          Newsletters
-        </li>
-        <li class="flex items-center">
-          <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
-              d="M12 6v6m0 6h.01"></path></svg>
-          Événements
-        </li>
-      </ul>
-    </div>
-  </div>
-
-
 <div class="page-container mx-auto w-full max-w-2xl p-6 mt-16">
   <form 
   [formGroup]="postForm" 
@@ -66,11 +12,12 @@
     <div class="post-header">
       <img 
         class="profile-image w-12 h-12 rounded-full object-cover" 
-        src="prof.jpg" 
-        alt="Profile Image" 
+         [src]="me.photoProfile"
+       
       />
       <div class="user-info">
-        <h3 class="font-medium text-lg">{{this.me.firstName}}  {{this.me.lastName}}</h3>
+    <h3 class="font-medium text-lg" *ngIf="me">{{ me.firstName }} {{ me.lastName }}</h3>
+
       </div>
     </div>
   </div>
@@ -130,21 +77,22 @@
 
 
 
+<div *ngIf="classifiedPosts && classifiedPosts.length > 0">
 
   <div *ngFor="let post of classifiedPosts" class="post-container bg-white p-6 rounded-lg shadow-md mb-6">
     <div class="post-header flex items-center mb-4 space-x-3">
-      <img class="profile-image w-12 h-12 rounded-full object-cover"alt="Profile Image" src="prof.jpg"/>
+      <img class="profile-image w-12 h-12 rounded-full object-cover"  [src]="post.photoProfile" alt="Profile Image" />
       <div class="user-info">
-        <h3  class="font-medium text-lg hover:underline">
-          Safae Labjakh
+        <h3 (click)="navigateToProfile(post.poste.userId)" class="font-medium text-lg hover:underline">
+          {{ post.firstName }} {{ post.lastName }} 
+
         </h3>
-                <p class="text-sm text-gray-500">20 days ago </p>
+               
       </div>
     </div>
 
     <div class="post-content">
       <p>{{ post.poste.textArea }}</p>
-      <p>lenghtttt{{post.poste.posteFiles.length}}</p>
       <div *ngIf="post.poste.posteFiles && post.poste.posteFiles.length > 0" class="image-gallery grid gap-2">
         <ng-container [ngSwitch]="post.poste.posteFiles.length">
       
@@ -153,7 +101,7 @@
               class="post-image cursor-pointer" 
               [src]="getFileUrl(post.poste.posteFiles[0])"  
               alt="Post Image" 
-              (click)="openModalimage(post.poste.posteFiles[0])"
+              (click)="openModalimage(getFileUrl(post.poste.posteFiles[0]))"
             />
            
           </div>
@@ -183,7 +131,7 @@
               class="post-image cursor-pointer" 
               [src]="getFileUrl(image)" 
               alt="Post Image" 
-              (click)="openModalimage(image)"
+              (click)="openModalimage(getFileUrl(image))"
             />
           </div>
       
@@ -195,7 +143,7 @@
               [src]="getFileUrl(image)" 
               alt="Post Image" 
               [class.hidden]="i >= 4"
-              (click)="openModalimage(image)"
+              (click)="openModalimage(getFileUrl(image))"
             />
             <div *ngIf="post.poste.posteFiles.length > 4" class="relative flex items-center justify-center bg-gray-200 rounded-lg">
               <span 
@@ -286,4 +234,5 @@
   
     </div>
     
+  </div>
   </div>

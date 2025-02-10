@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import com.back.backend.Entities.DemandeMentorat;
 import com.back.backend.Entities.Laureat;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.User;
+import com.back.backend.dto.DemandeWithStudent;
 import com.back.backend.enums.Role;
 import com.back.backend.enums.StatusMentorat;
 import com.back.backend.enums.TypePoste;
@@ -43,23 +45,34 @@ public class LaureatService {
       return laureatRepository.findAllByRole(Role.LAUREAT) ;     
     }
 
-    //pour les demandes de mentorats par default on va les mettre les status a PENDING 
-    public String accepterDemande(int idDemande){
-        Optional<DemandeMentorat> demandeMentorat = demandeRepository.findById(idDemande) ; 
-        if(demandeMentorat.isPresent()){
-            DemandeMentorat demande = demandeMentorat.get();
-            demande.setStatusMentorat(StatusMentorat.ACCEPTED);
-            demandeRepository.save(demande) ; 
+    //ACCEPTER DEMANDE
+    // public String accepterDemande(DemandeMentorat demande){
+    //     DemandeMentorat demandeMentorat = demandeRepository.getDemandeMentorat(demande.getLaureatId(), demande.getEtudiantId()) ; 
+    //     if(demandeMentorat!= null){
+    //         demande.setStatusMentorat(StatusMentorat.ACCEPTED);
+    //         demandeRepository.save(demande) ; 
+    //         return "demnade accepte" ; 
+    //     }
+    //     return "demande introuvable" ; 
+    // }
+
+    //ACCEPTER DEMANDE
+    public String accepterDemande(DemandeMentorat demande){
+        DemandeMentorat demandeMentorat = demandeRepository.getDemandeMentorat(demande.getLaureatId(), demande.getEtudiantId()) ; 
+        if(demandeMentorat!= null){
+            demandeMentorat.setStatusMentorat(StatusMentorat.ACCEPTED);
+            demandeRepository.save(demandeMentorat) ; 
             return "demnade accepte" ; 
         }
         return "demande introuvable" ; 
     }
-
-    public String refuserDemande(int idDemande){
-        Optional<DemandeMentorat> demandeMentorat = demandeRepository.findById(idDemande) ; 
-        if(demandeMentorat.isPresent()){
-            demandeRepository.deleteById(idDemande) ;
-            return "demnade rejetee et supprimer de la table" ; 
+    // refuser dmande
+    public String refuserDemande(DemandeMentorat demande){
+        DemandeMentorat demandeMentorat = demandeRepository.getDemandeMentorat(demande.getLaureatId(), demande.getEtudiantId()) ; 
+        if(demande!=null){
+           DemandeMentorat demandeMentorat2= demandeRepository.getDemandeMentorat(demande.getLaureatId() , demande.getEtudiantId()) ; 
+           demandeRepository.deleteById(demandeMentorat2.getId());
+           return "demnade rejetee et supprimer de la table" ; 
         }
         return "demande introuvable" ; 
     }
@@ -68,14 +81,16 @@ public class LaureatService {
     }
     // status mentorat 
     public int getStatusMentorat(DemandeMentorat demandeMentorat){
-        Optional<DemandeMentorat> demande = demandeRepository.findById(demandeMentorat.getId()) ; 
-        if(demande.isPresent()){
+        DemandeMentorat demande = demandeRepository.getDemandeMentorat(demandeMentorat.getLaureatId(), demandeMentorat.getEtudiantId() ) ; 
+        if(demande!=null){
         return demandeRepository.getStatusMentorat(demandeMentorat.getLaureatId() , demandeMentorat.getEtudiantId()) ;
         }
         else{
             return 2 ; 
         }
     }
+
+
 
     
     public ResponseEntity<String> modifierPoste(int posteId , String textArea){
@@ -90,10 +105,25 @@ public class LaureatService {
        }
     }
 
-
+ /* 
     public List<DemandeMentorat> getMentoredStudents(int laureatId) {
         return demandeRepository.findMentoredStudentsByLaureatIdAndStatusMentorat(laureatId, StatusMentorat.ACCEPTED);
     }
+        */
         
     
+        // demande pas encore accepte status = 0 
+    public List<DemandeWithStudent> getAllDemandes(int idLanreat) {
+        List<DemandeMentorat> listeDemande = demandeRepository.getAllDemandes(idLanreat);
+        return listeDemande.stream()
+            .map(demande -> {
+                User user = this.userRepository.findById(demande.getEtudiantId())
+                               .orElse(null);
+                String firstName =  user.getFirstName() ;
+                String lastName =  user.getLastName() ;
+                String photo=user.getPhotoProfile() ; 
+                return new DemandeWithStudent(demande, firstName, lastName , photo);
+            })
+            .collect(Collectors.toList());
+    }
 }

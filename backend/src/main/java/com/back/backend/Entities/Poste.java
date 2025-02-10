@@ -69,7 +69,7 @@ public class Poste {
     @JoinColumn(name = "caummunaute_id", nullable = true , updatable = false, insertable = false)
     private Caummunaute caummunaute;
     @Column(name = "caummunaute_id")
-    private int caummunauteId;
+    private Integer caummunauteId;
 
     @OneToMany(mappedBy = "poste", cascade = CascadeType.ALL)
     // A poste can have multiple files

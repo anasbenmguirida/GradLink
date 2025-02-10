@@ -19,4 +19,3 @@ List<Poste> findPostesByOrder();
 
 }
 
-

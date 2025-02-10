@@ -164,7 +164,7 @@
   height: 1px;  /* Hauteur de la ligne */
   background-color: #ddd;  /* Couleur de la ligne */
   margin: 10px 0;  /* Espacement au-dessus et en-dessous de la ligne */
-  border-top: 1px solid #ddd;  /* Ligne solide, vous pouvez aussi utiliser `dotted` pour une ligne pointillée */
+  border-top: 1px solid #ddd;  /* Ligne solide, vous pouvez aussi utiliser dotted pour une ligne pointillée */
 }
 
 .post-image {
