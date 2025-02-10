@@ -8,7 +8,7 @@
     <!-- Image de couverture -->
     <div class="relative">
       <img src="banner.jpg" class="w-full h-20 object-cover rounded-t-3xl">
-      <img  [src]="user.photoProfile ? getFileUrl(user.photoProfile) : 'safae.jpeg'"   class="w-16 h-16 rounded-full border-4 border-white absolute -bottom-8 left-1/2 transform -translate-x-1/2">
+      <img  [src]="user.photoProfile ? user.photoProfile : 'safae.jpeg'"   class="w-16 h-16 rounded-full border-4 border-white absolute -bottom-8 left-1/2 transform -translate-x-1/2">
     </div>
 
     <!-- Informations utilisateur -->
@@ -73,7 +73,8 @@
     </div>
 
     <!-- 🟢 Bouton d'ajout d'événement flottant avec effet de rebond -->
-    <button 
+    <button          *ngIf="user.role==='ADMIN'" 
+
       (click)="openDialog()"
       class="fixed bottom-8 right-8 bg-gradient-to-r from-blue-500 to-blue-700 text-white p-4 rounded-full shadow-lg hover:scale-110 hover:shadow-2xl transition-transform duration-300 ease-in-out flex items-center justify-center transform-gpu hover:animate-bounce"
       aria-label="Ajouter un événement"
