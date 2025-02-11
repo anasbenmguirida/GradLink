@@ -48,6 +48,9 @@ export class PostService {
 
 
   updatePost( post: any): Observable<any> {
+    console.log("post:", post);
+console.log("textArea:", post.textArea);
+console.log("id:", post.id);
     const body = {
       textArea: post.textArea,
       id: post.id

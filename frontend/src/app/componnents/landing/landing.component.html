@@ -170,7 +170,7 @@
       <div class="flex transition-transform duration-500 ease-in-out min-h-full" [style.transform]="activeMemberId !== null ? 'translateX(-' + activeMemberId * 100 + '%)' : 'translateX(0%)'">
         
           <!-- Affichage des membres de l'équipe -->
-          <div *ngFor="let member of teamMembers" class="min-w-full mb-3 flex-shrink-0 p-4 sm:w-1/3 md:w-1/2 lg:w-1/3 xl:w-1/4">
+          <div *ngFor="let member of teamMembers" class="min-w-full mb-3 flex-shrink-0 p-4 w-1/3 sm:w-1/3 md:w-1/2 lg:w-1/3 xl:w-1/4 ">
             <div class="profile-card rounded-lg shadow-lg p-6 text-center min-h-full min-w-2xl  flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white-60">
               <img [src]="member.image" alt="{{ member.name }}" class="profile-photo h-20 rounded-full m-0 w-2/3">
               <h3 class="text-lg font-semibold">{{ member.name }}</h3>

@@ -54,6 +54,7 @@ export class EventDetailsComponent implements OnInit {
   
       if (this.event) {
         this.eventId = this.event.id;
+      
         console.log('ID de l\'événement récupéré depuis l\'URL :', this.eventId);
       }
     } else {
@@ -181,6 +182,7 @@ console.log('ha anaaaaaaaaaaa',this.event.id)
   reserver() {
   this.eventService.reserverEvent(this.eventId!).subscribe(
   (response) => {
+    this.event.placeRestant=this.event.placeRestant-1
     this.isReserved = true; // Mettre à jour l'état de la réservation
   },
   (error) => {
@@ -192,6 +194,8 @@ console.log('ha anaaaaaaaaaaa',this.event.id)
   cancelReservation() {
   this.eventService.cancelReservation(this.eventId!).subscribe(
   (response) => {
+    this.event.placeRestant=this.event.placeRestant+1
+
     this.isReserved = false;
   },
   (error) => {

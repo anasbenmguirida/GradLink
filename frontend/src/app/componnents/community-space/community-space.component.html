@@ -7,7 +7,7 @@
   <!-- Image de couverture -->
   <div class="relative">
     <img src="banner.jpg" class="w-full h-20 object-cover rounded-t-3xl">
-    <img  [src]="user.photoProfile ? getFileUrl(user.photoProfile) : 'safae.jpeg'"   class="w-16 h-16 rounded-full border-4 border-white absolute -bottom-8 left-1/2 transform -translate-x-1/2">
+    <img  [src]="user.photoProfile ? user.photoProfile : 'safae.jpeg'"   class="w-16 h-16 rounded-full border-4 border-white absolute -bottom-8 left-1/2 transform -translate-x-1/2">
   </div>
 
   <!-- Informations utilisateur -->
@@ -114,8 +114,6 @@
     </div>
   </div>
   </div>
-
- <!-- Discussions de la communauté sélectionnée -->
 <!-- Discussions de la communauté sélectionnée -->
 <div *ngIf="selectedCommunityId" class="lg:w-2/3 max-h-screen p-4 bg-white h-full shadow-lg rounded-lg transition-all">
   <div  *ngFor="let community of communities" [ngClass]="{'hidden': community.id !== selectedCommunityId}">
@@ -124,7 +122,7 @@
     <div #messagesContainer  class="msg max-h-96 overflow-y-auto space-y-4 mb-6">
       <div   *ngFor="let poste of community.postes" class="flex items-start bg-gray-50 p-4 rounded-lg shadow-md mb-4 hover:shadow-lg transition-all">
         <!-- Affichage de l'image de profil de l'utilisateur -->
-        <img   [src]="poste.user.photoProfile ? getFileUrl(poste.user.photoProfile) : 'safae.jpeg'"  
+        <img   [src]="poste.user.photoProfile ? poste.user.photoProfile : 'safae.jpeg'"  
         alt="Profil" class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-blue-500">
 
         <div  class="flex-1">

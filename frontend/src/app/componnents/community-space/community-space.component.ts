@@ -195,44 +195,61 @@ export class CommunitySpaceComponent implements OnInit{
     this.isEditDialogOpen = true;
   }
 
- saveEdit() {
+//  saveEdit() {
     
-    if (this.selectedCommunityId === null || !this.editPost) {
-      console.error('Aucune communauté sélectionnée ou aucun post à modifier.');
-      return;
-    }
+//     if (this.selectedCommunityId === null || !this.editPost) {
+//       console.error('Aucune communauté sélectionnée ou aucun post à modifier.');
+//       return;
+//     }
 
-    const updatedPost = {
-      ...this.editPost, // Copie des données existantes
-      textArea: this.editPost.textArea.trim(),
-      posteFiles: this.editPost.posteFiles // Inclure les fichiers mis à jour, le cas échéant
-    };
+//     const updatedPost = {
+//       ...this.editPost, // Copie des données existantes
+//       textArea: this.editPost.textArea.trim(),
+//       posteFiles: this.editPost.posteFiles // Inclure les fichiers mis à jour, le cas échéant
+//     };
 
-    // Utiliser le service pour envoyer les données mises à jour
-    this.communityService.updatePost(this.selectedCommunityId, this.editPost.id, updatedPost)
-      .subscribe(
-        (response) => {
-          console.log('Post mis à jour avec succès!', response);
+//     // Utiliser le service pour envoyer les données mises à jour
+//     this.communityService.updatePost(this.selectedCommunityId, this.editPost.id, updatedPost)
+//       .subscribe(
+//         (response) => {
+//           console.log('Post mis à jour avec succès!', response);
 
-          // Mettez à jour l'interface utilisateur
-          const communityIndex = this.communities.findIndex(c => c.id === this.selectedCommunityId);
-          if (communityIndex !== -1) {
-            const postIndex = this.communities[communityIndex].postes.findIndex( (p: { id: number }) => p.id === this.editPost.id);
-            if (postIndex !== -1) {
-              this.communities[communityIndex].postes[postIndex] = response; // Mise à jour locale
-            }
-          }
+//           // Mettez à jour l'interface utilisateur
+//           const communityIndex = this.communities.findIndex(c => c.id === this.selectedCommunityId);
+//           if (communityIndex !== -1) {
+//             const postIndex = this.communities[communityIndex].postes.findIndex( (p: { id: number }) => p.id === this.editPost.id);
+//             if (postIndex !== -1) {
+//               this.communities[communityIndex].postes[postIndex] = response; // Mise à jour locale
+//             }
+//           }
 
-          // Fermer la boîte de dialogue
-          this.isEditDialogOpen = false;
-        },
-        (error) => {
-          console.error('Erreur lors de la mise à jour du poste :', error);
-          // Gérer l'erreur (afficher un message à l'utilisateur, par exemple)
-        }
-      );
-  }
+//           // Fermer la boîte de dialogue
+//           this.isEditDialogOpen = false;
+//         },
+//         (error) => {
+//           console.error('Erreur lors de la mise à jour du poste :', error);
+//           // Gérer l'erreur (afficher un message à l'utilisateur, par exemple)
+//         }
+//       );
+//   }
   
+saveEdit() {
+
+  this.postService.updatePost(this.editPost).subscribe(
+      (response: any) => {
+          console.log("Post mis à jour avec succès :", response);
+          this.loadCommunities();
+
+          // Réinitialisation et fermeture du modal
+          this.isEditDialogOpen = false;
+          this.selectedImages = [];
+          this.editPost = null;
+      },
+      (error) => {
+          console.error("Erreur lors de la mise à jour du post :", error);
+      }
+  );
+}
 
 
 
@@ -293,8 +310,17 @@ async addFiles() {
 canEditOrDeleteMessage(_t27: { user: string; firstName: string; lastName: string; description: string; text: string; photo: string; image: string; }|{ user: string; firstName: string; lastName: string; description: string; text: string; photo: string; image?: undefined; }): any {
 throw new Error('Method not implemented.');
 }
-deleteMessage(arg0: any) {
-throw new Error('Method not implemented.');
+deleteMessage(post: any): void {
+  this.postService.deletePost(post.id).subscribe(
+    () => {
+      console.log(`Post with ID ${post.id} deleted successfully.`);
+      this.loadCommunities();
+
+    },
+    (error) => {
+      console.error('Error deleting post:', error);
+    }
+  );
 }
 editMessage(_t27: { user: string; firstName: string; lastName: string; description: string; text: string; photo: string; image: string; }|{ user: string; firstName: string; lastName: string; description: string; text: string; photo: string; image?: undefined; }) {
 throw new Error('Method not implemented.');
