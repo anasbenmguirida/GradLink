@@ -80,3 +80,25 @@
 .items-end {
   align-items: flex-end; 
 }
+
+.fixed {
+  position: fixed;
+}
+.bottom-0 {
+  bottom: 0;
+}
+.right-0 {
+  right: 0;
+}
+.w-full {
+  width: 100%;
+}
+.sm\:w-96 {
+  width: 24rem; /* Taille pour les écrans plus larges */
+}
+.max-h-80 {
+  max-height: 20rem;
+}
+.overflow-y-auto {
+  overflow-y: auto;
+}

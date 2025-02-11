@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DemandeMentoratService } from '../../services/demandeMentorat/demande-mentorat.service';
@@ -23,7 +23,9 @@ import { Subscription } from 'rxjs';
 @Injectable ({
   providedIn:'root',
 })
-export class NavBarComponent implements OnInit , OnDestroy {
+export class NavBarComponent implements OnInit , OnDestroy,AfterViewChecked {
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
+
   query :string=''; 
   invitations:any=[];
   usersMessage :any=[];
@@ -107,7 +109,7 @@ listenForNewMessages(): void {
  messageSubscription: Subscription | null = null;
 
  setupWebSocketListener() {
-  console.log("WebSocket ouvert:", this.messagerieService.isSocketOpen()); // Vérifiez si le WebSocket est bien ouvert
+  console.log("WebSocket ouvert:", this.messagerieService.isSocketOpen());
   this.messageSubscription = this.messagerieService.getMessages().subscribe(
     (newMessage: any) => {
       console.log("Message reçu via WebSocket:", newMessage);
@@ -116,7 +118,8 @@ listenForNewMessages(): void {
         (newMessage.senderId === this.selectedUser.id || newMessage.recipientId === this.selectedUser.id)
       ) {
         this.selectedMessages.push(newMessage);
-        this.cdr.detectChanges();
+        this.cdr.detectChanges(); // Mettre à jour la vue
+        this.scrollToBottom(); // Faire défiler vers le bas après avoir ajouté le message
       }
     },
     (error: any) => {
@@ -124,6 +127,7 @@ listenForNewMessages(): void {
     }
   );
 }
+
 
 
 
@@ -163,6 +167,19 @@ listenForNewMessages(): void {
       this.selectedMessages = [];
     }
   
+    ngAfterViewChecked() {
+      // Faire défiler vers le bas après chaque mise à jour de la vue
+      this.scrollToBottom();
+    }
+  
+    private scrollToBottom(): void {
+      try {
+        this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+      } catch (err) {
+        console.error("Erreur lors du défilement", err);
+      }
+    }
+  
     sendMessage() {
       if (!this.newMessage.trim() || !this.selectedUser) {
         console.warn('Le message est vide ou aucun utilisateur n’est sélectionné.');
@@ -200,12 +217,20 @@ listenForNewMessages(): void {
     
         // Réinitialiser le champ de saisie
         this.newMessage = '';
+        this.scrollToBottom();
       } catch (error) {
         console.error('Erreur lors de l’envoi du message via WebSocket:', error);
       }
     }
     
   
+
+    
+    ngOnChanges() {
+      this.scrollToBottom();
+    }
+  
+    
     toggleMessagerie() {
       this.isMessagerie = !this.isMessagerie;
   

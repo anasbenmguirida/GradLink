@@ -203,12 +203,12 @@
   </div>
   
 
-  <div class="page-container mx-auto w-full max-w-2xl p-6">
+  <div class="page-container  mx-auto w-full max-w-2xl p-6">
 
     <form 
     [formGroup]="postForm" 
     (ngSubmit)="submitPost()" 
-    class="post-container bg-white p-6 rounded-lg shadow-md mb-6"
+    class="post-container bg-white mt-3 p-6 rounded-lg shadow-md mb-6"
   >
   
     <div class="flex items-center mb-4 space-x-3">
@@ -279,11 +279,19 @@
     </div>
   </form>
   
+  <div *ngIf="classifiedPosts.length === 0" 
+  class="text-center text-gray-500 mb-4 mt-4 bg-white rounded-lg shadow-md w-full max-w-2xl p-6 h-48 flex items-center justify-center">
+ Aucun post à afficher.
+</div>
 
 
-<div *ngFor="let post of classifiedPosts; let i = index" class="post-container bg-white p-6 rounded-lg shadow-md mb-6 relative">
+
+<div  *ngIf="classifiedPosts.length > 0"class="page-container mx-auto w-full max-w-2xl p-6 space-y-6">
+   
+
+ <div *ngFor="let post of classifiedPosts; let i = index" class="post-container bg-white p-6 rounded-lg shadow-md mb-6 relative">
   
-  <div class="post-header flex items-center justify-between mb-4">
+  <div *ngIf="post.poste.typePoste==='NORMAL'" class="post-header flex items-center justify-between mb-4">
     <div class="flex items-center space-x-3">
       <img class="profile-image w-12 h-12 rounded-full object-cover" [src]="me.photoProfile" alt="Profile Image" />
       <div class="user-info">
@@ -492,4 +500,5 @@
 
   </div>
   
+</div>
 </div>
