@@ -14,7 +14,8 @@
   align-self: flex-end;
 }
 .cursor-pointer:hover {
-  cursor: pointer;
+  /* Si tu veux ajouter un effet spécifique au survol */
+  opacity: 0.8; /* Ajoute une légère transparence sur le survol */
 }
 
 .text-time {
