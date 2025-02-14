@@ -53,15 +53,8 @@
           >
           {{searchUser.specialite}}
           </h4>
-          <h4
-            *ngIf="searchUser.role==='LAUREAT'"
-            class="text-sm font-normal"
-          >
-            entreprise : {{searchUser.entreprise}}
-          </h4>
-          <h4 *ngIf="searchUser.role==='LAUREAT'" class="text-sm font-normal">
-            Promotion: {{searchUser.promotion}}
-          </h4>
+         
+        
         <h4
   *ngIf="searchUser.role === 'ETUDIANT'"
   class="text-sm font-normal text-[50px]"

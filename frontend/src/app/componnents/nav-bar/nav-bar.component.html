@@ -5,7 +5,7 @@
       <div class="flex items-center space-x-4">
         <!-- Logo -->
         <div class="flex shrink-0 items-center">
-          <img class="h-8 w-auto" src="gradlink.jpeg" alt="Your Company">
+          <img class="h-8 w-auto" src="gradlink.jpg" alt="Your Company">
         </div>
 
         <!-- Barre de recherche (visible sur mobile et desktop) -->
@@ -75,7 +75,9 @@
         <div class="hidden sm:flex space-x-4 ml-4">
           <a href="#" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white">Dashboard</a>
           <a routerLink="/posts" routerLinkActive="Active" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Home</a>
-          <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Evenement</a>
+          <a routerLink="/Events" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Evenements</a>
+          <a routerLink="/Community" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">communautés</a>
+
         </div>
 
         <!-- Messagerie, Notifications, Profil -->
@@ -209,7 +211,7 @@
                 <div *ngFor="let message of selectedMessages" class="flex flex-col space-y-2">
                   <div 
                     [ngClass]="{
-                      'self-end bg-green-100': message.senderId === me.id,
+                      'self-end bg-blue-200': message.senderId === me.id,
                       'self-start bg-gray-100': message.recipientId === me.id
                     }"
                     class="p-3 rounded-xl max-w-max flex items-end relative">
@@ -224,7 +226,7 @@
                   placeholder="Écrire un message..." 
                   (keydown.enter)="sendMessage()" 
                   class="flex-1 p-2 border rounded-full border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" /> 
-                <button (click)="sendMessage()" class="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none">
+                <button (click)="sendMessage()" class="p-2 bg-blue-400 text-white rounded-full hover:bg-blue-500 focus:outline-none">
                   Envoyer
                 </button>
               </div>
@@ -315,7 +317,7 @@
                   Paramètres et confidentialité
                 </a>
                 <a
-                  href="#"
+                 routerLink="/login"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   Déconnexion
@@ -340,7 +342,8 @@
     <div class="flex flex-col items-center">
       <a href="#" class="text-white text-xl py-2">Dashboard</a>
       <a routerLink="/posts" routerLinkActive="Active" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Home</a>
-      <a href="#" class="text-white text-xl py-2">Evenement</a>
+      <a routerLink="/Events" class="text-white text-xl py-2">Evenements</a>
+      <a routerLink="/Community" class="text-white text-xl py-2">Communautés</a>
     </div>
   </div>
 </nav>
