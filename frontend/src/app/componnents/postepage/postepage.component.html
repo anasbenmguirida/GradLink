@@ -5,7 +5,7 @@
   <form 
   [formGroup]="postForm" 
   (ngSubmit)="submitPost()" 
-  class="post-container bg-white p-6 rounded-lg shadow-md mb-6"
+  class="post-container bg-white p-6 rounded-lg shadow-md mb-2"
 >
 
   <div class="flex items-center mb-4 space-x-3">
@@ -76,11 +76,16 @@
 
 
 
+<div *ngIf="classifiedPosts.length === 0" 
+class="text-center text-gray-500 mt-4 bg-white rounded-lg shadow-md h-48 flex items-center justify-center">
+Aucun post à afficher.
+</div>
 
-<div *ngIf="classifiedPosts && classifiedPosts.length > 0">
+<div  *ngIf="classifiedPosts.length > 0"class="page-container mx-auto w-full max-w-2xl p-6 space-y-6">
+
 
   <div *ngFor="let post of classifiedPosts" class="post-container bg-white p-6 rounded-lg shadow-md mb-6">
-    <div class="post-header flex items-center mb-4 space-x-3">
+    <div *ngIf="post.poste.typePoste==='NORMAL'" class="post-header flex items-center mb-4 space-x-3">
       <img class="profile-image w-12 h-12 rounded-full object-cover"  [src]="post.photoProfile" alt="Profile Image" />
       <div class="user-info">
         <h3 (click)="navigateToProfile(post.poste.userId)" class="font-medium text-lg hover:underline">
@@ -187,26 +192,14 @@
         </div>
   
       </div>
-      
-      
-   
-  
- 
-  
-  
-     
-      <div *ngIf="post.pdfs && post.pdfs.length > 0" class="pdf-links mt-4">
-        <div *ngFor="let pdf of post.pdfs" class="pdf-link">
-          📄 <a [href]="pdf" target="_blank" class="text-blue-600 underline">Voir le fichier PDF</a>
-        </div>
-      </div>
+    
     </div>
   
   
   
     <div class="separator my-4 h-px bg-gray-200"></div>
   
-    <div class="flex items-center space-x-2">
+     <div class="flex items-center space-x-2">
       <button
         (click)="toggleLike(post)"
         [ngClass]="{
@@ -227,7 +220,7 @@
         </svg>
       </button>
       <span *ngIf="post.poste.nbrLikes!=0">{{ post.poste.nbrLikes }}</span>
-    </div>
+     </div>
     
     
    </div>

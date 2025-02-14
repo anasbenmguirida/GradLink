@@ -56,6 +56,7 @@ console.log(this.selectedId)
     this.ProfileService.getUserById(this.selectedId).subscribe(
       (data) => {
         this.searchUser = data;  
+       console.log("user cherchét",this.searchUser)
       },
       (error) => {
         console.error('Erreur lors de la récupération de l\'utilisateur:', error);

@@ -5,7 +5,7 @@
       <div class="flex items-center space-x-4">
         <!-- Logo -->
         <div class="flex shrink-0 items-center">
-          <img class="h-8 w-auto" src="gradlink.jpeg" alt="Your Company">
+          <img class="h-8 w-auto" src="gradlink.jpg" alt="Your Company">
         </div>
 
         <!-- Barre de recherche (visible sur mobile et desktop) -->
@@ -75,7 +75,9 @@
         <div class="hidden sm:flex space-x-4 ml-4">
           <a href="#" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white">Dashboard</a>
           <a routerLink="/posts" routerLinkActive="Active" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Home</a>
-          <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Evenement</a>
+          <a routerLink="/Events" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Evenements</a>
+          <a routerLink="/Community" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">communautés</a>
+
         </div>
 
         <!-- Messagerie, Notifications, Profil -->
@@ -87,8 +89,13 @@
 
           <div *ngIf="isInvit" class="absolute z-10 mt-2 w-80 bg-white shadow-lg rounded-lg border top-12 right-0">
             <div class="p-4">
-              <h3 class="text-lg font-semibold text-gray-900">Demandes de mentorattt</h3>
-              <ul>
+              <h3 class="text-lg font-semibold text-gray-900">Demandes du mentorat</h3>
+
+
+<p *ngIf="!demandesMentorat || demandesMentorat.length === 0" class="text-gray-500 italic">
+  Aucune demande de mentorat pour le moment.
+</p>
+              <ul *ngIf="demandesMentorat && demandesMentorat.length > 0">
                 <li *ngFor="let demande of demandesMentorat" class="py-2 border-b space-y-3">
                            
                   <div (click)="onSelectDemande(demande.demande.id)" class="flex items-start space-x-3">
@@ -128,7 +135,7 @@
                     </ng-container>
                   
                     <!-- Afficher le statut après acceptation ou refus -->
-                    <span *ngIf="statusDemande[demande.demande.etudiantId] === 'accepted'" class="text-green-600 font-semibold">Accepté</span>
+                    <span *ngIf="statusDemande[demande.demande.etudiantId] === 'accepted'" class="text-bleu-600 font-semibold">Accepté</span>
                     <span *ngIf="statusDemande[demande.demande.etudiantId] === 'refused'" class="text-red-600 font-semibold">Refusé</span>
                   </div>
                   
@@ -157,7 +164,20 @@
                 />
               </div>
               <div class="scrollable-container">
-                <ul>
+                
+                    
+                <p *ngIf="!usersMessage || usersMessage.length === 0" class="text-gray-500 italic text-center">
+                 Pas des discussions.
+                </p>
+                
+               
+                  <ul *ngIf="usersMessage && usersMessage.length > 0">
+                               
+
+
+
+
+
                   <li
                     *ngFor="let user of usersMessage"
                     [class.selected]="user === selectedUser"
@@ -177,48 +197,41 @@
               </div>
             </div>
             </div>
-            
             <div *ngIf="selectedUser" class="fixed bottom-0 right-0 w-full sm:w-96 bg-white shadow-xl rounded-t-xl border border-gray-200">
-             <div class="flex items-center p-4 bg-gray-100 rounded-t-xl">
+              <div class="flex items-center p-4 bg-gray-100 rounded-t-xl">
                 <img [src]="selectedUser.profilePhoto" alt="profile" class="w-10 h-10 rounded-full object-cover mr-4">
                 <h3 class="text-lg font-semibold">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h3>
-            
-  
                 <button (click)="closeChat()" class="ml-auto text-gray-600 hover:text-gray-900">
                   <span class="material-icons">X</span>
                 </button>
               </div>
             
-              <div class="flex-1 overflow-y-auto p-4 space-y-4 max-h-80">
+              <!-- Conteneur des messages avec hauteur fixe et défilement -->
+              <div class="flex-1 overflow-y-auto p-4 space-y-4 max-h-80" #messagesContainer style="max-height: 300px; min-height: 300px;">
                 <div *ngFor="let message of selectedMessages" class="flex flex-col space-y-2">
-                  
                   <div 
-                  [ngClass]="{
-                    'self-end bg-green-100': message.senderId === me.id,
-                    'self-start bg-gray-100': message.recipientId === me.id
-                  }"
+                    [ngClass]="{
+                      'self-end bg-blue-200': message.senderId === me.id,
+                      'self-start bg-gray-100': message.recipientId === me.id
+                    }"
                     class="p-3 rounded-xl max-w-max flex items-end relative">
-                    
                     <p class="text-sm">{{ message.contenue }}</p>
-                    
                   </div>
                 </div>
               </div>
-              
-              
-              
             
               <div class="p-4 bg-gray-100 rounded-b-xl flex items-center space-x-4">
                 <input 
-                [(ngModel)]="newMessage" 
-                placeholder="Écrire un message..." 
-                (keydown.enter)="sendMessage()" 
-                class="flex-1 p-2 border rounded-full border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" /> 
-                 <button (click)="sendMessage()" class="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none">
+                  [(ngModel)]="newMessage" 
+                  placeholder="Écrire un message..." 
+                  (keydown.enter)="sendMessage()" 
+                  class="flex-1 p-2 border rounded-full border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" /> 
+                <button (click)="sendMessage()" class="p-2 bg-blue-400 text-white rounded-full hover:bg-blue-500 focus:outline-none">
                   Envoyer
                 </button>
               </div>
             </div>
+            
             
             
   
@@ -304,7 +317,7 @@
                   Paramètres et confidentialité
                 </a>
                 <a
-                  href="#"
+                 routerLink="/login"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   Déconnexion
@@ -329,7 +342,8 @@
     <div class="flex flex-col items-center">
       <a href="#" class="text-white text-xl py-2">Dashboard</a>
       <a routerLink="/posts" routerLinkActive="Active" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Home</a>
-      <a href="#" class="text-white text-xl py-2">Evenement</a>
+      <a routerLink="/Events" class="text-white text-xl py-2">Evenements</a>
+      <a routerLink="/Community" class="text-white text-xl py-2">Communautés</a>
     </div>
   </div>
 </nav>
