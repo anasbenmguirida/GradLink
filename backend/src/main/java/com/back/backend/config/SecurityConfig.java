@@ -75,6 +75,10 @@ public class SecurityConfig {
             .requestMatchers(mvcMatcherBuilder.pattern("/api/update-poste")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/api/laureat/demandes-pending/{id}")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern("/api/save-picture")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/events/{eventId}/reserve")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/events/{eventId}/check-reservation")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern("/api/events/{eventId}/cancel")).permitAll()
+
         
                 .anyRequest().authenticated()
             )
@@ -86,7 +90,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     
+   
 }
 

@@ -2,11 +2,12 @@ import { UserService } from './../../services/authservice/user.service';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-registre',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,RouterLink],
 
 
 
@@ -19,9 +20,8 @@ export class RegistreComponent implements OnInit {
   currentStep = 1; // Initialiser à l'étape 1
 
   formGroup!: FormGroup;
-  router: any;
   
-  constructor(private userService: UserService) {} 
+  constructor(private userService: UserService, private router: Router) {} 
 
   ngOnInit() {
     this.formGroup = new FormGroup(
@@ -70,7 +70,6 @@ export class RegistreComponent implements OnInit {
         (response:any) => {
           console.log('Signup successful:', response);
 
-          alert('Inscription réussie !');
           this.router.navigate(['/login']); 
         },
         (error) => {
