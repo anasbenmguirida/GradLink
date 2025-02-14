@@ -450,9 +450,6 @@ throw new Error('Method not implemented.');
 
   
   postMessage() {
-    if (!this.newMessageText.trim()) {
-        return;
-    }
 
     const formData = new FormData();
     formData.append('textArea', this.newMessageText);
