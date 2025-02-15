@@ -10,7 +10,7 @@
   flex-direction: column; /* Les posts s'empilent verticalement */
   align-items: center; /* Centrer les posts horizontalement */
   justify-content: center; /* Centrer les posts verticalement */
-  min-height: 100vh; /* Occuper toute la hauteur de la fenêtre */
+  min-height: 30; /* Occuper toute la hauteur de la fenêtre */
   padding: 20px; /* Espacement autour du contenu */
   background-color: #f4f4f4; /* Fond de la page */
 }
