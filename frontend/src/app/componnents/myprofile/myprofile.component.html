@@ -122,7 +122,7 @@
      
       <form [formGroup]="form" (Submit)="updateProfile($event)">
         <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="prenom">firstName</label>
+          <label class="block text-sm font-medium mb-2" for="prenom">Prénom</label>
           <input
             id="prenom"
             type="text"
@@ -137,7 +137,7 @@
           </div>
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="nom">lastName</label>
+          <label class="block text-sm font-medium mb-2" for="nom">Nom</label>
           <input
             id="nom"
             type="text"
@@ -160,16 +160,7 @@
             formControlName="specialite"
           />
         </div>
-        <div *ngIf="me.role==='LAUREAT'" class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="titre">Entreprise Actuelle</label>
-          <input
-            id="titre"
-            type="text"
-            class="border border-gray-300 p-2 rounded w-full"
-            formControlName="entreprise"
-          />
-        
-        </div>
+       
         <div  *ngIf="me.role==='ETUDIANT'" class="mb-4">
           <label class="block text-sm font-medium mb-2" for="titre">Filiere</label>
           <input
@@ -187,7 +178,7 @@
         </div>
         <button
               type="submit" 
-          class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-400"
           [disabled]="form.invalid"
         >
           Enregistrer

@@ -86,11 +86,10 @@ export class EventService {
 
 
 //  // Méthode pour obtenir l'état de la réservation d'un événement
- getReservationStatus(eventId: number): Observable<any> {
-  const token = localStorage.getItem('authToken'); // Récupérer le token JWT
-  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`); 
-
-  return this.http.get(`${this.apiUrl}/${eventId}/reservation-status`, { headers });
+ getReservationStatus(eventId: number, userId:number): Observable<any> {
+  const params = new HttpParams().set('userId', userId.toString()); // Conversion en string obligatoire
+console.log('EveeeeeeeeeeeeeeentId',eventId)
+  return this.http.get(`${this.baseUrl}/${eventId}/check-reservation`,{ params });
 }
 // Récupérer les détails d'un événement par son ID
 getEventDetails(eventId: number): Observable<any> {
@@ -115,11 +114,21 @@ reserverEvent(eventId: number): Observable<any> {
 
 // Méthode pour annuler une réservation
 cancelReservation(eventId: number): Observable<any> {
-  const token = localStorage.getItem('authToken'); 
-  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`); 
+  const user = localStorage.getItem('user');
+  if (!user) {
+    throw new Error('User not found in local storage');
+  }
+  const userId = JSON.parse(user).id;
 
-  return this.http.delete(`${this.apiUrl}/${eventId}/cancel`, { headers });
+  const options = {
+    body: { userId: userId },  // ✅ Ajout du body
+    responseType: 'text' as 'json'  // ✅ Correction de la syntaxe
+  };
+
+  return this.http.delete(`${this.baseUrl}/${eventId}/cancel`, options);
 }
+
+
 
 deleteEvent(eventId: number): Observable<any> {
  

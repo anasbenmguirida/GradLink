@@ -40,7 +40,6 @@ user:any
   ngOnInit() {
     this.loadEvents();
     if (isPlatformBrowser(this.platformId)) {
-      console.log('hiiiiii123')
 
       this.user = JSON.parse(localStorage.getItem('user') || '{}');
       console.log(this.user)
@@ -134,7 +133,6 @@ user:any
   }
 
   reloadEvents(newEvent: any): void {
-    console.log('Événement ajouté :', newEvent);
    location.reload()
     this.loadEvents();
   }

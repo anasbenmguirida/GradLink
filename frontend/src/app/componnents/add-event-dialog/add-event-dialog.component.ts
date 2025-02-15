@@ -63,7 +63,6 @@ console.log(this.userId)
           console.log(response)
           this.onSave.emit(response); // Émettre l'événement de sauvegarde
           this.closeDialog(); // Fermer le dialogue
-          alert('Événement créé avec succès!');
         },
         (error) => {
           console.error('Erreur lors de la création de l\'événement:', error);
