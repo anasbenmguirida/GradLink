@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.back.backend.dto.PosteWithUserDTO;
+import com.back.backend.enums.TypePoste;
 import com.back.backend.Entities.Poste;
 import com.back.backend.Entities.PosteFiles;
 import com.back.backend.Entities.PosteLikes;
@@ -56,14 +57,18 @@ public class PosteService {
 
    public List<PosteWithUserDTO> findPostesByOrder() {
     List<Poste> postes = this.posteRepository.findPostesByOrder();
+
     return postes.stream()
+        .filter(poste -> poste.getTypePoste() == TypePoste.NORMAL) // Filter only NORMAL posts
         .map(poste -> {
             User user = this.userRepository.findById(poste.getUserId())
-                           .orElse(null);
-            String firstName = user.getFirstName();
-            String lastName = user.getLastName();
-            String photoProfile = user.getPhotoProfile();
-            return new PosteWithUserDTO(poste, firstName, lastName , photoProfile);
+                .orElse(null);
+
+            String firstName = user != null ? user.getFirstName() : "";
+            String lastName = user != null ? user.getLastName() : "";
+            String photoProfile = user != null ? user.getPhotoProfile() : "";
+
+            return new PosteWithUserDTO(poste, firstName, lastName, photoProfile);
         })
         .collect(Collectors.toList());
 }
