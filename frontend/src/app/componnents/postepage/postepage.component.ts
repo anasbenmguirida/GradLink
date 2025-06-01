@@ -75,10 +75,10 @@ export class PostePageComponent implements OnInit  {
     //  this.checkLikes();
 
     });
-    console.log("Token récupéré dans /posts:", localStorage.getItem('authToken'));
+    // console.log("Token récupéré dans /posts:", localStorage.getItem('authToken'));
 
-    console.log("hi");
-    console.log(this.me);
+    // console.log("hi");
+    // console.log(this.me);
   
 
     console.log(this.posts);

@@ -60,7 +60,7 @@ export class LandingComponent {
     { id: 0, name: 'Safae LABJAKH', role: ' Frontend Developer', image: 'safae.jpeg' },
     { id: 1, name: 'Soumaia KEROUAN SALAH', role: ' Frontend Developer', image: 'soumaia.jpg' },
     { id: 2, name: 'Malika Tajidi', role: 'Backend Developer', image: 'malika.jpg' },
-    { id: 3, name: 'Anas BENMGUIRIDA', role: 'Backend Developer', image: 'charlie.jpg' },
+    { id: 3, name: 'Anas BENMGUIRIDA', role: 'Backend Developer', image: 'anas.png' },
 
   ];
 

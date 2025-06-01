@@ -12,7 +12,7 @@
   align-items: center; /* Centrer les posts horizontalement */
   justify-content: center; /* Centrer les posts verticalement */
   min-height: 60vh; /* Occuper toute la hauteur de la fenêtre */
-  padding: 0px; /* Espacement autour du contenu */
+  padding: 10px; /* Espacement autour du contenu */
   background-color: #f4f4f4; /* Fond de la page */
 }
 
